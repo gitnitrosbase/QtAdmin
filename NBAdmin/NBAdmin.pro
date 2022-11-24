@@ -1,4 +1,4 @@
-QT += gui core
+QT += gui core network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -15,6 +15,8 @@ HEADERS += \
     TabWindow.hpp \
 
 RESOURCES += res.qrc \
+
+FORMS += mainwindow.ui \
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

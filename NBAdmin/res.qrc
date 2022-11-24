@@ -1,5 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>images/favicon.ico</file>
+	<file>images/AddTab.svg</file>
+	<file>images/RunbtnPic.svg</file>
     </qresource>
 </RCC>

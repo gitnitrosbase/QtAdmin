@@ -21,26 +21,22 @@ public:
     explicit TabWindow(QWidget* parent = nullptr) : QWidget(parent)
     {
         gridLayout_ = new QGridLayout(this);
-        pushButton_run_ = new QPushButton("Run ->", this);
         textEdit_ = new QTextEdit(this);
         tableWidget_ = new QTableWidget(this);
         comboBox_ = new QComboBox(this);
 
-        gridLayout_->addWidget(textEdit_, 0, 0, 1, 0);
-        gridLayout_->addWidget(pushButton_run_, 1, 0);
-        gridLayout_->addWidget(comboBox_, 1, 1);
-        gridLayout_->addWidget(tableWidget_, 2, 0,1,0);
+        gridLayout_->addWidget(textEdit_, 0, 0);
+        gridLayout_->addWidget(comboBox_, 1, 0);
+        gridLayout_->addWidget(tableWidget_, 2, 0);
 
-        pushButton_run_->setMaximumWidth(60);
-
-        connect(pushButton_run_, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
+        //connect(pushButton_run_, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
         connect(comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){ setCurrentIndex1(index); });
     }
     ~TabWindow()
     {
     }
 
-private slots:
+public slots:
 
     void setCurrentIndex1(int index)
     {
@@ -57,7 +53,7 @@ private slots:
         }
         for (int i = 0; i<int(input_queries_.size());i+=1)
         {
-            NB_HANDLE connection = nb_connect( u"127.0.0.1", 3020, u"TESTUSER", u"1234" );
+            NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort.toInt(), u"TESTUSER", u"1234" );
             check_error(connection);
             responces_.push_back(exec_select_query(connection, input_queries_.at(i)));
             nb_disconnect(connection);
@@ -146,11 +142,13 @@ private:
 
 private:
     QTableWidget* tableWidget_ = nullptr;
-    QPushButton* pushButton_run_ = nullptr;
     QGridLayout* gridLayout_ = nullptr;
     QTextEdit* textEdit_ = nullptr;
     QComboBox* comboBox_ = nullptr;
 
     std::vector<QString> input_queries_;
     std::vector<std::vector<std::vector<std::string> > > responces_;
+public:
+    QString dbPort;
+    QString dbName;
 };
