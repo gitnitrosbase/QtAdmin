@@ -60,25 +60,16 @@ private slots:
             TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
             currentTab->dbPort_ = dbList_[currentDatabase_];
             currentTab->push_button_run_clicked();
-            std::cout<<"run query"<<std::endl;
-            //filling_tree();
         }
-
     }
     void push_button_plus_clicked()
     {
         ui->tabWidget->insertTab(ui->tabWidget->count(), new TabWindow(this), QString("Query " + QString::number(ui->tabWidget->count()+1)));
     }
-    void push_button_minus_clicked()
-    {
-        ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
-    }
-
     void on_tabWidget_tabCloseRequested(int index)
     {
         ui->tabWidget->removeTab(index);
     }
-
     void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*)
     {
         QString dbName = current->text(0);
@@ -87,44 +78,79 @@ private slots:
             ui->label_2->setText(dbName);
             currentDatabase_ = dbName;
         }
-
     }
-
     void on_actionCreate_database_triggered()
     {
         connectWindow_->show();
     }
     void on_actionOpen_database_triggered()
     {
-        std::cout<<"open database"<<std::endl;
+        std::cout<<"what mean open database"<<std::endl;
     }
     void on_actionRefresh_triggered()
     {
         filling_tree();
+    }
+    void on_actionStop_triggered()
+    {
+        QMessageBox::warning(this, "Title", "Dont work");
+    }
+    void on_actionStart_triggered()
+    {
+        QMessageBox::warning(this, "Title", "Dont work");
+    }
+    void on_actionBackup_triggered()
+    {
+        QMessageBox::warning(this, "Title", "Dont work");
+    }
+    void on_actionRestore_triggered()
+    {
+        QMessageBox::warning(this, "Title", "Dont work");
+    }
+    void on_actionDatabase_Info_triggered()
+    {
+        if (currentDatabase_ != "")
+        {
+            QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+            const QUrl url(address);
+            QNetworkRequest request(url);
+            request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+            QJsonObject obj;
+            obj["cmd"] = 8;
+            obj["port"] = dbList_.find(currentDatabase_)->second;
+            QJsonDocument doc(obj);
+            QByteArray data = doc.toJson();
+            QNetworkReply *reply = mgr->post(request, data);
+            connect(reply, &QNetworkReply::finished, [=]()
+            {
+                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+                QString output;
+
+                output+="Name: ";
+                output+=currentDatabase_;
+                output+="\nPort: ";
+                int port = dbList_[currentDatabase_];
+                output+=QString::number(port);
+                output+="\nVersion Database: ";
+                QJsonObject reply_obj = reply_doc.object();
+                QString str = reply_obj.find("version").value().toString();
+                output+=str;
+                QMessageBox::information(this, "Database info", output);
+                reply->deleteLater();
+            });
+        }
+        else QMessageBox::warning(this, "Warning", "Select database");
     }
 
 private:
     void filling_tree()
     {
         ui->treeWidget->takeTopLevelItem(0);
-
-        const QString ipAddress = "127.0.0.1";
-        const QString pcPort = "8008";
-
-        QString finalPath;
-        finalPath += "http://";
-        finalPath += ipAddress;
-        finalPath += ":";
-        finalPath += pcPort;
-        finalPath += "/api3";
-
         QTreeWidgetItem* username = new QTreeWidgetItem();
         username->setText(0,"Local");
-
         ui->treeWidget->addTopLevelItem(username);
-
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        const QUrl url(finalPath);
+        const QUrl url(address);
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
         QJsonObject obj;
@@ -139,7 +165,6 @@ private:
                 QJsonDocument copyReply = QJsonDocument::fromJson(reply->readAll());
                 QJsonObject Responce = copyReply.object();
                 QJsonArray tmpArray = Responce["list"].toArray();
-
                 dbList_.clear();
                 for (auto item_db : tmpArray)
                 {
@@ -149,14 +174,13 @@ private:
                     dbList_.insert(std::pair<QString, int>(item_db.toObject().find("dbname").value().toString(), item_db.toObject().find("port").value().toInt()));
 
                     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-                    QUrl url(finalPath);
+                    QUrl url(address);
                     QNetworkRequest request(url);
                     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
                     QJsonObject obj;
                     obj["cmd"] = 8;
                     obj["port"] = item_db.toObject().find("port").value().toInt();
                     QJsonDocument doc(obj);
-
                     QByteArray data = doc.toJson();
                     QNetworkReply *reply_table = mgr->post(request, data);
                     connect(reply_table, &QNetworkReply::finished, [=]()
@@ -165,7 +189,6 @@ private:
                         {
                             QJsonDocument copy_reply_table = QJsonDocument::fromJson(reply_table->readAll());
                             QJsonObject Responce = copy_reply_table.object();
-//                          QMessageBox::information(this, "", copy_reply_table.toJson());
                             QJsonArray tmpArray = Responce["data"].toArray();
                             for (auto item_table : tmpArray)
                             {
@@ -190,10 +213,9 @@ private:
     }
 
 private:
+    QString address = "http://127.0.0.1:8008/api3";
     std::map<QString, int> dbList_;
     Ui::MainWindow *ui;
     QString currentDatabase_ = "";
-
     ConnectWindow* connectWindow_ = nullptr;
-
 };

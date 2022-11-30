@@ -32,23 +32,12 @@ public:
     ~TabWindow() = default;
 
 public slots:
-
     void setCurrentIndex(int index)
     {
         print_result_to_table(responces_.at(index), *tableWidget_);
     }
     void push_button_run_clicked()
     {
-//        std::cout<<"check1"<<std::endl;
-//        for (int i = 0;i<comboBox_->count();i+=1 )
-//        {
-//            comboBox_->removeItem(i);
-//        }
-//        std::cout<<"check2"<<std::endl;
-//        input_queries_.clear();
-//        std::cout<<"check3"<<std::endl;
-//        responces_.clear();
-//        std::cout<<"check4"<<std::endl;
         QString tmp = textEdit_->toPlainText();
         QString query;
         if (tmp.back() != ";") tmp.append(";");
