@@ -6,6 +6,13 @@
 #include <QGridLayout>
 #include <QPushButton>
 
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
+
 #include <iostream>
 #include <windows.h>
 #include <lmcons.h>
@@ -40,35 +47,27 @@ public slots:
         }
         return output;
     }
-    // пока не работает(не выполняется команда виндовс)
     void createDataBase()
     {
-        TCHAR name [ UNLEN + 1 ];
-        DWORD size = UNLEN + 1;
-        QString qname;
-
-        GetUserName((TCHAR*)name, &size);
-        qname = fromTCHAR(name, size);
-
-        if (dbName_->text() != "" && dbPort_->text() != "")
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 3;
+        obj["port"] = dbPort_->text().toInt();
+        obj["dbname"] = dbName_->text().toStdString().c_str();
+        obj["dbpath"] = dbPath_->text().toStdString().c_str();
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        connect(reply, &QNetworkReply::finished, [=]()
         {
-            QString str;
-            str = "cd C:/Users/";
-            str+=qname;
-            str+="/AppData/Local/nitrosbaseuni/bin/ ; ./nbase.exe ";
-            str+=dbName_->text();
-            str+=" -c create -p ";
-            str+=dbPort_->text();
-            std::cout<<str.toStdString()<<std::endl;
-            if (dbPath_->text() != "")
-            {
-                str+=" < ";
-                str+=dbPath_->text();
-                system(str.toStdString().c_str());
-            }
-            str+=" > res.txt";
-            system(str.toStdString().c_str());
-        }
+            if (reply->error() == QNetworkReply::NoError) std::cout<<"db create"<<std::endl;
+            else std::cout<<"error!"<<std::endl;
+
+            reply->deleteLater();
+        });
         this->close();
     }
 
@@ -78,4 +77,6 @@ private:
     QLineEdit* dbPath_ = nullptr;
     QPushButton* pushButton_ = nullptr;
     QGridLayout* gridLayout_ = nullptr;
+public:
+    QString address_;
 };

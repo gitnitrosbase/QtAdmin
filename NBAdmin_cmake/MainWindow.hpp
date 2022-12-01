@@ -84,6 +84,7 @@ private slots:
     void on_actionCreate_database_triggered()
     {
         connectWindow_->show();
+        connectWindow_->address_ = this->address_;
     }
     void on_actionOpen_database_triggered()
     {
@@ -114,7 +115,7 @@ private slots:
         if (currentDatabase_ != "")
         {
             QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-            const QUrl url(address);
+            const QUrl url(address_);
             QNetworkRequest request(url);
             request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
             QJsonObject obj;
@@ -125,19 +126,22 @@ private slots:
             QNetworkReply *reply = mgr->post(request, data);
             connect(reply, &QNetworkReply::finished, [=]()
             {
-                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-                QString output;
+                if (reply->error() == QNetworkReply::NoError)
+                {
+                    QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+                    QString output;
 
-                output+="Name: ";
-                output+=currentDatabase_;
-                output+="\nPort: ";
-                int port = dbList_[currentDatabase_];
-                output+=QString::number(port);
-                output+="\nVersion Database: ";
-                QJsonObject reply_obj = reply_doc.object();
-                QString str = reply_obj.find("version").value().toString();
-                output+=str;
-                QMessageBox::information(this, "Database info", output);
+                    output+="Name: ";
+                    output+=currentDatabase_;
+                    output+="\nPort: ";
+                    int port = dbList_[currentDatabase_];
+                    output+=QString::number(port);
+                    output+="\nVersion Database: ";
+                    QJsonObject reply_obj = reply_doc.object();
+                    QString str = reply_obj.find("version").value().toString();
+                    output+=str;
+                    QMessageBox::information(this, "Database info", output);
+                }
                 reply->deleteLater();
             });
         }
@@ -175,7 +179,7 @@ private:
         username->setText(0,"Local");
         ui->treeWidget->addTopLevelItem(username);
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        const QUrl url(address);
+        const QUrl url(address_);
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
         QJsonObject obj;
@@ -199,7 +203,7 @@ private:
                     dbList_.insert(std::pair<QString, int>(item_db.toObject().find("dbname").value().toString(), item_db.toObject().find("port").value().toInt()));
 
                     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-                    QUrl url(address);
+                    QUrl url(address_);
                     QNetworkRequest request(url);
                     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
                     QJsonObject obj;
@@ -238,7 +242,7 @@ private:
     }
 
 private:
-    QString address = "http://127.0.0.1:8008/api3";
+    QString address_ = "http://127.0.0.1:8008/api3";
     std::map<QString, int> dbList_;
     Ui::MainWindow *ui;
     QString currentDatabase_ = "";
