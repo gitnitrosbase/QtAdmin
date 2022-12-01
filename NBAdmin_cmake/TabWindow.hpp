@@ -27,7 +27,6 @@ public:
         gridLayout_->addWidget(textEdit_, 0, 0);
         gridLayout_->addWidget(comboBox_, 1, 0);
         gridLayout_->addWidget(tableWidget_, 2, 0);
-        connect(comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
     }
     ~TabWindow() = default;
 
@@ -38,6 +37,13 @@ public slots:
     }
     void push_button_run_clicked()
     {
+        input_queries_.clear();
+        responces_.clear();
+        delete comboBox_;
+        comboBox_ = new QComboBox(this);
+        gridLayout_->addWidget(comboBox_, 1, 0);
+        connect(comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
+
         QString tmp = textEdit_->toPlainText();
         QString query;
         if (tmp.back() != ";") tmp.append(";");
@@ -59,17 +65,9 @@ public slots:
             nb_disconnect(connection);
             comboBox_->addItem(QString::fromStdString(input_queries_.at(i)));
         }
-        std::cout<<"==="<<std::endl;
-        for (auto item : input_queries_)
-        {
-            std::cout<<item<<std::endl;
-        }
-        std::cout<<"==="<<std::endl;
-        std::cout<<comboBox_->count()<<std::endl;
     }
 
 private:
-
     void print_result_to_table(std::vector<std::vector<std::string> > output, QTableWidget& tableWidget)
     {
         tableWidget.setColumnCount(output[0].size());
@@ -87,7 +85,6 @@ private:
                 tableWidget.setItem(i-1,j, new QTableWidgetItem(QString::fromStdString(output[i][j])));
             }
         }
-
     }
     bool check_query(NB_HANDLE connection)
     {
@@ -151,7 +148,6 @@ private:
     QGridLayout* gridLayout_ = nullptr;
     QTextEdit* textEdit_ = nullptr;
     QComboBox* comboBox_ = nullptr;
-
     std::vector<std::string> input_queries_;
     std::vector<std::vector<std::vector<std::string> > > responces_;
 public:

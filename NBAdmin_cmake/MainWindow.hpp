@@ -35,7 +35,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -49,6 +48,9 @@ public:
         connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
         ui->treeWidget->setHeaderLabel("Databases");
         connectWindow_ = new ConnectWindow();
+
+        ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
+        ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
      }
     ~MainWindow() = default;
 
@@ -140,6 +142,29 @@ private slots:
             });
         }
         else QMessageBox::warning(this, "Warning", "Select database");
+    }
+    void on_actionInfo_triggered()
+    {
+        on_actionDatabase_Info_triggered();
+    }
+    void on_actionContacts_triggered()
+    {
+        QMessageBox::information(this,"Contacts", "Email: support@nitrosbase.com");
+    }
+
+    void on_actionNew_query_triggered()
+    {
+        push_button_plus_clicked();
+    }
+
+    void on_actionClose_query_triggered()
+    {
+        ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
+    }
+
+    void on_actionRun_query_triggered()
+    {
+        push_button_run_clicked();
     }
 
 private:
