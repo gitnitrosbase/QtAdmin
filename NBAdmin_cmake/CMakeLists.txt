@@ -14,7 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(QT NAMES Qt5 COMPONENTS Widgets Network REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network REQUIRED)
 
-set(PROJECT_SOURCES nb-samples.h nitrosbase.h main.cpp TabWindow.hpp MainWindow.hpp ConnectWindow.hpp mainwindow.ui nbclient.lib res.qrc)
+set(PROJECT_SOURCES nb-samples.h nitrosbase.h main.cpp TabWindow.hpp MainWindow.hpp ConnectWindow.hpp OpenWindow.hpp mainwindow.ui nbclient.lib res.qrc)
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
 

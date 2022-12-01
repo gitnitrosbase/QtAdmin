@@ -15,11 +15,11 @@
 
 #include <iostream>
 
-class ConnectWindow : public QWidget
+class OpenWindow : public QWidget
 {
     Q_OBJECT
 public:
-    ConnectWindow(QWidget* parent = nullptr) : QWidget(parent)
+    OpenWindow(QWidget* parent = nullptr) : QWidget(parent)
     {
         gridLayout_ = new QGridLayout(this);
         dbName_ = new QLineEdit(this);
@@ -30,20 +30,20 @@ public:
         gridLayout_->addWidget(dbPort_);
         gridLayout_->addWidget(dbPath_);
         gridLayout_->addWidget(pushButton_);
-        connect(pushButton_, SIGNAL(clicked()), this, SLOT(createDatabase()));
+        connect(pushButton_, SIGNAL(clicked()), this, SLOT(openDatabase()));
 
         setWindowIcon(QIcon(":/images/favicon.ico"));
     }
-    ~ConnectWindow() = default;
+    ~OpenWindow() = default;
 public slots:
-    void createDatabase()
+    void OpenDatabase()
     {
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(address_);
         QNetworkRequest request(url);
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
         QJsonObject obj;
-        obj["cmd"] = 3;
+        obj["cmd"] = 1;
         obj["port"] = dbPort_->text().toInt();
         obj["dbname"] = dbName_->text().toStdString().c_str();
         obj["dbpath"] = dbPath_->text().toStdString().c_str();
@@ -52,7 +52,7 @@ public slots:
         QNetworkReply *reply = mgr->post(request, data);
         connect(reply, &QNetworkReply::finished, [=]()
         {
-            if (reply->error() == QNetworkReply::NoError) std::cout<<"db create"<<std::endl;
+            if (reply->error() == QNetworkReply::NoError) std::cout<<"db open"<<std::endl;
             else std::cout<<"error!"<<std::endl;
 
             reply->deleteLater();

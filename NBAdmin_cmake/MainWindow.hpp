@@ -29,6 +29,7 @@
 
 #include "TabWindow.hpp"
 #include "ConnectWindow.hpp"
+#include "OpenWindow.hpp"
 #include "ui_mainwindow.h"
 
 QT_BEGIN_NAMESPACE
@@ -48,6 +49,7 @@ public:
         connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
         ui->treeWidget->setHeaderLabel("Databases");
         connectWindow_ = new ConnectWindow();
+        openWindow_ = new OpenWindow();
 
         ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
         ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
@@ -84,11 +86,14 @@ private slots:
     void on_actionCreate_database_triggered()
     {
         connectWindow_->show();
+        connectWindow_->setWindowTitle("Create database");
         connectWindow_->address_ = this->address_;
     }
     void on_actionOpen_database_triggered()
     {
-        std::cout<<"what mean open database"<<std::endl;
+        openWindow_->show();
+        openWindow_->setWindowTitle("Open database");
+        openWindow_->address_ = this->address_;
     }
     void on_actionRefresh_triggered()
     {
@@ -247,4 +252,5 @@ private:
     Ui::MainWindow *ui;
     QString currentDatabase_ = "";
     ConnectWindow* connectWindow_ = nullptr;
+    OpenWindow* openWindow_ = nullptr;
 };
