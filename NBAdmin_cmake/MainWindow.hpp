@@ -13,6 +13,7 @@
 #include <QDirIterator>
 #include <QToolBar>
 #include <QMainWindow>
+#include <QFile>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -29,6 +30,7 @@
 
 #include "TabWindow.hpp"
 #include "ConnectWindow.hpp"
+#include "BackupWindow.hpp"
 #include "OpenWindow.hpp"
 #include "ui_mainwindow.h"
 
@@ -50,7 +52,7 @@ public:
         ui->treeWidget->setHeaderLabel("Databases");
         connectWindow_ = new ConnectWindow();
         openWindow_ = new OpenWindow();
-
+        backupWindow_ = new BackupWindow();
         ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
         ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
      }
@@ -109,7 +111,9 @@ private slots:
     }
     void on_actionBackup_triggered()
     {
-        QMessageBox::warning(this, "Title", "Dont work");
+        backupWindow_->show();
+        backupWindow_->setWindowTitle("Backup");
+        backupWindow_->address_ = this->address_;
     }
     void on_actionRestore_triggered()
     {
@@ -135,7 +139,6 @@ private slots:
                 {
                     QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
                     QString output;
-
                     output+="Name: ";
                     output+=currentDatabase_;
                     output+="\nPort: ";
@@ -200,13 +203,15 @@ private:
                 QJsonObject Responce = copyReply.object();
                 QJsonArray tmpArray = Responce["list"].toArray();
                 dbList_.clear();
+
+                int i = 0;
+
                 for (auto item_db : tmpArray)
                 {
                     QTreeWidgetItem* dbName = new QTreeWidgetItem();
-                    dbName->setText(0, item_db.toObject().find("dbname").value().toString());
+                    dbName->setText(0, QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())));
                     username->addChild(dbName);
                     dbList_.insert(std::pair<QString, int>(item_db.toObject().find("dbname").value().toString(), item_db.toObject().find("port").value().toInt()));
-
                     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
                     QUrl url(address_);
                     QNetworkRequest request(url);
@@ -217,6 +222,9 @@ private:
                     QJsonDocument doc(obj);
                     QByteArray data = doc.toJson();
                     QNetworkReply *reply_table = mgr->post(request, data);
+
+                    i+=1;
+
                     connect(reply_table, &QNetworkReply::finished, [=]()
                     {
                         if(reply_table->error() == QNetworkReply::NoError)
@@ -224,18 +232,55 @@ private:
                             QJsonDocument copy_reply_table = QJsonDocument::fromJson(reply_table->readAll());
                             QJsonObject Responce = copy_reply_table.object();
                             QJsonArray tmpArray = Responce["data"].toArray();
+
+                            QFile filename(QString("file" + QString::number(i) + ".txt"));
+                            filename.open(QIODevice::ReadWrite);
+                            filename.write(copy_reply_table.toJson());
+                            filename.close();
+
+                            QTreeWidgetItem* dbTables = new QTreeWidgetItem();
+                            dbName->addChild(dbTables);
+
+                            QTreeWidgetItem* dbEdges = new QTreeWidgetItem();
+                            dbName->addChild(dbEdges);
+
+                            int tablesCount = 0;
+                            int edgesCount = 0;
+
                             for (auto item_table : tmpArray)
                             {
-                                QTreeWidgetItem* table_name = new QTreeWidgetItem();
-                                table_name->setText(0,item_table.toObject().find("tablename").value().toString());
-                                dbName->addChild(table_name);
-                                QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
-                                for (auto item_field : fields_array)
+                                if (item_table.toObject().find("type").value().toInt() == 2)
                                 {
-                                    QTreeWidgetItem* field = new QTreeWidgetItem();
-                                    field->setText(0, item_field.toObject().find("name")->toString());
-                                    table_name->addChild(field);
+                                    QTreeWidgetItem* table_name = new QTreeWidgetItem();
+                                    table_name->setText(0,item_table.toObject().find("tablename").value().toString());
+                                    dbTables->addChild(table_name);
+                                    QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
+                                    for (auto item_field : fields_array)
+                                    {
+                                        QTreeWidgetItem* field = new QTreeWidgetItem();
+                                        field->setText(0, QString(item_field.toObject().find("name")->toString() + " [" + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())) + "]"));
+                                        table_name->addChild(field);
+                                    }
+
+                                    tablesCount+=1;
                                 }
+                                else if (item_table.toObject().find("type").value().toInt() == 3)
+                                {
+                                    QTreeWidgetItem* table_name = new QTreeWidgetItem();
+                                    table_name->setText(0,item_table.toObject().find("tablename").value().toString());
+                                    dbEdges->addChild(table_name);
+                                    QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
+                                    for (auto item_field : fields_array)
+                                    {
+                                        QTreeWidgetItem* field = new QTreeWidgetItem();
+                                        field->setText(0, QString(item_field.toObject().find("name")->toString()));
+                                        table_name->addChild(field);
+                                    }
+
+                                    edgesCount+=1;
+                                }
+                                dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
+                                dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
                             }
                         }
                         reply_table->deleteLater();
@@ -253,4 +298,18 @@ private:
     QString currentDatabase_ = "";
     ConnectWindow* connectWindow_ = nullptr;
     OpenWindow* openWindow_ = nullptr;
+    BackupWindow* backupWindow_ = nullptr;
+    std::vector<std::string> fieldsTypes_ = {
+        "varchar",
+        "int",
+        "bigint",
+        "double",
+        "datetime",
+        "bit",
+        "date",
+        "varbinary",
+        "nvarchar",
+        "rowversion",
+        "decimal"
+    };
 };
