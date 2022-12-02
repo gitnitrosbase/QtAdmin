@@ -211,7 +211,7 @@ private:
                     QTreeWidgetItem* dbName = new QTreeWidgetItem();
                     dbName->setText(0, QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())));
                     username->addChild(dbName);
-                    dbList_.insert(std::pair<QString, int>(item_db.toObject().find("dbname").value().toString(), item_db.toObject().find("port").value().toInt()));
+                    dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())), item_db.toObject().find("port").value().toInt()));
                     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
                     QUrl url(address_);
                     QNetworkRequest request(url);

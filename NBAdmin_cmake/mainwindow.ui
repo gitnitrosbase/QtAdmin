@@ -20,7 +20,7 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">backgraund:rgb(255, 255, 255)</string>
+   <string notr="true">background-color:rgb(255, 255, 255)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -58,6 +58,9 @@
         <width>16777215</width>
         <height>40</height>
        </size>
+      </property>
+      <property name="styleSheet">
+       <string notr="true">background-color: #eee;</string>
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <property name="spacing">
@@ -166,8 +169,25 @@
               <height>30</height>
              </size>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+border-radius: 15px;
+background-color: rgb(255, 255, 255);
+}
+QPushButton:hover {
+    border-radius: 15px;
+	border: 1px solid #fff;
+    outline: none;
+	background-color: #ececec;
+}
+</string>
+            </property>
             <property name="text">
              <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/images/RunbtnPic.svg</normaloff>:/images/RunbtnPic.svg</iconset>
             </property>
            </widget>
           </item>
@@ -192,8 +212,24 @@
               <height>30</height>
              </size>
             </property>
+            <property name="styleSheet">
+             <string notr="true">QPushButton {
+border-radius: 15px;
+background-color: rgb(255, 255, 255);
+}
+QPushButton:hover {
+    border-radius: 15px;
+	border: 1px solid #fff;
+    outline: none;
+	background-color: #ececec;
+}</string>
+            </property>
             <property name="text">
              <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="res.qrc">
+              <normaloff>:/images/AddTab.svg</normaloff>:/images/AddTab.svg</iconset>
             </property>
            </widget>
           </item>
@@ -223,7 +259,7 @@
        </property>
        <property name="maximumSize">
         <size>
-         <width>16777215</width>
+         <width>400</width>
          <height>16777215</height>
         </size>
        </property>
@@ -275,7 +311,32 @@
      <height>20</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">QMenuBar:item:selected {
+background-color: rgba(127, 127, 127, 0.75); 
+color: rgb(255, 255, 255);
+}</string>
+   </property>
    <widget class="QMenu" name="menuDatabase">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+background-color: rgba(255, 255, 255, 0.9); 
+color: gray; 
+padding: 4px 0px;
+border: 1px solid rgb(0, 0, 0);
+}
+QMenu:item {
+
+}
+QMenu:item:selected {
+background-color: rgba(127, 127, 127, 0.75); 
+color: rgb(255, 255, 255);
+}
+
+ 
+
+ </string>
+    </property>
     <property name="title">
      <string>Database</string>
     </property>
@@ -289,6 +350,19 @@
     <addaction name="actionDatabase_Info"/>
    </widget>
    <widget class="QMenu" name="menuQuery">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+background-color: rgba(255, 255, 255, 0.9); 
+color: gray;
+padding: 4px 0px;
+border: 1px solid rgb(0, 0, 0);
+}
+QMenu:item:selected {
+background-color: rgba(127, 127, 127, 0.75); 
+color: rgb(255, 255, 255);
+}
+ </string>
+    </property>
     <property name="title">
      <string>Query</string>
     </property>
@@ -299,6 +373,19 @@
     <addaction name="actionSave"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
+    <property name="styleSheet">
+     <string notr="true">QMenu {
+background-color: rgba(255, 255, 255, 0.9); 
+color: gray;
+padding: 4px 0px;
+border: 1px solid rgb(0, 0, 0);
+}
+QMenu:item:selected {
+background-color: rgba(127, 127, 127, 0.75); 
+color: rgb(255, 255, 255);
+}
+ </string>
+    </property>
     <property name="title">
      <string>Help</string>
     </property>
@@ -310,26 +397,44 @@
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionCreate_database">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Create database</string>
    </property>
   </action>
   <action name="actionOpen_database">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Open database</string>
    </property>
   </action>
   <action name="actionRefresh">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Refresh</string>
    </property>
   </action>
   <action name="actionStop">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Stop</string>
    </property>
   </action>
   <action name="actionStart">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Start</string>
    </property>
@@ -340,6 +445,9 @@
    </property>
   </action>
   <action name="actionRestore">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>Restore</string>
    </property>
@@ -350,41 +458,64 @@
    </property>
   </action>
   <action name="actionNew_query">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>New query</string>
    </property>
   </action>
   <action name="actionClose_query">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Close query</string>
    </property>
   </action>
   <action name="actionRun_query">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Run query</string>
    </property>
   </action>
   <action name="actionOpen">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Open</string>
    </property>
   </action>
   <action name="actionSave">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Save</string>
    </property>
   </action>
   <action name="actionInfo">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Info</string>
    </property>
   </action>
   <action name="actionContacts">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Contacts</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="res.qrc"/>
+ </resources>
  <connections/>
 </ui>
