@@ -30,7 +30,7 @@
 
 #include "TabWindow.hpp"
 #include "ConnectWindow.hpp"
-#include "BackupWindow.hpp"
+#include "backupWindow.hpp"
 #include "OpenWindow.hpp"
 #include "ui_mainwindow.h"
 

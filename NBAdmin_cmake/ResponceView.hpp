@@ -3,6 +3,9 @@
 #include <QAbstractTableModel>
 #include <QString>
 
+#include <QList>
+#include <QStandardItem>
+
 #include <vector>
 #include <string>
 
@@ -10,7 +13,10 @@ class ResponceView : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    ResponceView(QObject *parent = nullptr);
+    ResponceView(QObject *parent = nullptr) : QAbstractTableModel(parent)
+    {
+
+    }
     int rowCount(const QModelIndex &parent = QModelIndex()) const override
     {
         return rows_;
@@ -27,8 +33,19 @@ public:
     }
     void setResponce(std::vector<std::vector<std::string> > value)
     {
-        responces_ = value;
+//        QList<QStandardItem*> list;
+//        for (int i = 0; i<value.size(); i+=1)
+//        {
+//            for (int j = 0; j<value.at(0).size(); j+=1)
+//            {
+//                QStandardItem* item = new QStandardItem(i,j);
+//                item->setText(QString::fromStdString(responces_.at(i).at(j)));
+//                list.append(item);
+//            }
+//        }
     }
+
+
 
 private:
     int rows_ = 0;

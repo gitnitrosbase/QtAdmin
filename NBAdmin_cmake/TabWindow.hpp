@@ -38,10 +38,11 @@ public slots:
     void setCurrentIndex(int index)
     {
         //print_result_to_table(responces_.at(index), *tableWidget_);
-        if (currentModel_ != nullptr) delete currentModel_;
-        currentModel_ = new ResponceView();
-        currentModel_->setResponce(responces_.at(index));
-        tableWidget_->setModel(currentModel_);
+//        if (currentModel_ != nullptr) delete currentModel_;
+//        currentModel_ = new ResponceView();
+        QStandardItemModel* model = new QStandardItemModel();
+        print_to_model(model, responces_.at(index));
+        tableWidget_->setModel(model);
     }
     void push_button_run_clicked()
     {
@@ -76,6 +77,22 @@ public slots:
     }
 
 private:
+
+    void print_to_model(QStandardItemModel* model, std::vector<std::vector<std::string> > &input)
+    {
+        for (int i = 0; i<input.size(); i+=1)
+        {
+            QList<QStandardItem*> list;
+            for (int j = 0; j<input.at(0).size(); j+=1)
+            {
+                QStandardItem* item = new QStandardItem(i,j);
+                item->setText(QString::fromStdString(input.at(i).at(j)));
+                list.append(item);
+            }
+            model->appendRow(list);
+        }
+    }
+
     void print_result_to_table(std::vector<std::vector<std::string> > output, QTableWidget& tableWidget)
     {
         tableWidget.setColumnCount(output[0].size());

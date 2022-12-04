@@ -30,7 +30,7 @@ public:
         gridLayout_->addWidget(dbPort_);
         gridLayout_->addWidget(dbPath_);
         gridLayout_->addWidget(pushButton_);
-        connect(pushButton_, SIGNAL(clicked()), this, SLOT(openDatabase()));
+        connect(pushButton_, SIGNAL(clicked()), this, SLOT(OpenDatabase()));
 
         setWindowIcon(QIcon(":/images/favicon.ico"));
     }
