@@ -9,10 +9,13 @@
 #include <QComboBox>
 #include <QMessageBox>
 
+#include <QTableView>
+
 #include <vector>
 #include <string>
 
 #include "nb-samples.h"
+#include "ResponceView.hpp"
 
 class TabWindow : public QWidget
 {
@@ -22,7 +25,8 @@ public:
     {
         gridLayout_ = new QGridLayout(this);
         textEdit_ = new QTextEdit(this);
-        tableWidget_ = new QTableWidget(this);
+        //tableWidget_ = new QTableWidget(this);
+        tableWidget_ = new QTableView(this);
         comboBox_ = new QComboBox(this);
         gridLayout_->addWidget(textEdit_, 0, 0);
         gridLayout_->addWidget(comboBox_, 1, 0);
@@ -33,7 +37,11 @@ public:
 public slots:
     void setCurrentIndex(int index)
     {
-        print_result_to_table(responces_.at(index), *tableWidget_);
+        //print_result_to_table(responces_.at(index), *tableWidget_);
+        if (currentModel_ != nullptr) delete currentModel_;
+        currentModel_ = new ResponceView();
+        currentModel_->setResponce(responces_.at(index));
+        tableWidget_->setModel(currentModel_);
     }
     void push_button_run_clicked()
     {
@@ -144,12 +152,15 @@ private:
     }
 
 private:
-    QTableWidget* tableWidget_ = nullptr;
+    //QTableWidget* tableWidget_ = nullptr;
+    QTableView* tableWidget_ = nullptr;
     QGridLayout* gridLayout_ = nullptr;
     QTextEdit* textEdit_ = nullptr;
     QComboBox* comboBox_ = nullptr;
+
     std::vector<std::string> input_queries_;
     std::vector<std::vector<std::vector<std::string> > > responces_;
+    ResponceView* currentModel_ = nullptr;
 public:
     int dbPort_;
 };

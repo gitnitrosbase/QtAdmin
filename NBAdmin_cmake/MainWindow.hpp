@@ -279,9 +279,9 @@ private:
 
                                     edgesCount+=1;
                                 }
-                                dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
-                                dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
                             }
+                            dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
+                            dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
                         }
                         reply_table->deleteLater();
                     });
