@@ -12,7 +12,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt5 COMPONENTS Widgets Network REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network REQUIRED)
+find_package(Qt5 COMPONENTS Widgets Network REQUIRED)
 
 set(PROJECT_SOURCES
     nb-samples.h
@@ -30,4 +30,4 @@ set(PROJECT_SOURCES
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network ${PROJECT_SOURCE_DIR}/nbclient.dll)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Network ${PROJECT_SOURCE_DIR}/nbclient.dll)
