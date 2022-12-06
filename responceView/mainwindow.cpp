@@ -9,11 +9,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    std::cout<<"start"<<std::endl;
+    //std::cout<<"start"<<std::endl;
     model_ = new ResponceView();
-    std::cout<<"create"<<std::endl;
+    //std::cout<<"create"<<std::endl;
     ui->tableView->setModel(model_);
-    std::cout<<"create1"<<std::endl;
+    //std::cout<<"create1"<<std::endl;
+
 }
 
 MainWindow::~MainWindow()
@@ -28,12 +29,18 @@ void MainWindow::on_pushButton_clicked()
     clock_t start = clock();
     QList<QString> tmp = {"1", "2", "3", "4", "5", "6"};
 
-    model_->insertColumns(0,6);
 
-    for (int i = 0; i < ui->lineEdit_3->text().toInt(); i+=1) model_->addRow(tmp);
+    //for (int i = 0; i < ui->lineEdit_3->text().toInt(); i+=1) model_->addRow(tmp);
     clock_t end = clock();
+
+
+    model_->setRowCount(ui->lineEdit_3->text().toInt());
+
 
     double seconds = (double)(end - start);
     std::cout<< seconds <<std::endl;
+
+
+
 }
 

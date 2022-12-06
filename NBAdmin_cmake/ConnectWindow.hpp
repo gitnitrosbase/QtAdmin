@@ -31,7 +31,6 @@ public:
         gridLayout_->addWidget(dbPath_);
         gridLayout_->addWidget(pushButton_);
         connect(pushButton_, SIGNAL(clicked()), this, SLOT(createDatabase()));
-
         setWindowIcon(QIcon(":/images/favicon.ico"));
     }
     ~ConnectWindow() = default;

@@ -179,6 +179,43 @@ private slots:
         push_button_run_clicked();
     }
 
+    void on_actionOpen_triggered()
+    {
+        TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+
+        QString path = "C:/Users/nk/Documents/query.txt";
+        QFile file(path);
+        file.open(QIODevice::ReadWrite);
+        if(file.isOpen())
+        {
+            QString tmp = file.readAll();
+            currentTab->setText(tmp);
+        }
+        else
+        {
+            QMessageBox::warning(this, "Warning", "Could not open the file");
+        }
+        file.close();
+    }
+
+    void on_actionSave_triggered()
+    {
+        TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+
+        QString path = "C:/Users/nk/Documents/query_save.txt";
+        QFile file(path);
+        file.open(QIODevice::ReadWrite);
+        if(file.isOpen())
+        {
+            file.write(currentTab->textFromTextEdit().toUtf8());
+        }
+        else
+        {
+            QMessageBox::warning(this, "Warning", "Could not open the file");
+        }
+        file.close();
+    }
+
 private:
     void filling_tree()
     {
@@ -273,7 +310,7 @@ private:
                                     for (auto item_field : fields_array)
                                     {
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
-                                        field->setText(0, QString(item_field.toObject().find("name")->toString()));
+                                        field->setText(0, QString(item_field.toObject().find("name")->toString()  + " [" + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())) + "]"));
                                         table_name->addChild(field);
                                     }
 
