@@ -105,7 +105,25 @@ private slots:
     }
     void on_actionStop_triggered()
     {
-        //QMessageBox::warning(this, "Title", "Dont work");
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 4;
+        obj["port"] = dbList_.find(currentDatabase_)->second;
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        connect(reply, &QNetworkReply::finished, [=]()
+        {
+            if (reply->error() == QNetworkReply::NoError)
+            {
+                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+
+            }
+            reply->deleteLater();
+        });
 
     }
     void on_actionStart_triggered()
@@ -246,6 +264,12 @@ private:
         return input;
     }
 
+    QString runCheck(bool input)
+    {
+        if (input) return "RUN";
+        else return "STOPED";
+    }
+
 
     void filling_tree()
     {
@@ -277,8 +301,20 @@ private:
                 for (auto item_db : tmpArray)
                 {
                     QTreeWidgetItem* dbName = new QTreeWidgetItem();
-                    dbName->setText(0, QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())));
+                    dbName->setText(0, QString(item_db.toObject().find("dbname").value().toString()
+                                               + " "
+                                               + QString::number(item_db.toObject().find("port").value().toInt())
+                                               ));
                     username->addChild(dbName);
+
+
+                    if (item_db.toObject().find("run").value().toBool()) dbName->setIcon(0, QIcon(":/images/true.png"));
+                    else dbName->setIcon(0, QIcon(":/images/false.png"));
+
+
+
+
+
                     dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())), item_db.toObject().find("port").value().toInt()));
                     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
                     QUrl url(address_);
