@@ -26,7 +26,8 @@ set(PROJECT_SOURCES
     ResponceView.hpp
     mainwindow.ui
     nbclient.lib
-    res.qrc)
+    res.qrc
+    )
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
 

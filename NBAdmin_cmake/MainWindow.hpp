@@ -49,7 +49,9 @@ public:
         filling_tree();
         connect(ui->Add, SIGNAL(clicked()), this, SLOT(push_button_plus_clicked()));
         connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
-        ui->treeWidget->setHeaderLabel("Databases");
+        QStringList headers = {"Databases", "Type", "Nullable", "Link"};
+        ui->treeWidget->setHeaderLabels(headers);
+
         connectWindow_ = new ConnectWindow();
         openWindow_ = new OpenWindow();
         backupWindow_ = new BackupWindow();
@@ -231,10 +233,24 @@ private:
         return output;
     }
 
+    QString nullCheck(int index)
+    {
+        if (index == 0) return "NOT NULL";
+        else if (index == 1) return "NULL";
+        else return "???";
+    }
+
+    QString linkCheck(QString input)
+    {
+        //if (input != "") return QString(" -> " + input);
+        return input;
+    }
+
 
     void filling_tree()
     {
         ui->treeWidget->takeTopLevelItem(0);
+        ui->treeWidget->setColumnCount(4);
         QTreeWidgetItem* username = new QTreeWidgetItem();
         username->setText(0,"Local");
         ui->treeWidget->addTopLevelItem(username);
@@ -310,7 +326,17 @@ private:
                                     for (auto item_field : fields_array)
                                     {
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
-                                        field->setText(0, QString(item_field.toObject().find("name")->toString() + " [" + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())) + "]"));
+                                        field->setText(0, QString(item_field.toObject().find("name")->toString()
+                                                                  //+ " ["
+                                                                  + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()))
+                                                                  //+ " "
+                                                                  //+ nullCheck(item_field.toObject().find("nullable")->toInt())
+                                                                  //+ "]"
+                                                                  //+ linkCheck(item_field.toObject().find("linktable")->toString())
+                                                                  ));
+                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())));
+                                        field->setText(2, nullCheck(item_field.toObject().find("nullable")->toInt()));
+                                        field->setText(3, linkCheck(item_field.toObject().find("linktable")->toString()));
                                         table_name->addChild(field);
                                     }
 
@@ -325,7 +351,15 @@ private:
                                     for (auto item_field : fields_array)
                                     {
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
-                                        field->setText(0, QString(item_field.toObject().find("name")->toString()  + " [" + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())) + "]"));
+                                        field->setText(0, QString(item_field.toObject().find("name")->toString()
+                                                                  //+ " ["
+                                                                  //+ QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()))
+                                                                  //+ "]"
+                                                                  //+ linkCheck(item_field.toObject().find("linktable")->toString())
+                                                                  ));
+                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())));
+                                        field->setText(2, nullCheck(item_field.toObject().find("nullable")->toInt()));
+                                        field->setText(3, linkCheck(item_field.toObject().find("linktable")->toString()));
                                         table_name->addChild(field);
                                     }
 
