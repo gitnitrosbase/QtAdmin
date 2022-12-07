@@ -103,7 +103,8 @@ private slots:
     }
     void on_actionStop_triggered()
     {
-        QMessageBox::warning(this, "Title", "Dont work");
+        //QMessageBox::warning(this, "Title", "Dont work");
+
     }
     void on_actionStart_triggered()
     {
@@ -217,6 +218,20 @@ private slots:
     }
 
 private:
+
+    QString paintText(QString str, int color)
+    {
+        QString output;
+        switch (color)
+        {
+            case 0 : output = QString("<span style=\" color:#ff0000;\">%1</span>").arg(str); break;
+            case 1 : output = QString("<span style=\" color:#008000;\">%1</span>").arg(str); break;
+            case 2 : output = QString("<span style=\" color:#0000FF;\">%1</span>").arg(str); break;
+        }
+        return output;
+    }
+
+
     void filling_tree()
     {
         ui->treeWidget->takeTopLevelItem(0);
