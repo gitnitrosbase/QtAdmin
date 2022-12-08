@@ -134,10 +134,41 @@ private slots:
             reply->deleteLater();
         });
 
+        filling_tree();
+
     }
     void on_actionStart_triggered()
     {
-        QMessageBox::warning(this, "Title", "Dont work");
+        QString name = "";
+        QString tmp = dbList_.find(currentDatabase_)->first;
+        for (auto item : tmp) if (item != " ") name += item; else break;
+
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 1;
+        obj["port"] = dbList_.find(currentDatabase_)->second;
+        obj["dbname"] = name;
+        obj["dbpath"] = "";
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        connect(reply, &QNetworkReply::finished, [=]()
+        {
+            if (reply->error() == QNetworkReply::NoError)
+            {
+                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+                QFile file("answer.txt");
+                file.open(QIODevice::ReadWrite);
+                file.write(reply_doc.toJson());
+
+            }
+            reply->deleteLater();
+        });
+
+        filling_tree();
     }
     void on_actionBackup_triggered()
     {
@@ -316,13 +347,8 @@ private:
                                                ));
                     username->addChild(dbName);
 
-
                     if (item_db.toObject().find("run").value().toBool()) dbName->setIcon(0, QIcon(":/images/true.png"));
                     else dbName->setIcon(0, QIcon(":/images/false.png"));
-
-
-
-
 
                     dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())), item_db.toObject().find("port").value().toInt()));
                     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
@@ -373,7 +399,7 @@ private:
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
                                         field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                                   //+ " ["
-                                                                  + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()))
+                                                                  //+ QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()))
                                                                   //+ " "
                                                                   //+ nullCheck(item_field.toObject().find("nullable")->toInt())
                                                                   //+ "]"
