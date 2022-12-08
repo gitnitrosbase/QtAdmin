@@ -59,15 +59,48 @@ public:
         ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
 
         ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-
+        connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
      }
     ~MainWindow() = default;
 
 private slots:
+    void filling_tree_slot()
+    {
+        filling_tree();
+    }
+
     void showContextMenu(const QPoint point)
     {
+        std::cout<<"check"<<std::endl;
 
+        QMenu * menu = new QMenu(this);
+
+        QAction * refreshAction = new QAction(trUtf8("Refresh"), this);
+        QAction * stopAction = new QAction(trUtf8("Stop"), this);
+        QAction * startAction = new QAction(trUtf8("Start"), this);
+        QAction * backupAction = new QAction(trUtf8("Backup"), this);
+        QAction * restoreAction = new QAction(trUtf8("Restore"), this);
+        QAction * deleteAction = new QAction(trUtf8("Delete"), this);
+        QAction * databaseInfoAction = new QAction(trUtf8("Database info"), this);
+
+        connect(refreshAction, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
+        connect(stopAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
+        connect(startAction, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
+        connect(backupAction, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
+        //connect(restoreAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
+        //connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
+        connect(databaseInfoAction, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
+
+        menu->addAction(refreshAction);
+        menu->addAction(stopAction);
+        menu->addAction(startAction);
+        menu->addAction(backupAction);
+        menu->addAction(restoreAction);
+        menu->addAction(deleteAction);
+        menu->addAction(databaseInfoAction);
+
+        menu->popup(ui->treeWidget->viewport()->mapToGlobal(point));
     }
 
     void push_button_run_clicked()
@@ -405,7 +438,7 @@ private:
                                                                   //+ "]"
                                                                   //+ linkCheck(item_field.toObject().find("linktable")->toString())
                                                                   ));
-                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())));
+                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt())));
                                         field->setText(2, nullCheck(item_field.toObject().find("nullable")->toInt()));
                                         field->setText(3, linkCheck(item_field.toObject().find("linktable")->toString()));
                                         table_name->addChild(field);
@@ -428,7 +461,7 @@ private:
                                                                   //+ "]"
                                                                   //+ linkCheck(item_field.toObject().find("linktable")->toString())
                                                                   ));
-                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt())));
+                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt())));
                                         field->setText(2, nullCheck(item_field.toObject().find("nullable")->toInt()));
                                         field->setText(3, linkCheck(item_field.toObject().find("linktable")->toString()));
                                         table_name->addChild(field);
