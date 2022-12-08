@@ -34,7 +34,8 @@ public:
         gridLayout_->addWidget(comboBox_, 1, 0);
         gridLayout_->addWidget(tableWidget_, 2, 0);
 
-
+        font.setPixelSize(16);
+        textEdit_->setFont(font);
 
     }
     ~TabWindow() = default;
@@ -174,6 +175,8 @@ private:
     std::vector<std::string> input_queries_;
     std::vector<QStandardItemModel*> models_;
     QMenu* rightClickMenu_ = nullptr;
+    QFont font;
+
 
 public:
     int dbPort_;
