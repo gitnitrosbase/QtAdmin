@@ -57,10 +57,19 @@ public:
         backupWindow_ = new BackupWindow();
         ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
         ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
+
+        ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+
      }
     ~MainWindow() = default;
 
 private slots:
+    void showContextMenu(const QPoint point)
+    {
+
+    }
+
     void push_button_run_clicked()
     {
         if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
@@ -421,6 +430,7 @@ private:
     ConnectWindow* connectWindow_ = nullptr;
     OpenWindow* openWindow_ = nullptr;
     BackupWindow* backupWindow_ = nullptr;
+    QMenu* rightClickMenu_ = nullptr;
     std::vector<std::string> fieldsTypes_ = {
         "varchar",
         "int",
