@@ -57,7 +57,6 @@ public slots:
     {
         //std::cout<<"start set current"<<std::endl;
         tableWidget_->setModel(models_.at(index));
-        //std::cout<<"end set current"<<index<<std::endl;
     }
     void push_button_run_clicked()
     {

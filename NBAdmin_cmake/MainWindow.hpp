@@ -30,7 +30,7 @@
 
 #include "TabWindow.hpp"
 #include "ConnectWindow.hpp"
-#include "backupWindow.hpp"
+#include "BackupWindow.hpp"
 #include "OpenWindow.hpp"
 #include "ui_mainwindow.h"
 
@@ -87,7 +87,7 @@ private slots:
         connect(startAction, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
         connect(backupAction, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
         //connect(restoreAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
-        //connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
+        connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
         connect(databaseInfoAction, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
 
         menu->addAction(refreshAction);
@@ -127,6 +127,38 @@ private slots:
             currentDatabase_ = dbName;
         }
     }
+    void on_actionDelete_database_triggered()
+    {
+        QString name = "";
+        QString tmp = dbList_.find(currentDatabase_)->first;
+        for (auto item : tmp) if (item != " ") name += item; else break;
+
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 10;
+        obj["port"] = dbList_.find(currentDatabase_)->second;
+        obj["dbname"] = name;
+        obj["dbpath"] = "";
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        connect(reply, &QNetworkReply::finished, [=]()
+        {
+            if (reply->error() == QNetworkReply::NoError)
+            {
+                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+                QFile file("answer.txt");
+                file.open(QIODevice::ReadWrite);
+                file.write(reply_doc.toJson());
+                file.close();
+            }
+            reply->deleteLater();
+        });
+    }
+
     void on_actionCreate_database_triggered()
     {
         connectWindow_->show();
@@ -194,7 +226,7 @@ private slots:
                 QFile file("answer.txt");
                 file.open(QIODevice::ReadWrite);
                 file.write(reply_doc.toJson());
-
+                file.close();
             }
             reply->deleteLater();
         });
@@ -209,7 +241,35 @@ private slots:
     }
     void on_actionRestore_triggered()
     {
-        QMessageBox::warning(this, "Title", "Dont work");
+        // создаем бд из бекапа (пример json лежит в skype)
+//        QString name = "";
+//        QString tmp = dbList_.find(currentDatabase_)->first;
+//        for (auto item : tmp) if (item != " ") name += item; else break;
+
+//        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+//        const QUrl url(address_);
+//        QNetworkRequest request(url);
+//        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+//        QJsonObject obj;
+//        obj["cmd"] = 10;
+//        obj["port"] = dbList_.find(currentDatabase_)->second;
+//        obj["dbname"] = name;
+//        obj["dbpath"] = "";
+//        QJsonDocument doc(obj);
+//        QByteArray data = doc.toJson();
+//        QNetworkReply *reply = mgr->post(request, data);
+//        connect(reply, &QNetworkReply::finished, [=]()
+//        {
+//            if (reply->error() == QNetworkReply::NoError)
+//            {
+//                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+//                QFile file("answer.txt");
+//                file.open(QIODevice::ReadWrite);
+//                file.write(reply_doc.toJson());
+//                file.close();
+//            }
+//            reply->deleteLater();
+//        });
     }
     void on_actionDatabase_Info_triggered()
     {
