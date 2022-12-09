@@ -30,7 +30,7 @@ public:
     {
 
         ui->setupUi(this);
-        connect(pushButton_, SIGNAL(clicked()), this, SLOT(backupDatabase()));
+        connect(ui->Open, SIGNAL(clicked()), this, SLOT(backupDatabase()));
         setWindowIcon(QIcon(":/images/favicon.ico"));
     }
     ~BackupWindow() = default;

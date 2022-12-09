@@ -18,21 +18,21 @@
 #include "ui_creadb.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class CreaDB; }
+namespace Ui { class ConnectWindow; }
 QT_END_NAMESPACE
 
 
-class CreaDB : public QDialog
+class ConnectWindow : public QDialog
 {
     Q_OBJECT
 public:
-    CreaDB(QWidget* parent = nullptr) : QDialog(parent), ui(new Ui::CreaDB)
+    ConnectWindow(QWidget* parent = nullptr) : QDialog(parent), ui(new Ui::ConnectWindow)
     {
         ui->setupUi(this);
 
         setWindowIcon(QIcon(":/images/favicon.ico"));
     }
-    ~CreaDB() = default;
+    ~ConnectWindow() = default;
 public slots:
     void createDatabase()
     {
@@ -72,7 +72,7 @@ private slots:
     }
 
 private:
-    Ui::CreaDB* ui;
+    Ui::ConnectWindow* ui;
 public:
     QString address_ = "http://127.0.0.1:8008/api3";
 };

@@ -50,9 +50,8 @@ public:
         connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
         QStringList headers = {"Databases", "Type", "Nullable", "Link"};
         ui->treeWidget->setHeaderLabels(headers);
-
-        connectWindow_ = new CreaDB();
-        openWindow_ = new OpenDB();
+        connectWindow_ = new ConnectWindow();
+        openWindow_ = new OpenWindow();
         backupWindow_ = new BackupWindow();
         ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
         ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
@@ -485,8 +484,8 @@ private:
     std::map<QString, int> dbList_;
     Ui::MainWindow *ui;
     QString currentDatabase_ = "";
-    CreaDB* connectWindow_ = nullptr;
-    OpenDB* openWindow_ = nullptr;
+    ConnectWindow* connectWindow_ = nullptr;
+    OpenWindow* openWindow_ = nullptr;
     BackupWindow* backupWindow_ = nullptr;
     QMenu* rightClickMenu_ = nullptr;
     std::vector<std::string> fieldsTypes_ = {

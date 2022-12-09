@@ -17,23 +17,23 @@
 
 #include <ui_OpenDb.h>
 QT_BEGIN_NAMESPACE
-namespace Ui { class OpenDB; }
+namespace Ui { class OpenWindow; }
 QT_END_NAMESPACE
 
 
 
-class OpenDB : public QWidget
+class OpenWindow : public QWidget
 {
     Q_OBJECT
 public:
-    OpenDB(QWidget* parent = nullptr) : QWidget(parent), ui(new Ui::OpenDB)
+    OpenWindow(QWidget* parent = nullptr) : QWidget(parent), ui(new Ui::OpenWindow)
     {
         ui->setupUi(this);
         setWindowIcon(QIcon(":/images/favicon.ico"));
         connect(ui->Open, SIGNAL(clicked()), this, SLOT(OpenDatabase()));
         connect(ui->Cancel, SIGNAL(clicked()), this, SLOT(cancel_clicked()));
     }
-    ~OpenDB() = default;
+    ~OpenWindow() = default;
 public slots:
     void cancel_clicked()
     {
@@ -66,5 +66,5 @@ public slots:
 
 public:
     QString address_ = "http://127.0.0.1:8008/api3";
-    Ui::OpenDB* ui;
+    Ui::OpenWindow* ui;
 };
