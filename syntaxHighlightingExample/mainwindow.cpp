@@ -19,17 +19,34 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    ui->textEdit->append(paintText("sample teaxt with color", 0));
-    ui->textEdit->append(paintText("sample teaxt with color", 1));
-    ui->textEdit->append(paintText("sample teaxt with color", 2));
+//    ui->textEdit->append(paintText("sample teaxt with color", 0));
+//    ui->textEdit->append(paintText("sample teaxt with color", 1));
+//    ui->textEdit->append(paintText("sample teaxt with color", 2));
 
-    QFile file("output.txt");
-    file.open(QIODevice::ReadWrite);
-    if (file.isOpen())
+//    QFile file("output.txt");
+//    file.open(QIODevice::ReadWrite);
+//    if (file.isOpen())
+//    {
+//        file.write(ui->textEdit->toPlainText().toUtf8());
+//    }
+//    file.close();
+
+
+    QString word;
+    QString str = ui->textEdit->toPlainText();
+    int j;
+    for (int i = 0; i<str.size(); i+=1)
     {
-        file.write(ui->textEdit->toPlainText().toUtf8());
+        j = i;
+        word = "";
+        while (str.at(j) != " " && j < str.size()) word += str.at(j);
+
+
     }
-    file.close();
+
+
+
+
 }
 
 
