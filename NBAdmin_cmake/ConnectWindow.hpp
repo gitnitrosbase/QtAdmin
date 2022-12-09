@@ -15,27 +15,32 @@
 
 #include <iostream>
 
-class ConnectWindow : public QWidget
+#include "ui_creadb.h"
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class CreaDB; }
+QT_END_NAMESPACE
+
+
+class CreaDB : public QDialog
 {
     Q_OBJECT
 public:
-    ConnectWindow(QWidget* parent = nullptr) : QWidget(parent)
+    CreaDB(QWidget* parent = nullptr) : QDialog(parent), ui(new Ui::CreaDB)
     {
-        gridLayout_ = new QGridLayout(this);
-        dbName_ = new QLineEdit(this);
-        dbPort_ = new QLineEdit(this);
-        dbPath_ = new QLineEdit(this);
-        pushButton_ = new QPushButton(this);
-        gridLayout_->addWidget(dbName_);
-        gridLayout_->addWidget(dbPort_);
-        gridLayout_->addWidget(dbPath_);
-        gridLayout_->addWidget(pushButton_);
-        connect(pushButton_, SIGNAL(clicked()), this, SLOT(createDatabase()));
+        ui->setupUi(this);
+
         setWindowIcon(QIcon(":/images/favicon.ico"));
     }
-    ~ConnectWindow() = default;
+    ~CreaDB() = default;
 public slots:
     void createDatabase()
+    {
+
+    }
+
+private slots:
+    void on_buttonBox_accepted()
     {
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(address_);
@@ -43,9 +48,9 @@ public slots:
         request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
         QJsonObject obj;
         obj["cmd"] = 3;
-        obj["port"] = dbPort_->text().toInt();
-        obj["dbname"] = dbName_->text().toStdString().c_str();
-        obj["dbpath"] = dbPath_->text().toStdString().c_str();
+        obj["dbname"] = ui->lineEdit->text().toStdString().c_str();
+        obj["port"] = ui->lineEdit_2->text().toInt();
+        obj["dbpath"] = ui->lineEdit_3->text().toStdString().c_str();
         QJsonDocument doc(obj);
         QByteArray data = doc.toJson();
         QNetworkReply *reply = mgr->post(request, data);
@@ -59,12 +64,15 @@ public slots:
         this->close();
     }
 
+
+
+    void on_buttonBox_rejected()
+    {
+        this->close();
+    }
+
 private:
-    QLineEdit* dbName_ = nullptr;
-    QLineEdit* dbPort_ = nullptr;
-    QLineEdit* dbPath_ = nullptr;
-    QPushButton* pushButton_ = nullptr;
-    QGridLayout* gridLayout_ = nullptr;
+    Ui::CreaDB* ui;
 public:
     QString address_ = "http://127.0.0.1:8008/api3";
 };

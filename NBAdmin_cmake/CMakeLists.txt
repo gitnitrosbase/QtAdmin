@@ -15,8 +15,6 @@ find_package(QT NAMES Qt5 COMPONENTS Widgets Network REQUIRED)
 find_package(Qt5 COMPONENTS Widgets Network REQUIRED)
 
 set(PROJECT_SOURCES
-    nb-samples.h
-    nitrosbase.h
     main.cpp
     TabWindow.hpp
     MainWindow.hpp
@@ -24,11 +22,27 @@ set(PROJECT_SOURCES
     OpenWindow.hpp
     BackupWindow.hpp
     ResponceView.hpp
+    )
+
+set(UI_FILES
     mainwindow.ui
+    backup.ui
+    creadb.ui
+    info.ui
+    OpenDb.ui
+    )
+
+set(NITROSBASE
+    nitrosbase.h
+    nb-samples.h
     nbclient.lib
+    )
+
+set(RES_FILES
     res.qrc
     )
 
-add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES})
+
+add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Network ${PROJECT_SOURCE_DIR}/nbclient.dll)
