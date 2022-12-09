@@ -46,7 +46,6 @@ public:
     {
         ui->setupUi(this);
         push_button_plus_clicked();
-        filling_tree();
         connect(ui->Add, SIGNAL(clicked()), this, SLOT(push_button_plus_clicked()));
         connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
         QStringList headers = {"Databases", "Type", "Nullable", "Link"};
@@ -61,19 +60,19 @@ public:
         ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
         connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
+        filling_tree();
      }
     ~MainWindow() = default;
 
 private slots:
     void filling_tree_slot()
     {
+        std::cout<<"check"<<std::endl;
         filling_tree();
     }
 
     void showContextMenu(const QPoint point)
     {
-        std::cout<<"check"<<std::endl;
-
         QMenu * menu = new QMenu(this);
 
         QAction * refreshAction = new QAction(trUtf8("Refresh"), this);
