@@ -193,6 +193,11 @@ private slots:
             {
                 QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
 
+                QFile file("answerstartstop.txt");
+                file.open(QIODevice::ReadWrite);
+                file.write(reply_doc.toJson());
+                file.close();
+
             }
             reply->deleteLater();
         });
@@ -223,7 +228,8 @@ private slots:
             if (reply->error() == QNetworkReply::NoError)
             {
                 QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-                QFile file("answer.txt");
+
+                QFile file("answerstartstop.txt");
                 file.open(QIODevice::ReadWrite);
                 file.write(reply_doc.toJson());
                 file.close();
@@ -438,8 +444,8 @@ private:
                                                ));
                     username->addChild(dbName);
 
-                    if (item_db.toObject().find("run").value().toBool()) dbName->setIcon(0, QIcon(":/images/true.png"));
-                    else dbName->setIcon(0, QIcon(":/images/false.png"));
+                    if (item_db.toObject().find("run").value().toBool() == true) dbName->setIcon(0, QIcon(":/images/true.png"));
+                    else if (item_db.toObject().find("run").value().toBool() == false) dbName->setIcon(0, QIcon(":/images/false.png"));
 
                     dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())), item_db.toObject().find("port").value().toInt()));
                     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
