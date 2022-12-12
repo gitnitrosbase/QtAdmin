@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QFile>
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -15,64 +16,32 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-
 void MainWindow::on_pushButton_clicked()
 {
-//    ui->textEdit->append(paintText("sample teaxt with color", 0));
-//    ui->textEdit->append(paintText("sample teaxt with color", 1));
-//    ui->textEdit->append(paintText("sample teaxt with color", 2));
+    QString input = ui->input->toPlainText();
 
-//    QFile file("output.txt");
-//    file.open(QIODevice::ReadWrite);
-//    if (file.isOpen())
-//    {
-//        file.write(ui->textEdit->toPlainText().toUtf8());
-//    }
-//    file.close();
-
+    if (input.at(input.size()-1) != " ") input+=" ";
 
     QString word;
-    QString str = ui->textEdit->toPlainText();
-    int j;
-    for (int i = 0; i<str.size(); i+=1)
-    {
-        j = i;
-        word = "";
-        while (str.at(j) != " " && j < str.size()) word += str.at(j);
+    QString words;
+        int j;
+        for (int i = 0;i<input.size();i+=1)
+        {
+            word = "";
+            j = i;
+            while(input.at(j) != " ")
+            {
+                word+=input.at(j);
+                j+=1;
+            }
+            auto nullIter = alp.find("-1");
+            if (alp.find(word) != nullIter)
+            {
+                words+=paintText(word, alp.find(word)->second);
+                words+="\n";
+            }
+            i = j;
+        }
 
-
-    }
-
-
-
-
+    ui->output->setText(words);
 }
-
-
-void MainWindow::on_textEdit_textChanged()
-{
-//    QString word;
-//    QString str = ui->textEdit->toPlainText();
-//    int j;
-//    for (int i = 0;i<ui->textEdit->toPlainText().size();i+=1)
-//    {
-//        word = "";
-//        j = i;
-//        //for (int j = i;j<ui->textEdit->toPlainText().size();j+=1)
-//        while(str.at(j) != " " && j < ui->textEdit->toPlainText().size())
-//        {
-//            word+=str.at(j);
-//            j+=1;
-//        }
-//        auto iterNull = alp.find("-1");
-//        if (alp.find(word) != iterNull)
-//        {
-//            str.remove(i,j);
-//            str.insert(i, paintText(word, 0));
-//        }
-//        i = j;
-//    }
-    //надо найти подстроку в строке textEdit, удалить оригинал и вставить html код
-}
-

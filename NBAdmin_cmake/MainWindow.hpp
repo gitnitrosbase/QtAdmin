@@ -26,8 +26,6 @@
 #include <utility>
 #include <algorithm>
 
-#include <windows.h>
-
 #include "TabWindow.hpp"
 #include "ConnectWindow.hpp"
 #include "BackupWindow.hpp"

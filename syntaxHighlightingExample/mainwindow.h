@@ -1,4 +1,4 @@
-    #ifndef MAINWINDOW_H
+#ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
 #include <QMainWindow>
@@ -33,19 +33,17 @@ private slots:
     }
 
 
-    void on_textEdit_textChanged();
-
 private:
     Ui::MainWindow *ui;
-    std::map<QString, QString> alp =
+    std::map<QString, int> alp =
     {
-        {"select","blue"},
-        {"from","blue"},
-        {"top","blue"},
-        {"where","blue"},
-        {"create","blue"},
-        {"delete","blue"},
-        {"insert","blue"}
+        {"select",0},
+        {"from",0},
+        {"top",0},
+        {"where",1},
+        {"create",1},
+        {"delete",2},
+        {"insert",2}
     };
 };
 #endif // MAINWINDOW_H

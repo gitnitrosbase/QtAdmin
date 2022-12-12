@@ -27,13 +27,23 @@
      <string>PushButton</string>
     </property>
    </widget>
-   <widget class="QTextEdit" name="textEdit">
+   <widget class="QTextEdit" name="output">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>190</y>
       <width>771</width>
       <height>351</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="QTextEdit" name="input">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>20</y>
+      <width>771</width>
+      <height>131</height>
      </rect>
     </property>
    </widget>
@@ -44,7 +54,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
   </widget>
