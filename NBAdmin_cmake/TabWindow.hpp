@@ -18,6 +18,9 @@
 #include <ctime>
 
 #include "nb-samples.h"
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QFile>
 
 class TabWindow : public QWidget
 {
@@ -29,12 +32,24 @@ public:
         textEdit_ = new QTextEdit(this);
         tableWidget_ = new QTableView(this);
         comboBox_ = new QComboBox(this);
-        //rightClickMenu_ = new QMenu(this);
         gridLayout_->addWidget(textEdit_, 0, 0);
         gridLayout_->addWidget(comboBox_, 1, 0);
         gridLayout_->addWidget(tableWidget_, 2, 0);
 
-        font.setPixelSize(16);
+        int fontFromConfig;
+
+        QFile file(":/config.conf");
+        file.open(QIODevice::ReadOnly);
+        if (file.isOpen())
+        {
+            QJsonDocument jsonDoc = QJsonDocument::fromBinaryData(file.readAll());
+            QJsonObject jsonObject = jsonDoc.object();
+            fontFromConfig = jsonDoc["fontsize"].toInt();
+            std::cout<<jsonDoc["fontsize"].toInt()<<std::endl;
+        }
+        file.close();
+
+        font.setPointSize(fontFromConfig);
         textEdit_->setFont(font);
 
     }

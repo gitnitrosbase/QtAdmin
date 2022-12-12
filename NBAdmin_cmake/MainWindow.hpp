@@ -376,6 +376,24 @@ private slots:
 
 private:
 
+    void setAddress()
+    {
+        QFile file(":/config.conf");
+        file.open(QIODevice::ReadOnly);
+        if (file.isOpen())
+        {
+            QJsonDocument jsonDoc = QJsonDocument::fromBinaryData(file.readAll());
+            QJsonObject jsonObject = jsonDoc.object();
+            QString address = "http://";
+            address+=jsonDoc["ip"].toString();
+            address+=":";
+            address+=jsonDoc["port"].toString();
+            address+="/api3";
+            address_ = address;
+        }
+        file.close();
+    }
+
     QString paintText(QString str, int color)
     {
         QString output;
