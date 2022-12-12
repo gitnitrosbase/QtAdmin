@@ -64,6 +64,4 @@ private:
     Ui::BackupWindow* ui;
 public:
     QString address_ = "http://127.0.0.1:8008/api3";
-    int currnetPort_;
-    QString currentName_;
 };
