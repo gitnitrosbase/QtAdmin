@@ -5,6 +5,8 @@
 #include <map>
 #include <QString>
 
+#include "syntexHightlight.hpp"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -36,6 +38,8 @@ private slots:
     }
 
 
+    void on_input_textChanged();
+
 private:
     Ui::MainWindow *ui;
     std::map<QString, int> alp =
@@ -48,5 +52,6 @@ private:
         {"delete",2},
         {"insert",2}
     };
+    SyntaxHighlighter* synhig;
 };
 #endif // MAINWINDOW_H
