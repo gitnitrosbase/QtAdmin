@@ -45,3 +45,11 @@ void MainWindow::on_pushButton_clicked()
 
     ui->output->setText(words);
 }
+
+void MainWindow::on_output_textChanged()
+{
+    QString str = ui->output->toPlainText();
+    ui->output->setText("");
+    ui->output->setText(str);
+}
+

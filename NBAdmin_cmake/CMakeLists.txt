@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 3.5)
 
 project(NBAdmin_cmake)
 
@@ -10,8 +10,6 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-set(CMAKE_PREFIX_PATH /home/nk/Qt/5.12.12/gcc_64/lib/cmake)
 
 find_package(QT NAMES Qt5 COMPONENTS Widgets Network REQUIRED)
 find_package(Qt5 COMPONENTS Widgets Network REQUIRED)
@@ -45,6 +43,6 @@ set(RES_FILES
     )
 
 
-add_executable(${PROJECT_NAME} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES})
+add_executable(${PROJECT_NAME} WIN32 ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Network ${PROJECT_SOURCE_DIR}/nbclient.dll)

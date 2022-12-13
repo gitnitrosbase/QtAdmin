@@ -18,6 +18,9 @@ public:
     ~MainWindow();
 
 private slots:
+    void on_output_textChanged();
+
+private slots:
     void on_pushButton_clicked();
 
     QString paintText(QString str, int color)
