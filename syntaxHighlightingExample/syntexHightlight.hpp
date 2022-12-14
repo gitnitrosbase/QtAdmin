@@ -2,6 +2,8 @@
 
 #include <QWidget>
 #include <QSyntaxHighlighter>
+#include <vector>
+#include <utility>
 
 class SyntaxHighlighter;
 
@@ -12,26 +14,55 @@ public:
 
     void highlightBlock( const QString& text )
     {
-        if( m_highlightedString.isEmpty() ) {
-            return;
-        }
-
         QTextCharFormat fmt;
-        fmt.setForeground(Qt::blue);
+        int LEN;
 
-        const int LEN = m_highlightedString.length();
-        for( int index = text.indexOf( m_highlightedString ); 0 <= index; index = text.indexOf( m_highlightedString, index + LEN ))
+        for (auto item : alp)
         {
-            setFormat( index, LEN, fmt );
+            fmt.setForeground( item.second);
+            LEN = item.first.length();
+            for( int index = text.indexOf( item.first ); 0 <= index; index = text.indexOf( item.first, index + LEN ))
+            {
+                setFormat( index, LEN, fmt );
+            }
         }
-    }
-
-    void setHighlightedString( const QString& str )
-    {
-        m_highlightedString = str;
-        rehighlight();
     }
 
 private:
-    QString m_highlightedString;
+    std::vector<std::pair<QString, Qt::GlobalColor> > alp =
+    {
+        {" SELECT ",Qt::blue},
+        {" FROM ",Qt::blue},
+        {" TOP ",Qt::blue},
+        {" WHERE ",Qt::blue},
+        {" CREATE ",Qt::blue},
+        {" DELETE ",Qt::blue},
+        {" INSERT ",Qt::blue},
+        {" ALTER ",Qt::blue},
+        {" TABLE ",Qt::blue},
+        {" INDEX ",Qt::blue},
+        {" AS ",Qt::blue},
+        {" EDGE ",Qt::blue},
+        {" DROP ",Qt::blue},
+        {" BULK ",Qt::blue},
+        {" UPDATE ",Qt::blue},
+        {" TRANCATE ",Qt::blue},
+        {" BACKUP ",Qt::blue},
+        {" SET ",Qt::blue},
+        {" FROM ",Qt::blue},
+        {" JOIN ",Qt::blue},
+        {" ON ",Qt::blue},
+        {" LEFT ",Qt::blue},
+        {" RIGHT ",Qt::blue},
+        {" ADD ",Qt::blue},
+        {" VALUE ",Qt::blue},
+        {" VALUES ",Qt::blue},
+        {" WITH ",Qt::blue},
+        {" DATABASE ",Qt::blue},
+        {" ORDER ",Qt::blue},
+        {" BY ",Qt::blue},
+        {" DISTINCT ",Qt::blue},
+        {" THEN ",Qt::blue},
+        {" ON ",Qt::blue}
+    };
 };
