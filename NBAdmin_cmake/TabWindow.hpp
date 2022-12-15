@@ -22,6 +22,8 @@
 #include <QJsonObject>
 #include <QFile>
 
+#include "syntexHightlight.hpp"
+
 class TabWindow : public QWidget
 {
     Q_OBJECT
@@ -36,21 +38,10 @@ public:
         gridLayout_->addWidget(comboBox_, 1, 0);
         gridLayout_->addWidget(tableWidget_, 2, 0);
 
-        int fontFromConfig;
-
-        QFile file(":/config.conf");
-        file.open(QIODevice::ReadOnly);
-        if (file.isOpen())
-        {
-            QJsonDocument jsonDoc = QJsonDocument::fromBinaryData(file.readAll());
-            QJsonObject jsonObject = jsonDoc.object();
-            fontFromConfig = jsonDoc["fontsize"].toInt();
-            std::cout<<jsonDoc["fontsize"].toInt()<<std::endl;
-        }
-        file.close();
-
-        font.setPointSize(fontFromConfig);
+        QFont font;
+        font.setPixelSize(16);
         textEdit_->setFont(font);
+        syntaxHighLight_ = new SyntaxHighlighter(textEdit_->document());
 
     }
     ~TabWindow() = default;
@@ -190,6 +181,7 @@ private:
     std::vector<QStandardItemModel*> models_;
     QMenu* rightClickMenu_ = nullptr;
     QFont font;
+    SyntaxHighlighter* syntaxHighLight_ = nullptr;
 
 
 public:

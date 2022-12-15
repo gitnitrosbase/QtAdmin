@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
     OpenWindow.hpp
     BackupWindow.hpp
     ResponceView.hpp
+    syntexHightLight.hpp
     )
 
 set(UI_FILES
