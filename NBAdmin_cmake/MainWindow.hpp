@@ -64,7 +64,6 @@ public:
 private slots:
     void filling_tree_slot()
     {
-        std::cout<<"check"<<std::endl;
         filling_tree();
     }
 
@@ -407,7 +406,7 @@ private:
     QString nullCheck(int index)
     {
         if (index == 0) return "NOT NULL";
-        else if (index == 1) return "NULL";
+        else if (index == 1) return "";
         else return "???";
     }
 
@@ -426,6 +425,10 @@ private:
 
     void filling_tree()
     {
+        if (dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->currentItem()) == dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->topLevelItem(0)) && ui->treeWidget->topLevelItemCount() != 0)
+        {
+            return;
+        }
         ui->treeWidget->takeTopLevelItem(0);
         ui->treeWidget->setColumnCount(4);
         QTreeWidgetItem* username = new QTreeWidgetItem();

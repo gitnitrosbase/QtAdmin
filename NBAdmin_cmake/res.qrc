@@ -4,6 +4,6 @@
     <file>images/AddTab.svg</file>
     <file>images/true.png</file>
     <file>images/false.png</file>
-    <file>config.json</file>
+    <file>images/RunbtnPic.svg</file>
     </qresource>
 </RCC>
