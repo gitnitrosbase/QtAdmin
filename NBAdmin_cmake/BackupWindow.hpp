@@ -37,26 +37,34 @@ public:
 public slots:
     void backupDatabase()
     {
-        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        const QUrl url(address_);
-        QNetworkRequest request(url);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-        QJsonObject obj;
-        obj["cmd"] = 5;
-//        obj["port"] = dbPort_->text().toInt();
-//        obj["dbname"] = dbName_->text().toStdString().c_str();
-//        obj["dbpath"] = dbPath_->text().toStdString().c_str();
-        obj["backuppath"] = ui->InputPath->text().toStdString().c_str();
-        QJsonDocument doc(obj);
-        QByteArray data = doc.toJson();
-        QNetworkReply *reply = mgr->post(request, data);
-        connect(reply, &QNetworkReply::finished, [=]()
+        if (dbName_ != "" && dbPort_ != "")
         {
-            if (reply->error() == QNetworkReply::NoError) std::cout<<"db open"<<std::endl;
-            else std::cout<<"error!"<<std::endl;
+            QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+            const QUrl url(address_);
+            QNetworkRequest request(url);
+            request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+            QJsonObject obj;
+            obj["cmd"] = 5;
+            obj["port"] = dbPort_.toInt();
+            obj["dbname"] = dbName_.toStdString().c_str();
+            //obj["dbpath"] = dbPath_->text().toStdString().c_str();
+            obj["backuppath"] = ui->InputPath->text().toStdString().c_str();
+            QJsonDocument doc(obj);
+            QByteArray data = doc.toJson();
+            QNetworkReply *reply = mgr->post(request, data);
+            connect(reply, &QNetworkReply::finished, [=]()
+            {
+                if (reply->error() == QNetworkReply::NoError) std::cout<<"db open"<<std::endl;
+                else std::cout<<"error!"<<std::endl;
 
-            reply->deleteLater();
-        });
+                reply->deleteLater();
+            });
+            this->close();
+        }
+    }
+
+    void on_Cancel_clicked()
+    {
         this->close();
     }
 
@@ -64,4 +72,6 @@ private:
     Ui::BackupWindow* ui;
 public:
     QString address_ = "http://127.0.0.1:8008/api3";
+    QString dbName_;
+    QString dbPort_;
 };

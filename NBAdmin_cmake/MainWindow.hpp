@@ -238,9 +238,20 @@ private slots:
     }
     void on_actionBackup_triggered()
     {
+        QString dbName;
+        for (int i = 0; i<currentDatabase_.count();i+=1)
+        {
+            if (currentDatabase_.at(i) != " ") dbName+=currentDatabase_.at(i);
+            else break;
+        }
+
         backupWindow_->show();
         backupWindow_->setWindowTitle("Backup");
         backupWindow_->address_ = this->address_;
+        backupWindow_->dbName_ = dbName;
+        backupWindow_->dbPort_ = QString::number(dbList_.find(currentDatabase_)->second);
+        std::cout<<backupWindow_->dbName_.toStdString()<<std::endl;
+        std::cout<<backupWindow_->dbPort_.toInt()<<std::endl;
     }
     void on_actionRestore_triggered()
     {
@@ -487,6 +498,9 @@ private:
                             QJsonDocument copy_reply_table = QJsonDocument::fromJson(reply_table->readAll());
                             QJsonObject Responce = copy_reply_table.object();
                             QJsonArray tmpArray = Responce["data"].toArray();
+
+                            QJsonArray indexesArray = Responce["indexes"].toArray();
+
 
                             QFile filename(QString("file" + QString::number(i) + ".txt"));
                             filename.open(QIODevice::ReadWrite);
