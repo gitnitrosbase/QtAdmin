@@ -47,7 +47,7 @@ public slots:
             obj["cmd"] = 5;
             obj["port"] = dbPort_.toInt();
             obj["dbname"] = dbName_.toStdString().c_str();
-            //obj["dbpath"] = dbPath_->text().toStdString().c_str();
+            obj["dbpath"] = "";
             obj["backuppath"] = ui->InputPath->text().toStdString().c_str();
             QJsonDocument doc(obj);
             QByteArray data = doc.toJson();

@@ -49,7 +49,7 @@ public slots:
         QJsonObject obj;
         obj["cmd"] = 1;
         obj["port"] = ui->InputPort->text().toInt();
-        obj["dbname"] = ui->InputName->text().toInt();
+        obj["dbname"] = ui->InputName->text().toStdString().c_str();
         obj["dbpath"] = ui->InputPath->text().toStdString().c_str();
         QJsonDocument doc(obj);
         QByteArray data = doc.toJson();
