@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QFileDialog>
 
 #include <iostream>
 
@@ -68,10 +69,21 @@ public slots:
         this->close();
     }
 
+private slots:
+    void on_pushButton_clicked()
+    {
+        QString Filename = QFileDialog::getExistingDirectory(
+                    this,tr("Open Path"),
+                    "C:\\"
+                    );
+       ui->InputPath->setText(Filename);
+    }
+
 private:
     Ui::BackupWindow* ui;
 public:
     QString address_ = "http://127.0.0.1:8008/api3";
     QString dbName_;
     QString dbPort_;
+
 };

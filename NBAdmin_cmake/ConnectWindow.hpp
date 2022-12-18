@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QFileDialog>
 
 #include <iostream>
 
@@ -50,7 +51,7 @@ private slots:
         obj["cmd"] = 3;
         obj["dbname"] = ui->lineEdit->text().toStdString().c_str();
         obj["port"] = ui->lineEdit_2->text().toInt();
-        obj["dbpath"] = ui->lineEdit_3->text().toStdString().c_str();
+        obj["dbpath"] = ui->InputPath->text().toStdString().c_str();
         QJsonDocument doc(obj);
         QByteArray data = doc.toJson();
         QNetworkReply *reply = mgr->post(request, data);
@@ -69,6 +70,12 @@ private slots:
     void on_buttonBox_rejected()
     {
         this->close();
+    }
+
+    void on_pushButton_clicked()
+    {
+        QString Filename = QFileDialog::getExistingDirectory(this,tr("Open Path"),"C:/");
+        ui->InputPath->setText(Filename);
     }
 
 private:

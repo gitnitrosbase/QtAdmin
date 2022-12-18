@@ -12,6 +12,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QFileDialog>
 
 #include <iostream>
 
@@ -62,6 +63,16 @@ public slots:
             reply->deleteLater();
         });
         this->close();
+    }
+
+private slots:
+    void on_pushButton_clicked()
+    {
+        QString Filename = QFileDialog::getExistingDirectory(
+                    this,tr("Open Path"),
+                    "C:\\"
+                    );
+       ui->InputPath->setText(Filename);
     }
 
 public:

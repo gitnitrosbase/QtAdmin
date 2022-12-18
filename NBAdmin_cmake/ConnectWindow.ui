@@ -122,7 +122,7 @@
          <string/>
         </property>
         <property name="icon">
-         <iconset resource="../../NBAdmin/res.qrc">
+         <iconset>
           <normaloff>:/images/close.svg</normaloff>:/images/close.svg</iconset>
         </property>
        </widget>
