@@ -30,6 +30,7 @@
 #include "ConnectWindow.hpp"
 #include "BackupWindow.hpp"
 #include "OpenWindow.hpp"
+#include "RestoreWindow.hpp"
 #include "ui_mainwindow.h"
 
 QT_BEGIN_NAMESPACE
@@ -51,6 +52,7 @@ public:
         connectWindow_ = new ConnectWindow();
         openWindow_ = new OpenWindow();
         backupWindow_ = new BackupWindow();
+        restoreWindow_ = new RestoreWindow();
         ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
         ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
 
@@ -254,36 +256,14 @@ private slots:
         std::cout<<backupWindow_->dbPort_.toInt()<<std::endl;
     }
     void on_actionRestore_triggered()
-    {
-        // создаем бд из бекапа (пример json лежит в skype)
-//        QString name = "";
-//        QString tmp = dbList_.find(currentDatabase_)->first;
-//        for (auto item : tmp) if (item != " ") name += item; else break;
+    {        
+        QString name = "";
+        QString tmp = dbList_.find(currentDatabase_)->first;
+        for (auto item : tmp) if (item != " ") name += item; else break;
 
-//        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-//        const QUrl url(address_);
-//        QNetworkRequest request(url);
-//        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-//        QJsonObject obj;
-//        obj["cmd"] = 10;
-//        obj["port"] = dbList_.find(currentDatabase_)->second;
-//        obj["dbname"] = name;
-//        obj["dbpath"] = "";
-//        QJsonDocument doc(obj);
-//        QByteArray data = doc.toJson();
-//        QNetworkReply *reply = mgr->post(request, data);
-//        connect(reply, &QNetworkReply::finished, [=]()
-//        {
-//            if (reply->error() == QNetworkReply::NoError)
-//            {
-//                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-//                QFile file("answer.txt");
-//                file.open(QIODevice::ReadWrite);
-//                file.write(reply_doc.toJson());
-//                file.close();
-//            }
-//            reply->deleteLater();
-//        });
+        restoreWindow_->show();
+        restoreWindow_->Name_ = name;
+        restoreWindow_->Port_ = dbList_.find(currentDatabase_)->second;
     }
     void on_actionDatabase_Info_triggered()
     {
@@ -586,6 +566,7 @@ private:
     ConnectWindow* connectWindow_ = nullptr;
     OpenWindow* openWindow_ = nullptr;
     BackupWindow* backupWindow_ = nullptr;
+    RestoreWindow* restoreWindow_ = nullptr;
     QMenu* rightClickMenu_ = nullptr;
     std::vector<std::string> fieldsTypes_ = {
         "varchar",

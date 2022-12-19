@@ -23,6 +23,7 @@ set(PROJECT_SOURCES
     BackupWindow.hpp
     ResponceView.hpp
     syntexHightLight.hpp
+    RestoreWindow.hpp
     )
 
 set(UI_FILES
@@ -31,6 +32,7 @@ set(UI_FILES
     creadb.ui
     info.ui
     OpenDb.ui
+    restore.ui
     )
 
 set(NITROSBASE
