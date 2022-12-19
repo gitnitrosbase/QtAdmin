@@ -21,6 +21,9 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
+#include <QRegularExpression>
+#include <QSyntaxHighlighter>
+
 #include <vector>
 #include <iostream>
 #include <utility>
@@ -32,6 +35,9 @@
 #include "OpenWindow.hpp"
 #include "RestoreWindow.hpp"
 #include "ui_mainwindow.h"
+
+#include <windows.h>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -47,7 +53,7 @@ public:
         push_button_plus_clicked();
         connect(ui->Add, SIGNAL(clicked()), this, SLOT(push_button_plus_clicked()));
         connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
-        QStringList headers = {"Databases", "Type", "Nullable", "Link"};
+        QStringList headers = {"Databases"};
         ui->treeWidget->setHeaderLabels(headers);
         connectWindow_ = new ConnectWindow();
         openWindow_ = new OpenWindow();
@@ -397,14 +403,14 @@ private:
 
     QString nullCheck(int index)
     {
-        if (index == 0) return "NOT NULL";
+        if (index == 0) return ", NOT NULL";
         else if (index == 1) return "";
         else return "???";
     }
 
     QString linkCheck(QString input)
     {
-        //if (input != "") return QString(" -> " + input);
+        if (input != "") return QString(" -> " + input);
         return input;
     }
 
@@ -417,14 +423,19 @@ private:
 
     void filling_tree()
     {
+        QString userName = "";
+        DWORD size=1024;
+        char buf[1024];
+        GetUserName(buf, &size);
+        userName = buf;
+
         if (dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->currentItem()) == dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->topLevelItem(0)) && ui->treeWidget->topLevelItemCount() != 0)
         {
             return;
         }
         ui->treeWidget->takeTopLevelItem(0);
-        ui->treeWidget->setColumnCount(4);
         QTreeWidgetItem* username = new QTreeWidgetItem();
-        username->setText(0,"Local");
+        username->setText(0, userName);
         ui->treeWidget->addTopLevelItem(username);
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         const QUrl url(address_);
@@ -480,8 +491,6 @@ private:
                             QJsonObject Responce = copy_reply_table.object();
                             QJsonArray tmpArray = Responce["data"].toArray();
 
-                            QJsonArray indexesArray = Responce["indexes"].toArray();
-
 
                             QFile filename(QString("file" + QString::number(i) + ".txt"));
                             filename.open(QIODevice::ReadWrite);
@@ -505,21 +514,63 @@ private:
                                     table_name->setText(0,item_table.toObject().find("tablename").value().toString());
                                     dbTables->addChild(table_name);
                                     QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
+
+                                    QTreeWidgetItem* columnItem = new QTreeWidgetItem();
+                                    columnItem->setText(0, "Columns");
+                                    table_name->addChild(columnItem);
+
+                                    QTreeWidgetItem* indexItem = new QTreeWidgetItem();
+                                    indexItem->setText(0, "Indexes");
+                                    table_name->addChild(indexItem);
+
+                                    QJsonArray indexesArray = Responce["indexes"].toArray();
+
+
                                     for (auto item_field : fields_array)
                                     {
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
+                                        QString name = QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()));
+
+                                        QString paintStr = "  ( "
+                                                + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
+                                                + " "
+                                                + nullCheck(item_field.toObject().find("nullable")->toInt())
+                                                + ") "
+                                                + linkCheck(item_field.toObject().find("linktable")->toString());
+
+
+                                        QTextDocument doc;
+                                        doc.setHtml(paintText(paintStr, 0));
+
+
                                         field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                                  //+ " ["
-                                                                  //+ QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()))
-                                                                  //+ " "
-                                                                  //+ nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                                  //+ "]"
-                                                                  //+ linkCheck(item_field.toObject().find("linktable")->toString())
+                                                                  + doc.toPlainText()
                                                                   ));
-                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt())));
-                                        field->setText(2, nullCheck(item_field.toObject().find("nullable")->toInt()));
-                                        field->setText(3, linkCheck(item_field.toObject().find("linktable")->toString()));
-                                        table_name->addChild(field);
+                                        columnItem->addChild(field);
+                                    }
+
+
+                                    for (auto item_field : indexesArray)
+                                    {
+                                        if (item_field.toObject().find("table")->toString() == table_name->text(0))
+                                        {
+                                            QTreeWidgetItem* field = new QTreeWidgetItem();
+                                            QString name = QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()));
+
+                                            field->setText(0, QString(item_field.toObject().find("name")->toString()));
+
+                                            QJsonArray indexesArray = item_field.toObject().find("fields")->toArray();
+
+                                            for (auto item_index : indexesArray)
+                                            {
+                                                QTreeWidgetItem* treeItem = new QTreeWidgetItem();
+                                                treeItem->setText(0, item_index.toString());
+
+                                                field->addChild(treeItem);
+                                            }
+
+                                            indexItem->addChild(field);
+                                        }
                                     }
 
                                     tablesCount+=1;
@@ -534,14 +585,11 @@ private:
                                     {
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
                                         field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                                  //+ " ["
-                                                                  //+ QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()))
-                                                                  //+ "]"
-                                                                  //+ linkCheck(item_field.toObject().find("linktable")->toString())
+                                                                  + "  ( "
+                                                                  + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
+                                                                  + " )  "
+                                                                  + linkCheck(item_field.toObject().find("linktable")->toString())
                                                                   ));
-                                        field->setText(1, QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt())));
-                                        field->setText(2, nullCheck(item_field.toObject().find("nullable")->toInt()));
-                                        field->setText(3, linkCheck(item_field.toObject().find("linktable")->toString()));
                                         table_name->addChild(field);
                                     }
 
