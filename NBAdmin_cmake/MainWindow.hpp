@@ -64,6 +64,7 @@ public:
     ~MainWindow() = default;
 
 private slots:
+
     void filling_tree_slot()
     {
         filling_tree();
@@ -85,7 +86,7 @@ private slots:
         connect(stopAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
         connect(startAction, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
         connect(backupAction, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
-        //connect(restoreAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
+        connect(restoreAction, SIGNAL(triggered()), this, SLOT(on_actionRestore_triggered()));
         connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
         connect(databaseInfoAction, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
 
@@ -329,7 +330,7 @@ private slots:
     {
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
 
-        QString path = "C:/Users/nk/Documents/query.txt";
+        QString path = QFileDialog::getOpenFileName(this, tr("Open"), "C:/");
         QFile file(path);
         file.open(QIODevice::ReadWrite);
         if(file.isOpen())
@@ -348,7 +349,7 @@ private slots:
     {
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
 
-        QString path = "C:/Users/nk/Documents/query_save.txt";
+        QString path = QFileDialog::getSaveFileName(this, tr("Save"), "C:/");;
         QFile file(path);
         file.open(QIODevice::ReadWrite);
         if(file.isOpen())
