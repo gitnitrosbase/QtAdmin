@@ -28,6 +28,7 @@
 #include <iostream>
 #include <utility>
 #include <algorithm>
+#include <map>
 
 #include "TabWindow.hpp"
 #include "ConnectWindow.hpp"
@@ -529,7 +530,6 @@ private:
                                     for (auto item_field : fields_array)
                                     {
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
-                                        QString name = QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()));
 
 //                                        QString paintStr =
 //                                                "  ( "
@@ -546,7 +546,7 @@ private:
 
                                         field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                                   + "  ( "
-                                                                  + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
+                                                                  + fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second
                                                                   + " "
                                                                   + nullCheck(item_field.toObject().find("nullable")->toInt())
                                                                   + ") "
@@ -554,14 +554,11 @@ private:
                                                                   ));
                                         columnItem->addChild(field);
                                     }
-
-
                                     for (auto item_field : indexesArray)
                                     {
                                         if (item_field.toObject().find("table")->toString() == table_name->text(0))
                                         {
                                             QTreeWidgetItem* field = new QTreeWidgetItem();
-                                            QString name = QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()));
 
                                             field->setText(0, QString(item_field.toObject().find("name")->toString()));
 
@@ -592,7 +589,7 @@ private:
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
                                         field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                                   + "  ( "
-                                                                  + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
+                                                                  + (fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second)
                                                                   + " )  "
                                                                   + linkCheck(item_field.toObject().find("linktable")->toString())
                                                                   ));
@@ -623,17 +620,17 @@ private:
     BackupWindow* backupWindow_ = nullptr;
     RestoreWindow* restoreWindow_ = nullptr;
     QMenu* rightClickMenu_ = nullptr;
-    std::vector<std::string> fieldsTypes_ = {
-        "varchar",
-        "int",
-        "bigint",
-        "double",
-        "datetime",
-        "bit",
-        "date",
-        "varbinary",
-        "nvarchar",
-        "rowversion",
-        "decimal"
+    std::map<int, QString> fieldsTypes_ = {
+        {1, "varchar"},
+        {2, "int"},
+        {3, "bigint"},
+        {4, "double"},
+        {5, "datetime"},
+        {6, "bit"},
+        {7, "date"},
+        {9, "varbinary"},
+        {10, "nvarchar"},
+        {11, "rowversion"},
+        {12, "decimal"}
     };
 };
