@@ -531,20 +531,26 @@ private:
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
                                         QString name = QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("name")->toInt()));
 
-                                        QString paintStr = "  ( "
-                                                + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
-                                                + " "
-                                                + nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                + ") "
-                                                + linkCheck(item_field.toObject().find("linktable")->toString());
+//                                        QString paintStr =
+//                                                "  ( "
+//                                                + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
+//                                                + " "
+//                                                + nullCheck(item_field.toObject().find("nullable")->toInt())
+//                                                + ") "
+//                                                + linkCheck(item_field.toObject().find("linktable")->toString());
 
 
-                                        QTextDocument doc;
-                                        doc.setHtml(paintText(paintStr, 0));
+//                                        QTextDocument doc;
+//                                        doc.setHtml(paintText(paintStr, 0));
 
 
                                         field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                                  + doc.toPlainText()
+                                                                  + "  ( "
+                                                                  + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
+                                                                  + " "
+                                                                  + nullCheck(item_field.toObject().find("nullable")->toInt())
+                                                                  + ") "
+                                                                  + linkCheck(item_field.toObject().find("linktable")->toString())
                                                                   ));
                                         columnItem->addChild(field);
                                     }
