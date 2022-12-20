@@ -554,10 +554,16 @@ private:
                                                                   ));
                                         columnItem->addChild(field);
                                     }
+
+                                    columnItem->setText(0, QString("Columns (" + QString::number(fields_array.count()) + ")"));
+
+
+                                    int indexesCount = 0;
                                     for (auto item_field : indexesArray)
                                     {
                                         if (item_field.toObject().find("table")->toString() == table_name->text(0))
                                         {
+                                            indexesCount += 1;
                                             QTreeWidgetItem* field = new QTreeWidgetItem();
 
                                             field->setText(0, QString(item_field.toObject().find("name")->toString()));
@@ -575,6 +581,7 @@ private:
                                             indexItem->addChild(field);
                                         }
                                     }
+                                    indexItem->setText(0, "Indexes (" + QString::number(indexesCount) + ")");
 
                                     tablesCount+=1;
                                 }
