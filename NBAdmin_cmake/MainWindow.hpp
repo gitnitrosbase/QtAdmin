@@ -531,19 +531,6 @@ private:
                                     {
                                         QTreeWidgetItem* field = new QTreeWidgetItem();
 
-//                                        QString paintStr =
-//                                                "  ( "
-//                                                + QString::fromStdString(fieldsTypes_.at(item_field.toObject().find("type")->toInt()))
-//                                                + " "
-//                                                + nullCheck(item_field.toObject().find("nullable")->toInt())
-//                                                + ") "
-//                                                + linkCheck(item_field.toObject().find("linktable")->toString());
-
-
-//                                        QTextDocument doc;
-//                                        doc.setHtml(paintText(paintStr, 0));
-
-
                                         field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                                   + "  ( "
                                                                   + fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second
