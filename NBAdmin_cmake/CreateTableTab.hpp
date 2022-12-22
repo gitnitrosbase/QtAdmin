@@ -12,6 +12,7 @@
 #include <QComboBox>
 #include <QStringList>
 #include <QFile>
+#include <QCheckBox>
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -38,6 +39,8 @@ public:
         ui->tableWidget->setHorizontalHeaderLabels(headerTable);
 
         connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(addRow()));
+        connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(rmRow()));
+
     }
     ~CreateTableTab()
     {
@@ -60,6 +63,11 @@ public slots:
     {
         QComboBox* typesComboBox = new QComboBox();
         QComboBox* FKTableComboBox = new QComboBox();
+        QCheckBox* PKCheckBox = new QCheckBox();
+        QCheckBox* FKCheckBox = new QCheckBox();
+        QCheckBox* identityCheckBox = new QCheckBox();
+        QCheckBox* notnullCheckBox = new QCheckBox();
+        QPushButton* rmPushButton = new QPushButton("X");
 
         for (auto item : fieldsTypes_)
         {
@@ -91,16 +99,32 @@ public slots:
                     std::cout<<item.toObject().find("tablename")->toString().toStdString()<<std::endl;
                     FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
                 }
+                FKTableComboBox->insertItem(0, "none");
+                FKTableComboBox->setCurrentIndex(0);
             }
         });
 
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 1, typesComboBox);
+        ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 2, PKCheckBox);
+        ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 3, FKCheckBox);
         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 4, FKTableComboBox);
+        ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 5, identityCheckBox);
+        ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 6, notnullCheckBox);
+        ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 8, rmPushButton);
+
+        ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
+
+        connect(rmPushButton, SIGNAL(clicked()), this, SLOT(rmRow()));
+    }
+
+    void rmRow()
+    {
+        ui->tableWidget->removeRow(ui->tableWidget->currentRow());
     }
 
 private:
-    QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , ""};
+    QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};
     Ui::CreateTableTab* ui;
 public:
     QString currentDatabase_ = "";
