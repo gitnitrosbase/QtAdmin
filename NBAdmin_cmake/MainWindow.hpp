@@ -148,7 +148,7 @@ private slots:
         {
             CreateTableTab* tmp = new CreateTableTab(this);
             ui->tabWidget->addTab(tmp, QString("Create Table"));
-            tmp->SetCurrentDatabase(currentDatabase_);
+            tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
         }
 
     }
