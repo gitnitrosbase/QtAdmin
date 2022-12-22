@@ -20,6 +20,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QLineEdit>
 
 #include "ui_CreateTableTab.h"
 
@@ -37,10 +38,6 @@ public:
 
         ui->tableWidget->setColumnCount(headerTable.count());
         ui->tableWidget->setHorizontalHeaderLabels(headerTable);
-
-        connect(ui->pushButton, SIGNAL(clicked()), this, SLOT(addRow()));
-        connect(ui->pushButton_2, SIGNAL(clicked()), this, SLOT(rmRow()));
-
     }
     ~CreateTableTab()
     {
@@ -61,6 +58,7 @@ public:
 public slots:
     void addRow()
     {
+        QLineEdit* nameLineEdit = new QLineEdit();
         QComboBox* typesComboBox = new QComboBox();
         QComboBox* FKTableComboBox = new QComboBox();
         QCheckBox* PKCheckBox = new QCheckBox();
@@ -105,6 +103,7 @@ public slots:
         });
 
         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
+        ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, nameLineEdit);
         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 1, typesComboBox);
         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 2, PKCheckBox);
         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 3, FKCheckBox);
@@ -115,12 +114,18 @@ public slots:
 
         ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
+        connect(nameLineEdit, SIGNAL(returnPressed()), this, SLOT(checkToAddRow()));
         connect(rmPushButton, SIGNAL(clicked()), this, SLOT(rmRow()));
     }
 
     void rmRow()
     {
         ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+    }
+
+    void checkToAddRow()
+    {
+        if (ui->tableWidget->currentRow() >= ui->tableWidget->rowCount()-1) addRow();
     }
 
 private:
