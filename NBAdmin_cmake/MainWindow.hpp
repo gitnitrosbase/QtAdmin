@@ -35,6 +35,7 @@
 #include "BackupWindow.hpp"
 #include "OpenWindow.hpp"
 #include "RestoreWindow.hpp"
+#include "CreateTableTab.hpp"
 #include "ui_mainwindow.h"
 
 #include <windows.h>
@@ -89,6 +90,8 @@ private slots:
         QAction * deleteAction = new QAction(trUtf8("Delete"), this);
         QAction * databaseInfoAction = new QAction(trUtf8("Database info"), this);
 
+        QAction * createTableAction = new QAction(trUtf8("Create Table"), this);
+
         connect(refreshAction, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
         connect(stopAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
         connect(startAction, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
@@ -97,6 +100,8 @@ private slots:
         connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
         connect(databaseInfoAction, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
 
+        connect(createTableAction, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
+
         menu->addAction(refreshAction);
         menu->addAction(stopAction);
         menu->addAction(startAction);
@@ -104,6 +109,8 @@ private slots:
         menu->addAction(restoreAction);
         menu->addAction(deleteAction);
         menu->addAction(databaseInfoAction);
+
+        menu->addAction(createTableAction);
 
         menu->popup(ui->treeWidget->viewport()->mapToGlobal(point));
     }
@@ -134,6 +141,18 @@ private slots:
             currentDatabase_ = dbName;
         }
     }
+
+    void on_actionCreateTable_triggeted()
+    {
+        if (currentDatabase_ != "")
+        {
+            CreateTableTab* tmp = new CreateTableTab(this);
+            ui->tabWidget->addTab(tmp, QString("Create Table"));
+            tmp->SetCurrentDatabase(currentDatabase_);
+        }
+
+    }
+
     void on_actionDelete_database_triggered()
     {
         QString name = "";

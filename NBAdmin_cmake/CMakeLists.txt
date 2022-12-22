@@ -24,6 +24,7 @@ set(PROJECT_SOURCES
     ResponceView.hpp
     syntexHightLight.hpp
     RestoreWindow.hpp
+    CreateTableTab.hpp
     )
 
 set(UI_FILES
@@ -33,6 +34,7 @@ set(UI_FILES
     info.ui
     OpenDb.ui
     restore.ui
+    CreateTableTab.ui
     )
 
 set(NITROSBASE
