@@ -13,6 +13,7 @@
 #include <QStringList>
 #include <QFile>
 #include <QCheckBox>
+#include <QStyle>
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
@@ -66,6 +67,9 @@ public slots:
         QCheckBox* identityCheckBox = new QCheckBox();
         QCheckBox* notnullCheckBox = new QCheckBox();
         QPushButton* rmPushButton = new QPushButton("X");
+
+        typesComboBox->setStyleSheet("background-color: #ffffff");
+        FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
         for (auto item : fieldsTypes_)
         {
