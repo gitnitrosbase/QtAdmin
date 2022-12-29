@@ -80,6 +80,8 @@ private slots:
 
     void showContextMenu(const QPoint point)
     {
+        std::cout<<ui->treeWidget->currentItem()->text(0).toStdString()<<std::endl;
+
         QMenu * menu = new QMenu(this);
 
         QAction * refreshAction = new QAction(trUtf8("Refresh"), this);

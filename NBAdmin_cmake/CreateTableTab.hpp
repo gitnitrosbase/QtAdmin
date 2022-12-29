@@ -45,14 +45,10 @@ public:
         delete ui;
     }
 
-
     void SetCurrentDatabase(QString& name, int port)
     {
         ui->label->setText("Create Table in " + name);
         port_ = port;
-
-        std::cout<<port_<<std::endl;
-
         addRow();
     }
 
@@ -98,7 +94,6 @@ public slots:
                 QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
                 for (auto item : tables)
                 {
-                    std::cout<<item.toObject().find("tablename")->toString().toStdString()<<std::endl;
                     FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
                 }
                 FKTableComboBox->insertItem(0, "none");
@@ -124,7 +119,7 @@ public slots:
 
     void rmRow()
     {
-        ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+        if (ui->tableWidget->rowCount() > 1) ui->tableWidget->removeRow(ui->tableWidget->currentRow());
     }
 
     void checkToAddRow()
@@ -132,13 +127,30 @@ public slots:
         if (ui->tableWidget->currentRow() >= ui->tableWidget->rowCount()-1) addRow();
     }
 
+    void on_pushButton_2_clicked()
+    {
+        QString tableName = ui->lineEdit->text();
+
+        for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
+        {
+            QString columnName = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
+            QString typeName = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText();
+            bool checkPK = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 2))->isChecked();
+            bool checkFK = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 3))->isChecked();
+            QString nameFK = "";
+            if (checkFK == true) nameFK = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 4))->currentText();
+            bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
+            bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
+            //QString comment = ui->tableWidget->itemAt(i, 7)->text();
+            std::cout<<columnName.toStdString()<<typeName.toStdString()<<checkPK<<checkFK<<checkIdentity<<checkNullable<<std::endl;
+        }
+    }
+
 private:
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};
     Ui::CreateTableTab* ui;
 public:
     QString currentDatabase_ = "";
-    QPushButton* addRowButton_ = nullptr;
-    QPushButton* rmRowButton_ = nullptr;
     QString address_ = "http://127.0.0.1:8008/api3";
     int port_ = 0;
     std::vector<QString> fieldsTypes_ = {
