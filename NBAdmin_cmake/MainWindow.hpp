@@ -68,6 +68,17 @@ public:
         connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
         filling_tree();
+        menu_ = new QMenu(this);
+        refreshAction_ = new QAction(trUtf8("Refresh"), this);
+        stopAction_ = new QAction(trUtf8("Stop"), this);
+        startAction_ = new QAction(trUtf8("Start"), this);
+        backupAction_ = new QAction(trUtf8("Backup"), this);
+        restoreAction_ = new QAction(trUtf8("Restore"), this);
+        deleteAction_ = new QAction(trUtf8("Delete"), this);
+        databaseInfoAction_ = new QAction(trUtf8("Database info"), this);
+        createTableAction_ = new QAction(trUtf8("Create Table"), this);
+        createEdgeAction_ = new QAction(trUtf8("Create Edge"), this);
+        createIndexAction_ = new QAction(trUtf8("Create Index"), this);
      }
     ~MainWindow() = default;
 
@@ -80,41 +91,57 @@ private slots:
 
     void showContextMenu(const QPoint point)
     {
-        std::cout<<ui->treeWidget->currentItem()->text(0).toStdString()<<std::endl;
+        menu_->clear();
 
-        QMenu * menu = new QMenu(this);
+        connect(refreshAction_, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
+        connect(stopAction_, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
+        connect(startAction_, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
+        connect(backupAction_, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
+        connect(restoreAction_, SIGNAL(triggered()), this, SLOT(on_actionRestore_triggered()));
+        connect(deleteAction_, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
+        connect(databaseInfoAction_, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
+        connect(createTableAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
+        connect(createEdgeAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateEdge_triggeted()));
+        connect(createIndexAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateIndex_triggeted()));
 
-        QAction * refreshAction = new QAction(trUtf8("Refresh"), this);
-        QAction * stopAction = new QAction(trUtf8("Stop"), this);
-        QAction * startAction = new QAction(trUtf8("Start"), this);
-        QAction * backupAction = new QAction(trUtf8("Backup"), this);
-        QAction * restoreAction = new QAction(trUtf8("Restore"), this);
-        QAction * deleteAction = new QAction(trUtf8("Delete"), this);
-        QAction * databaseInfoAction = new QAction(trUtf8("Database info"), this);
+        QString currentItem = ui->treeWidget->currentItem()->text(0);
 
-        QAction * createTableAction = new QAction(trUtf8("Create Table"), this);
+        QString currentItem1 = "";
 
-        connect(refreshAction, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
-        connect(stopAction, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
-        connect(startAction, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
-        connect(backupAction, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
-        connect(restoreAction, SIGNAL(triggered()), this, SLOT(on_actionRestore_triggered()));
-        connect(deleteAction, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
-        connect(databaseInfoAction, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
+        for (int i = 0; i<currentItem.count(); i+=1)
+        {
+            if (currentItem[i] != " ") currentItem1 +=currentItem[i];
+            else break;
+        }
 
-        connect(createTableAction, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
-
-        menu->addAction(refreshAction);
-        menu->addAction(stopAction);
-        menu->addAction(startAction);
-        menu->addAction(backupAction);
-        menu->addAction(restoreAction);
-        menu->addAction(deleteAction);
-        menu->addAction(databaseInfoAction);
-
-        menu->addAction(createTableAction);
-
-        menu->popup(ui->treeWidget->viewport()->mapToGlobal(point));
+        auto nullIter = dbList_.find("-1");
+        if (dbList_.find(currentItem) != nullIter)
+        {
+            menu_->addAction(refreshAction_);
+            menu_->addAction(stopAction_);
+            menu_->addAction(startAction_);
+            menu_->addAction(backupAction_);
+            menu_->addAction(restoreAction_);
+            menu_->addAction(deleteAction_);
+            menu_->addAction(databaseInfoAction_);
+        }
+        else if (currentItem1 == "Tables")
+        {
+            menu_->addAction(createTableAction_);
+        }
+        else if (currentItem1 == "Edges")
+        {
+            menu_->addAction(createEdgeAction_);
+        }
+        else if (currentItem1 == "Indexes")
+        {
+            menu_->addAction(createIndexAction_);
+        }
+        else
+        {
+            std::cout<<"check"<<std::endl;
+        }
+        menu_->popup(ui->treeWidget->viewport()->mapToGlobal(point));
     }
 
     void push_button_run_clicked()
@@ -144,6 +171,14 @@ private slots:
         }
     }
 
+    void on_actionCreateEdge_triggered()
+    {
+
+    }
+    void on_actionCreateIndex_triggered()
+    {
+
+    }
     void on_actionCreateTable_triggeted()
     {
         if (currentDatabase_ != "")
@@ -648,4 +683,16 @@ private:
         {11, "rowversion"},
         {12, "decimal"}
     };
+
+    QMenu * menu_ = nullptr;
+    QAction * refreshAction_ = nullptr;
+    QAction * stopAction_ = nullptr;
+    QAction * startAction_ = nullptr;
+    QAction * backupAction_ = nullptr;
+    QAction * restoreAction_ = nullptr;
+    QAction * deleteAction_ = nullptr;
+    QAction * databaseInfoAction_ = nullptr;
+    QAction * createTableAction_ = nullptr;
+    QAction * createEdgeAction_ = nullptr;
+    QAction * createIndexAction_ = nullptr;
 };
