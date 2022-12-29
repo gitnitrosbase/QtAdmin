@@ -22,8 +22,10 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QLineEdit>
+#include <QMessageBox>
 
 #include "ui_CreateTableTab.h"
+#include "nb-samples.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CreateTableTab; }
@@ -96,7 +98,7 @@ public slots:
                 {
                     FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
                 }
-                FKTableComboBox->insertItem(0, "none");
+                //FKTableComboBox->insertItem(0, "none");
                 FKTableComboBox->setCurrentIndex(0);
             }
         });
@@ -129,7 +131,9 @@ public slots:
 
     void on_pushButton_2_clicked()
     {
-        QString tableName = ui->lineEdit->text();
+        QString queryStr = "CREATE TABLE ";
+        queryStr += ui->lineEdit->text();
+        queryStr += "( ";
 
         for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
         {
@@ -143,7 +147,32 @@ public slots:
             bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
             //QString comment = ui->tableWidget->itemAt(i, 7)->text();
             std::cout<<columnName.toStdString()<<typeName.toStdString()<<checkPK<<checkFK<<checkIdentity<<checkNullable<<std::endl;
+
+            QString subQueryStr = columnName;
+            subQueryStr+=" ";
+            subQueryStr+=typeName;
+            subQueryStr+=" ";
+
+            if (ui->lineEdit->text() == "")
+            {
+                QMessageBox::warning(this, "Warning", "Please enter table name");
+                return;
+            }
+
+            if (checkPK) subQueryStr+= "PRIMARY KEY NOT NULL ";
+            if (checkIdentity && (typeName == "int" || typeName == "bigint")) subQueryStr+= "IDENTITY (1,2) ";
+            if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
+            if (checkNullable) subQueryStr += "NOT NULL ";
+            if (ui->tableWidget->rowCount()-1 != i) subQueryStr+=" , ";
+            queryStr += subQueryStr;
         }
+
+        queryStr += ");";
+
+        NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
+        nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
+        check_error(connection);
+        nb_disconnect(connection);
     }
 
 private:
