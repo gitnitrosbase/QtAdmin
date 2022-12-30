@@ -59,19 +59,19 @@ public slots:
 
     void setText(QString input)
     {
-        //std::cout<<input.toStdString()<<std::endl;
+        std::cout<<input.toStdString()<<std::endl;
         textEdit_->setText(input);
     }
 
     void setCurrentIndex(int index)
     {
-        //std::cout<<"start set current"<<std::endl;
+        std::cout<<"start set current"<<std::endl;
         tableWidget_->setModel(models_.at(index));
     }
     void push_button_run_clicked()
     {
         int start = clock();
-        //std::cout<<"start click"<<std::endl;
+        std::cout<<"start click"<<std::endl;
 
         for (auto item : models_) delete item;
         models_.clear();
@@ -85,18 +85,16 @@ public slots:
         connect(comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
 
         std::string tmp = textEdit_->toPlainText().toStdString();
-        QString query;
 
         std::string::size_type beg = 0;
-        for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
-        {
-            input_queries_.push_back(tmp.substr(beg, end - beg));
-            beg = end + 1;
-        }
+                for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
+                {
+                    input_queries_.push_back(tmp.substr(beg, end - beg));
+                    beg = end + 1;
+                }
 
-        input_queries_.push_back(tmp.substr(beg));
+                input_queries_.push_back(tmp.substr(beg));
 
-        //input_queries_.push_back(tmp.toStdString());
 
         for (int i = 0; i<int(input_queries_.size());i+=1)
         {
@@ -108,11 +106,11 @@ public slots:
             nb_disconnect(connection);
             comboBox_->addItem(QString::fromStdString(input_queries_.at(i)));
         }
-        //std::cout<<"end click"<<std::endl;
+        std::cout<<"end click"<<std::endl;
 
         int end = clock();
         int t = (end - start) / CLOCKS_PER_SEC;
-        //std::cout<<t<<std::endl;
+        std::cout<<t<<std::endl;
     }
 
 private:
@@ -148,7 +146,7 @@ private:
     void exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query)
     {
         QList<QStandardItem*> tmp;
-        //std::cout<<"start exec"<<std::endl;
+        std::cout<<"start exec"<<std::endl;
         nb_execute_sql(connection , query.toStdU16String().c_str(), size_t(query.size()));
         check_query(connection);
         int field_count = nb_field_count(connection);
@@ -174,7 +172,7 @@ private:
             }
             model->appendRow(tmp);
         }
-        //std::cout<<"end exec"<<std::endl;
+        std::cout<<"end exec"<<std::endl;
     }
 
 public:

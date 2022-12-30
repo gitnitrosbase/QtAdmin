@@ -204,11 +204,12 @@ private slots:
 
     void on_selectAction_triggered()
     {
-//        if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
-//        {
-//            TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-//            currentTab->textEdit_->setText(QString("SELECT * TOP 1000 FROM " + ui->treeWidget->currentItem()->text(0)));
-//        }
+        if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
+        {
+            TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+            currentTab->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0)));
+        }
+        push_button_run_clicked();
     }
 
     void on_actionCreateEdge_triggered()
