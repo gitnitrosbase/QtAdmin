@@ -42,11 +42,15 @@ public:
         font.setPixelSize(16);
         textEdit_->setFont(font);
         syntaxHighLight_ = new SyntaxHighlighter(textEdit_->document());
-
     }
     ~TabWindow() = default;
 
 public slots:
+
+    void selectThousandQuery(QString table)
+    {
+        NB_HANDLE connection;
+    }
 
     QString textFromTextEdit()
     {
@@ -172,7 +176,7 @@ private:
         //std::cout<<"end exec"<<std::endl;
     }
 
-private:
+public:
     QTableView* tableWidget_ = nullptr;
     QGridLayout* gridLayout_ = nullptr;
     QTextEdit* textEdit_ = nullptr;

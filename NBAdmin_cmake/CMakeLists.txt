@@ -25,6 +25,8 @@ set(PROJECT_SOURCES
     syntexHightLight.hpp
     RestoreWindow.hpp
     CreateTableTab.hpp
+    CreateEdgeTab.hpp
+    CreateIndexTab.hpp
     )
 
 set(UI_FILES
@@ -35,6 +37,8 @@ set(UI_FILES
     OpenDb.ui
     restore.ui
     CreateTableTab.ui
+    CreateEdgeTab.ui
+    CreateIndexTab.ui
     )
 
 set(NITROSBASE

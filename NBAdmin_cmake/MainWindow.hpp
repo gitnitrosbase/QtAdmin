@@ -20,6 +20,7 @@
 #include <QJsonObject>
 #include <QJsonDocument>
 #include <QJsonArray>
+#include <QList>
 
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
@@ -36,10 +37,11 @@
 #include "OpenWindow.hpp"
 #include "RestoreWindow.hpp"
 #include "CreateTableTab.hpp"
+#include "CreateEdgeTab.hpp"
+#include "CreateIndexTab.hpp"
 #include "ui_mainwindow.h"
 
 #include <windows.h>
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -76,9 +78,13 @@ public:
         restoreAction_ = new QAction(trUtf8("Restore"), this);
         deleteAction_ = new QAction(trUtf8("Delete"), this);
         databaseInfoAction_ = new QAction(trUtf8("Database info"), this);
-        createTableAction_ = new QAction(trUtf8("Create Table"), this);
-        createEdgeAction_ = new QAction(trUtf8("Create Edge"), this);
-        createIndexAction_ = new QAction(trUtf8("Create Index"), this);
+        createTableAction_ = new QAction(trUtf8("Create table"), this);
+        createEdgeAction_ = new QAction(trUtf8("Create edge"), this);
+        createIndexAction_ = new QAction(trUtf8("Create index"), this);
+
+        selectAction_ = new QAction(trUtf8("Select * top 1000"), this);
+        modifyStructAction_ = new QAction(trUtf8("Modify structure"), this);
+        deleteTableAction_ = new QAction(trUtf8("Delete table"), this);
      }
     ~MainWindow() = default;
 
@@ -93,6 +99,8 @@ private slots:
     {
         menu_->clear();
 
+
+
         connect(refreshAction_, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
         connect(stopAction_, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
         connect(startAction_, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
@@ -101,8 +109,11 @@ private slots:
         connect(deleteAction_, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
         connect(databaseInfoAction_, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
         connect(createTableAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
-        connect(createEdgeAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateEdge_triggeted()));
-        connect(createIndexAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateIndex_triggeted()));
+        connect(createEdgeAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateEdge_triggered()));
+        connect(createIndexAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateIndex_triggered()));
+        connect(selectAction_, SIGNAL(triggered()), this, SLOT(on_selectAction_triggered()));
+        connect(modifyStructAction_, SIGNAL(triggered()), this, SLOT(on_modifyStructAction_triggered()));
+        connect(deleteTableAction_, SIGNAL(triggered()), this, SLOT(on_deleteTableAction_triggered()));
 
         QString currentItem = ui->treeWidget->currentItem()->text(0);
 
@@ -112,6 +123,12 @@ private slots:
         {
             if (currentItem[i] != " ") currentItem1 +=currentItem[i];
             else break;
+        }
+
+        bool tmpFlag = false;
+        for (auto item : tables_)
+        {
+            if (item->text(0) == ui->treeWidget->currentItem()->text(0)) tmpFlag = true;
         }
 
         auto nullIter = dbList_.find("-1");
@@ -137,10 +154,14 @@ private slots:
         {
             menu_->addAction(createIndexAction_);
         }
-        else
+        else if (tmpFlag)
         {
-            std::cout<<"check"<<std::endl;
+            menu_->addAction(selectAction_);
+            menu_->addAction(createTableAction_);
+            menu_->addAction(modifyStructAction_);
+            menu_->addAction(deleteAction_);
         }
+
         menu_->popup(ui->treeWidget->viewport()->mapToGlobal(point));
     }
 
@@ -171,13 +192,42 @@ private slots:
         }
     }
 
+    void on_deleteTableAction_triggered()
+    {
+        QMessageBox::warning(this, "", "");
+    }
+
+    void on_modifyStructAction_triggered()
+    {
+        QMessageBox::warning(this, "", "");
+    }
+
+    void on_selectAction_triggered()
+    {
+        if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
+        {
+            TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+            currentTab->textEdit_->setText(QString("SELECT * TOP 1000 FROM " + ui->treeWidget->currentItem()->text(0)));
+        }
+    }
+
     void on_actionCreateEdge_triggered()
     {
-
+        if (currentDatabase_ != "")
+        {
+            CreateEdgeTab* tmp = new CreateEdgeTab(this);
+            ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Create Edge"));
+            tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
+        }
     }
     void on_actionCreateIndex_triggered()
     {
-
+        if (currentDatabase_ != "")
+        {
+            CreateIndexTab* tmp = new CreateIndexTab(this);
+            ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Create Index"));
+            tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
+        }
     }
     void on_actionCreateTable_triggeted()
     {
@@ -480,6 +530,8 @@ private:
 
     void filling_tree()
     {
+
+
         QString userName = "";
         DWORD size=1024;
         char buf[1024];
@@ -490,6 +542,7 @@ private:
         {
             return;
         }
+        tables_.clear();
         ui->treeWidget->takeTopLevelItem(0);
         QTreeWidgetItem* username = new QTreeWidgetItem();
         username->setText(0, userName);
@@ -581,7 +634,7 @@ private:
                                     table_name->addChild(indexItem);
 
                                     QJsonArray indexesArray = Responce["indexes"].toArray();
-
+                                    tables_.push_back(table_name);
 
                                     for (auto item_field : fields_array)
                                     {
@@ -599,7 +652,6 @@ private:
                                     }
 
                                     columnItem->setText(0, QString("Columns (" + QString::number(fields_array.count()) + ")"));
-
 
                                     int indexesCount = 0;
                                     for (auto item_field : indexesArray)
@@ -695,4 +747,8 @@ private:
     QAction * createTableAction_ = nullptr;
     QAction * createEdgeAction_ = nullptr;
     QAction * createIndexAction_ = nullptr;
+    QAction * selectAction_ = nullptr;
+    QAction * modifyStructAction_ = nullptr;
+    QAction * deleteTableAction_ = nullptr;
+    QList<QTreeWidgetItem*> tables_;
 };
