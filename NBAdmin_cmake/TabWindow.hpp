@@ -59,7 +59,7 @@ public slots:
 
     void setText(QString input)
     {
-        std::cout<<input.toStdString()<<std::endl;
+        //std::cout<<input.toStdString()<<std::endl;
         textEdit_->setText(input);
     }
 
@@ -84,19 +84,20 @@ public slots:
         gridLayout_->addWidget(comboBox_, 1, 0);
         connect(comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
 
-        QString tmp = textEdit_->toPlainText();
+        std::string tmp = textEdit_->toPlainText().toStdString();
         QString query;
-        if (tmp.back() != ";") tmp.append(";");
-        for (int i = 0; i<tmp.size();i+=1)
+
+        std::string::size_type beg = 0;
+        for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
         {
-            if (tmp.at(i) != ";") query += tmp.at(i);
-            else
-            {
-                input_queries_.push_back(query.toStdString());
-                query = "";
-                while(tmp.at(i+1) == " " || tmp.at(i+1) == "\t" || tmp.at(i+1) == "\n") i+=1;
-            }
+            input_queries_.push_back(tmp.substr(beg, end - beg));
+            beg = end + 1;
         }
+
+        input_queries_.push_back(tmp.substr(beg));
+
+        //input_queries_.push_back(tmp.toStdString());
+
         for (int i = 0; i<int(input_queries_.size());i+=1)
         {
             models_.push_back(new QStandardItemModel());
@@ -111,7 +112,7 @@ public slots:
 
         int end = clock();
         int t = (end - start) / CLOCKS_PER_SEC;
-        std::cout<<t<<std::endl;
+        //std::cout<<t<<std::endl;
     }
 
 private:

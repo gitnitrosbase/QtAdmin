@@ -85,6 +85,20 @@ public:
         selectAction_ = new QAction(trUtf8("Select * top 1000"), this);
         modifyStructAction_ = new QAction(trUtf8("Modify structure"), this);
         deleteTableAction_ = new QAction(trUtf8("Delete table"), this);
+
+        connect(refreshAction_, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
+        connect(stopAction_, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
+        connect(startAction_, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
+        connect(backupAction_, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
+        connect(restoreAction_, SIGNAL(triggered()), this, SLOT(on_actionRestore_triggered()));
+        connect(deleteAction_, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
+        connect(databaseInfoAction_, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
+        connect(createTableAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
+        connect(createEdgeAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateEdge_triggered()));
+        connect(createIndexAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateIndex_triggered()));
+        connect(selectAction_, SIGNAL(triggered()), this, SLOT(on_selectAction_triggered()));
+        connect(modifyStructAction_, SIGNAL(triggered()), this, SLOT(on_modifyStructAction_triggered()));
+        connect(deleteTableAction_, SIGNAL(triggered()), this, SLOT(on_deleteTableAction_triggered()));
      }
     ~MainWindow() = default;
 
@@ -100,20 +114,6 @@ private slots:
         menu_->clear();
 
 
-
-        connect(refreshAction_, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
-        connect(stopAction_, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
-        connect(startAction_, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
-        connect(backupAction_, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
-        connect(restoreAction_, SIGNAL(triggered()), this, SLOT(on_actionRestore_triggered()));
-        connect(deleteAction_, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
-        connect(databaseInfoAction_, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
-        connect(createTableAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
-        connect(createEdgeAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateEdge_triggered()));
-        connect(createIndexAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateIndex_triggered()));
-        connect(selectAction_, SIGNAL(triggered()), this, SLOT(on_selectAction_triggered()));
-        connect(modifyStructAction_, SIGNAL(triggered()), this, SLOT(on_modifyStructAction_triggered()));
-        connect(deleteTableAction_, SIGNAL(triggered()), this, SLOT(on_deleteTableAction_triggered()));
 
         QString currentItem = ui->treeWidget->currentItem()->text(0);
 
@@ -204,11 +204,11 @@ private slots:
 
     void on_selectAction_triggered()
     {
-        if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
-        {
-            TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-            currentTab->textEdit_->setText(QString("SELECT * TOP 1000 FROM " + ui->treeWidget->currentItem()->text(0)));
-        }
+//        if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
+//        {
+//            TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+//            currentTab->textEdit_->setText(QString("SELECT * TOP 1000 FROM " + ui->treeWidget->currentItem()->text(0)));
+//        }
     }
 
     void on_actionCreateEdge_triggered()
@@ -226,7 +226,7 @@ private slots:
         {
             CreateIndexTab* tmp = new CreateIndexTab(this);
             ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Create Index"));
-            tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
+            tmp->SetCurrentDatabase(QString(ui->treeWidget->currentItem()->parent()->text(0)), dbList_.find(currentDatabase_)->second);
         }
     }
     void on_actionCreateTable_triggeted()

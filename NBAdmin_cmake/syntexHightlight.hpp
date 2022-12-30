@@ -6,8 +6,6 @@
 #include <utility>
 #include <QRegularExpression>
 
-class SyntaxHighlighter;
-
 class SyntaxHighlighter : public QSyntaxHighlighter {
 
 public:
