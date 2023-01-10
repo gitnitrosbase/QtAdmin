@@ -1,5 +1,3 @@
-#pragma once
-
 #include "TabWindow.hpp"
 
 TabWindow::TabWindow(QWidget* parent) : QWidget(parent)

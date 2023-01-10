@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(createTableAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
     connect(createEdgeAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateEdge_triggered()));
     connect(createIndexAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateIndex_triggered()));
-    connect(selectAction_, SIGNAL(triggered()), this, SLOT(on_selectAction_triggered()));
+    connect(selectAction_, SIGNAL(triggered()), this, SLOT(on_tableSelectAction_triggered()));
     connect(modifyStructAction_, SIGNAL(triggered()), this, SLOT(on_modifyStructAction_triggered()));
     //connect(deleteTableAction_, SIGNAL(triggered()), this, SLOT(on_deleteTableAction_triggered()));
     connect(deleteTableAction_, &QAction::triggered, this, &MainWindow::on_deleteTableAction_triggered);
@@ -152,7 +152,7 @@ void MainWindow::on_modifyStructAction_triggered()
     QMessageBox::warning(this, "", "");
 }
 
-void MainWindow::on_selectAction_triggered()
+void MainWindow::on_tableSelectAction_triggered()
 {
     if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
     {

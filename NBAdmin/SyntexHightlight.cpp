@@ -1,5 +1,3 @@
-#pragma once
-
 #include "syntexHightlight.hpp"
 
 SyntaxHighlighter::SyntaxHighlighter( QTextDocument* parent ) : QSyntaxHighlighter(parent) {}

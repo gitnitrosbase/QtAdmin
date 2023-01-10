@@ -1,5 +1,3 @@
-#pragma once
-
 #include "CreateEdgeTab.hpp"
 
 CreateEdgeTab::CreateEdgeTab(QWidget* parent) : QWidget(parent), ui(new Ui::CreateEdgeTab)

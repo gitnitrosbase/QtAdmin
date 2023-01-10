@@ -1,5 +1,3 @@
-#pragma once
-
 #include "OpenWindow.hpp"
 
 OpenWindow::OpenWindow(QWidget* parent) : QWidget(parent), ui(new Ui::OpenWindow)

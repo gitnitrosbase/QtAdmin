@@ -73,7 +73,7 @@ private slots:
 
     void on_modifyStructAction_triggered();
 
-    void on_selectAction_triggered();
+    void on_tableSelectAction_triggered();
 
     void on_actionCreateEdge_triggered();
 
@@ -164,5 +164,7 @@ private:
     QAction * selectAction_ = nullptr;
     QAction * modifyStructAction_ = nullptr;
     QAction * deleteTableAction_ = nullptr;
+    QAction * deleteEdgeAction_ = nullptr;
+    QAction * deleteIndexAction_ = nullptr;
     QList<QTreeWidgetItem*> tables_;
 };

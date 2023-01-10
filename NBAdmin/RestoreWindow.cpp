@@ -1,5 +1,3 @@
-#pragma once
-
 #include "RestoreWindow.hpp"
 
 RestoreWindow::RestoreWindow(QWidget* parent) : QWidget(parent), ui(new Ui::RestoreWindow)

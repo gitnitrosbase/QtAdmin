@@ -26,6 +26,7 @@ set(PROJECT_HEADERS
     CreateTableTab.hpp
     CreateEdgeTab.hpp
     CreateIndexTab.hpp
+    ModifyTableTab.hpp
     )
 
 set(PROJECT_SOURCES
@@ -41,6 +42,7 @@ set(PROJECT_SOURCES
     CreateTableTab.cpp
     CreateEdgeTab.cpp
     CreateIndexTab.cpp
+    ModifyTableTab.cpp
 )
 
 set(UI_FILES
@@ -53,6 +55,7 @@ set(UI_FILES
     CreateTableTab.ui
     CreateEdgeTab.ui
     CreateIndexTab.ui
+    ModifyTableTab.ui
     )
 
 set(NITROSBASE
