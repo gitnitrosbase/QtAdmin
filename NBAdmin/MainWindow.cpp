@@ -33,22 +33,29 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     selectAction_ = new QAction(trUtf8("Select * top 1000"), this);
     modifyStructAction_ = new QAction(trUtf8("Modify structure"), this);
-    deleteTableAction_ = new QAction(trUtf8("Delete table"), this);
 
-    connect(refreshAction_, SIGNAL(triggered()), this, SLOT(filling_tree_slot()));
-    connect(stopAction_, SIGNAL(triggered()), this, SLOT(on_actionStop_triggered()));
-    connect(startAction_, SIGNAL(triggered()), this, SLOT(on_actionStart_triggered()));
-    connect(backupAction_, SIGNAL(triggered()), this, SLOT(on_actionBackup_triggered()));
-    connect(restoreAction_, SIGNAL(triggered()), this, SLOT(on_actionRestore_triggered()));
-    connect(deleteAction_, SIGNAL(triggered()), this, SLOT(on_actionDelete_database_triggered()));
-    connect(databaseInfoAction_, SIGNAL(triggered()), this, SLOT(on_actionDatabase_Info_triggered()));
-    connect(createTableAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateTable_triggeted()));
-    connect(createEdgeAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateEdge_triggered()));
-    connect(createIndexAction_, SIGNAL(triggered()), this, SLOT(on_actionCreateIndex_triggered()));
-    connect(selectAction_, SIGNAL(triggered()), this, SLOT(on_tableSelectAction_triggered()));
-    connect(modifyStructAction_, SIGNAL(triggered()), this, SLOT(on_modifyStructAction_triggered()));
-    //connect(deleteTableAction_, SIGNAL(triggered()), this, SLOT(on_deleteTableAction_triggered()));
-    connect(deleteTableAction_, &QAction::triggered, this, &MainWindow::on_deleteTableAction_triggered);
+    deleteTableAction_ = new QAction(trUtf8("Delete table"), this);
+    deleteIndexAction_ = new QAction(trUtf8("Delete Index"), this);
+    deleteEdgeAction_ = new QAction(trUtf8("Delete Edge"), this);
+
+    selectEdgeAction_ = new QAction(trUtf8("Select * top 1000"), this);
+
+    connect(refreshAction_, &QAction::triggered, this, &MainWindow::filling_tree_slot);
+    connect(stopAction_, &QAction::triggered, this, &MainWindow::on_actionStopTrig);
+    connect(startAction_, &QAction::triggered, this, &MainWindow::on_actionStartTrig);
+    connect(backupAction_, &QAction::triggered, this, &MainWindow::on_actionBackupTrig);
+    connect(restoreAction_, &QAction::triggered, this, &MainWindow::on_actionRestoreTrig);
+    connect(deleteAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteDatabaseTrig);
+    connect(databaseInfoAction_, &QAction::triggered, this, &MainWindow::on_actionDatabaseInfoTrig);
+    connect(createTableAction_, &QAction::triggered, this, &MainWindow::on_actionCreateTableTrig);
+    connect(createEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionCreateEdgeTrig);
+    connect(createIndexAction_, &QAction::triggered, this, &MainWindow::on_actionCreateIndexTrig);
+    connect(selectAction_, &QAction::triggered, this, &MainWindow::on_tableSelectActionTrig);
+    connect(modifyStructAction_, &QAction::triggered, this, &MainWindow::on_modifyStructActionTrig);
+    connect(deleteTableAction_, &QAction::triggered, this, &MainWindow::on_deleteTableActionTrig);
+    connect(deleteEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteEdgeTrig);
+    connect(deleteIndexAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteIndexTrig);
+    connect(selectEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionSelectEdgeTrig);
  }
 
 void MainWindow::filling_tree_slot()
@@ -60,24 +67,46 @@ void MainWindow::showContextMenu(const QPoint point)
 {
     menu_->clear();
 
-    QString currentItem = ui->treeWidget->currentItem()->text(0);
+    QString currentItem = "";
 
-    QString currentItem1 = "";
+    QString parentItem = "";
 
-    for (int i = 0; i<currentItem.count(); i+=1)
+    if (ui->treeWidget->currentItem() != ui->treeWidget->topLevelItem(0))
     {
-        if (currentItem[i] != " ") currentItem1 +=currentItem[i];
+        for (int i = 0; i<ui->treeWidget->currentItem()->parent()->text(0); i+=1)
+        {
+            if (ui->treeWidget->currentItem()->parent()->text(0)[i] != " ") parentItem += ui->treeWidget->currentItem()->parent()->text(0)[i];
+            else break;
+        }
+    }
+
+    for (int i = 0; i<ui->treeWidget->currentItem()->text(0).count(); i+=1)
+    {
+        if (ui->treeWidget->currentItem()->text(0)[i] != " ") currentItem += ui->treeWidget->currentItem()->text(0)[i];
         else break;
     }
 
-    bool tmpFlag = false;
+    bool tableFlag = false;
     for (auto item : tables_)
     {
-        if (item->text(0) == ui->treeWidget->currentItem()->text(0)) tmpFlag = true;
+        if (item->text(0) == ui->treeWidget->currentItem()->text(0))
+        {
+            tableFlag = true;
+            break;
+        }
     }
 
-    auto nullIter = dbList_.find("-1");
-    if (dbList_.find(currentItem) != nullIter)
+    bool dbFlag = false;
+    for (auto item : dbList_)
+    {
+        if (ui->treeWidget->currentItem()->text(0) == item.first)
+        {
+            dbFlag = true;
+            break;
+        }
+    }
+
+    if (dbFlag)
     {
         menu_->addAction(refreshAction_);
         menu_->addAction(stopAction_);
@@ -87,24 +116,34 @@ void MainWindow::showContextMenu(const QPoint point)
         menu_->addAction(deleteAction_);
         menu_->addAction(databaseInfoAction_);
     }
-    else if (currentItem1 == "Tables")
+    else if (parentItem == "Indexes")
+    {
+        std::cout<<parentItem.toStdString()<<std::endl;
+        menu_->addAction(deleteIndexAction_);
+    }
+    else if (parentItem == "Edges")
+    {
+        menu_->addAction(selectEdgeAction_);
+        menu_->addAction(deleteEdgeAction_);
+    }
+    else if (currentItem == "Tables")
     {
         menu_->addAction(createTableAction_);
     }
-    else if (currentItem1 == "Edges")
+    else if (currentItem == "Edges")
     {
         menu_->addAction(createEdgeAction_);
     }
-    else if (currentItem1 == "Indexes")
+    else if (currentItem == "Indexes")
     {
         menu_->addAction(createIndexAction_);
     }
-    else if (tmpFlag)
+    else if (tableFlag)
     {
         menu_->addAction(selectAction_);
-        menu_->addAction(createTableAction_);
+        //menu_->addAction(createTableAction_);
         menu_->addAction(modifyStructAction_);
-        menu_->addAction(deleteAction_);
+        menu_->addAction(deleteTableAction_);
     }
 
     menu_->popup(ui->treeWidget->viewport()->mapToGlobal(point));
@@ -137,9 +176,40 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTre
     }
 }
 
-void MainWindow::on_deleteTableAction_triggered()
+void MainWindow::on_actionSelectEdgeTrig()
 {
-    std::cout<<"check"<<std::endl;
+    QString fromId = "";
+    QString toId = "";
+
+    for(int i = ui->treeWidget->currentItem()->child(0)->text(0).count()-1; i >=0; i-=1)
+    {
+        if(ui->treeWidget->currentItem()->child(0)->text(0).at(i) != " ") fromId += ui->treeWidget->currentItem()->child(0)->text(0).at(i); else break;
+    }
+    for(int i = ui->treeWidget->currentItem()->child(1)->text(0).count()-1; i >=0; i-=1)
+    {
+        if(ui->treeWidget->currentItem()->child(1)->text(0).at(i) != " ") toId += ui->treeWidget->currentItem()->child(1)->text(0).at(i); else break;
+    }
+
+    std::reverse(fromId.begin(), fromId.end());
+    std::reverse(toId.begin(), toId.end());
+
+    QString tmp = QString("SELECT TOP 1000 t1.id, t2.id FROM %1 t JOIN %2 t1 on t.fromid = t1.id JOIN %3 t2 on t.toid = t2.id;")
+            .arg(ui->treeWidget->currentItem()->text(0))
+            .arg(fromId)
+            .arg(toId);
+    std::cout<<tmp.toStdString()<<std::endl;
+
+    push_button_plus_clicked();
+    ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+    TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+    //if (std::string(typeid(&currentTab).name()) == std::string("TabWindow"))
+    currentTab->textEdit_->setText(tmp);
+    push_button_run_clicked();
+}
+
+void MainWindow::on_actionDeleteEdgeTrig()
+{
+    std::cout<<"delete edge"<<std::endl;
     NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
     check_error(connection);
     QString tmp = QString("DROP TABLE %1").arg(ui->treeWidget->currentItem()->text(0));
@@ -147,12 +217,35 @@ void MainWindow::on_deleteTableAction_triggered()
     nb_disconnect(connection);
 }
 
-void MainWindow::on_modifyStructAction_triggered()
+void MainWindow::on_actionDeleteIndexTrig()
+{
+    std::cout<<"delete index"<<std::endl;
+    NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
+    check_error(connection);
+    QString tmp = QString("DROP INDEX %1 [ON %2 ]")
+            .arg(ui->treeWidget->currentItem()->text(0))
+            .arg(ui->treeWidget->currentItem()->parent()->parent()->text(0));
+    std::cout<<tmp.toStdString()<<std::endl;
+    nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
+    nb_disconnect(connection);
+}
+
+void MainWindow::on_deleteTableActionTrig()
+{
+    std::cout<<"delete table"<<std::endl;
+    NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
+    check_error(connection);
+    QString tmp = QString("DROP TABLE %1").arg(ui->treeWidget->currentItem()->text(0));
+    nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
+    nb_disconnect(connection);
+}
+
+void MainWindow::on_modifyStructActionTrig()
 {
     QMessageBox::warning(this, "", "");
 }
 
-void MainWindow::on_tableSelectAction_triggered()
+void MainWindow::on_tableSelectActionTrig()
 {
     if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
     {
@@ -165,16 +258,23 @@ void MainWindow::on_tableSelectAction_triggered()
     push_button_run_clicked();
 }
 
-void MainWindow::on_actionCreateEdge_triggered()
+void MainWindow::on_actionCreateEdgeTrig()
 {
     if (currentDatabase_ != "")
     {
         CreateEdgeTab* tmp = new CreateEdgeTab(this);
         ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Create Edge"));
         tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
+
+        QStringList tables = {};
+        for (int i = 0; i < ui->treeWidget->currentItem()->parent()->child(0)->childCount(); i+=1)
+        {
+            tables.push_back(ui->treeWidget->currentItem()->parent()->child(0)->child(i)->text(0));
+        }
+        tmp->SetTables(tables);
     }
 }
-void MainWindow::on_actionCreateIndex_triggered()
+void MainWindow::on_actionCreateIndexTrig()
 {
     if (currentDatabase_ != "")
     {
@@ -183,7 +283,7 @@ void MainWindow::on_actionCreateIndex_triggered()
         tmp->SetCurrentDatabase(QString(ui->treeWidget->currentItem()->parent()->text(0)), dbList_.find(currentDatabase_)->second);
     }
 }
-void MainWindow::on_actionCreateTable_triggeted()
+void MainWindow::on_actionCreateTableTrig()
 {
     if (currentDatabase_ != "")
     {
@@ -194,7 +294,7 @@ void MainWindow::on_actionCreateTable_triggeted()
 
 }
 
-void MainWindow::on_actionDelete_database_triggered()
+void MainWindow::on_actionDeleteDatabaseTrig()
 {
     QString name = "";
     QString tmp = dbList_.find(currentDatabase_)->first;
@@ -226,23 +326,23 @@ void MainWindow::on_actionDelete_database_triggered()
     });
 }
 
-void MainWindow::on_actionCreate_database_triggered()
+void MainWindow::on_actionCreateDatabaseTrig()
 {
     connectWindow_->show();
     connectWindow_->setWindowTitle("Create database");
     connectWindow_->address_ = this->address_;
 }
-void MainWindow::on_actionOpen_database_triggered()
+void MainWindow::on_actionOpenDatabaseTrig()
 {
     openWindow_->show();
     openWindow_->setWindowTitle("Open database");
     openWindow_->address_ = this->address_;
 }
-void MainWindow::on_actionRefresh_triggered()
+void MainWindow::on_actionRefreshTrig()
 {
     filling_tree();
 }
-void MainWindow::on_actionStop_triggered()
+void MainWindow::on_actionStopTrig()
 {
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
@@ -272,7 +372,7 @@ void MainWindow::on_actionStop_triggered()
     filling_tree();
 
 }
-void MainWindow::on_actionStart_triggered()
+void MainWindow::on_actionStartTrig()
 {
     QString name = "";
     QString tmp = dbList_.find(currentDatabase_)->first;
@@ -306,7 +406,7 @@ void MainWindow::on_actionStart_triggered()
 
     filling_tree();
 }
-void MainWindow::on_actionBackup_triggered()
+void MainWindow::on_actionBackupTrig()
 {
     QString dbName;
     for (int i = 0; i<currentDatabase_.count();i+=1)
@@ -323,7 +423,7 @@ void MainWindow::on_actionBackup_triggered()
     std::cout<<backupWindow_->dbName_.toStdString()<<std::endl;
     std::cout<<backupWindow_->dbPort_.toInt()<<std::endl;
 }
-void MainWindow::on_actionRestore_triggered()
+void MainWindow::on_actionRestoreTrig()
 {
     QString name = "";
     QString tmp = dbList_.find(currentDatabase_)->first;
@@ -333,7 +433,7 @@ void MainWindow::on_actionRestore_triggered()
     restoreWindow_->Name_ = name;
     restoreWindow_->Port_ = dbList_.find(currentDatabase_)->second;
 }
-void MainWindow::on_actionDatabase_Info_triggered()
+void MainWindow::on_actionDatabaseInfoTrig()
 {
     if (currentDatabase_ != "")
     {
@@ -369,31 +469,31 @@ void MainWindow::on_actionDatabase_Info_triggered()
     }
     else QMessageBox::warning(this, "Warning", "Select database");
 }
-void MainWindow::on_actionInfo_triggered()
+void MainWindow::on_actionInfoTrig()
 {
-    on_actionDatabase_Info_triggered();
+    on_actionDatabaseInfoTrig();
 }
-void MainWindow::on_actionContacts_triggered()
+void MainWindow::on_actionContactsTrig()
 {
     QMessageBox::information(this,"Contacts", "Email: support@nitrosbase.com");
 }
 
-void MainWindow::on_actionNew_query_triggered()
+void MainWindow::on_actionNewQueryTrig()
 {
     push_button_plus_clicked();
 }
 
-void MainWindow::on_actionClose_query_triggered()
+void MainWindow::on_actionCloseQueryTrig()
 {
     ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
 }
 
-void MainWindow::on_actionRun_query_triggered()
+void MainWindow::on_actionRunQueryTrig()
 {
     push_button_run_clicked();
 }
 
-void MainWindow::on_actionOpen_triggered()
+void MainWindow::on_actionOpenTrig()
 {
     TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
 
@@ -412,7 +512,7 @@ void MainWindow::on_actionOpen_triggered()
     file.close();
 }
 
-void MainWindow::on_actionSave_triggered()
+void MainWindow::on_actionSaveTrig()
 {
     TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
 
@@ -487,6 +587,8 @@ void MainWindow::filling_tree()
     char buf[1024];
     GetUserName(buf, &size);
     userName = buf;
+
+    userName_ = userName;
 
     if (dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->currentItem()) == dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->topLevelItem(0)) && ui->treeWidget->topLevelItemCount() != 0)
     {
@@ -642,6 +744,8 @@ void MainWindow::filling_tree()
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                               + "  ( "
                                                               + (fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second)
+                                                              +" "
+                                                              + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
                                                               + " )  "
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));

@@ -17,9 +17,18 @@ void CreateEdgeTab::SetCurrentDatabase(QString name, int port)
     port_ = port;
 }
 
+void CreateEdgeTab::SetTables(QStringList & tables)
+{
+    ui->pathFrom->clear();
+    ui->pathTo->clear();
+
+    ui->pathFrom->addItems(tables);
+    ui->pathTo->addItems(tables);
+}
+
 void CreateEdgeTab::on_buttonBox_accepted()
 {
-    QString query = QString("CREATE TABLE %1 AS EDGE %2 %3 ;").arg(ui->edgeName->text()).arg(ui->pathFrom->text()).arg(ui->pathTo->text());
+    QString query = QString("CREATE TABLE %1 AS EDGE %2 %3 ;").arg(ui->edgeName->text()).arg(ui->pathFrom->currentText()).arg(ui->pathTo->currentText());
 
     std::cout<<query.toStdString()<<std::endl;
 

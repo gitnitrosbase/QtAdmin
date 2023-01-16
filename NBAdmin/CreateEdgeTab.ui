@@ -145,16 +145,10 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLineEdit" name="pathFrom">
+       <widget class="QComboBox" name="pathFrom">
         <property name="minimumSize">
          <size>
           <width>200</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
           <height>40</height>
          </size>
         </property>
@@ -162,40 +156,7 @@
          <font>
           <family>Segoe UI Semibold</family>
           <pointsize>10</pointsize>
-          <bold>true</bold>
          </font>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>30</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI Semibold</family>
-          <pointsize>16</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>x</string>
         </property>
        </widget>
       </item>
@@ -265,16 +226,10 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLineEdit" name="pathTo">
+       <widget class="QComboBox" name="pathTo">
         <property name="minimumSize">
          <size>
           <width>200</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
           <height>40</height>
          </size>
         </property>
@@ -282,40 +237,7 @@
          <font>
           <family>Segoe UI Semibold</family>
           <pointsize>10</pointsize>
-          <bold>true</bold>
          </font>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="pushButton">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>30</width>
-          <height>40</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>30</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="font">
-         <font>
-          <family>Segoe UI Semibold</family>
-          <pointsize>16</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>x</string>
         </property>
        </widget>
       </item>

@@ -57,6 +57,8 @@ public:
     ~MainWindow() = default;
 
 private slots:
+
+
     void filling_tree_slot();
 
     void showContextMenu(const QPoint point);
@@ -69,49 +71,55 @@ private slots:
 
     void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*);
 
-    void on_deleteTableAction_triggered();
+    void on_actionSelectEdgeTrig();
 
-    void on_modifyStructAction_triggered();
+    void on_actionDeleteEdgeTrig();
 
-    void on_tableSelectAction_triggered();
+    void on_actionDeleteIndexTrig();
 
-    void on_actionCreateEdge_triggered();
+    void on_deleteTableActionTrig();
 
-    void on_actionCreateIndex_triggered();
+    void on_modifyStructActionTrig();
 
-    void on_actionCreateTable_triggeted();
+    void on_tableSelectActionTrig();
 
-    void on_actionDelete_database_triggered();
+    void on_actionCreateEdgeTrig();
 
-    void on_actionCreate_database_triggered();
+    void on_actionCreateIndexTrig();
 
-    void on_actionOpen_database_triggered();
+    void on_actionCreateTableTrig();
 
-    void on_actionRefresh_triggered();
+    void on_actionDeleteDatabaseTrig();
 
-    void on_actionStop_triggered();
+    void on_actionCreateDatabaseTrig();
 
-    void on_actionStart_triggered();
+    void on_actionOpenDatabaseTrig();
 
-    void on_actionBackup_triggered();
+    void on_actionRefreshTrig();
 
-    void on_actionRestore_triggered();
+    void on_actionStopTrig();
 
-    void on_actionDatabase_Info_triggered();
+    void on_actionStartTrig();
 
-    void on_actionInfo_triggered();
+    void on_actionBackupTrig();
 
-    void on_actionContacts_triggered();
+    void on_actionRestoreTrig();
 
-    void on_actionNew_query_triggered();
+    void on_actionDatabaseInfoTrig();
 
-    void on_actionClose_query_triggered();
+    void on_actionInfoTrig();
 
-    void on_actionRun_query_triggered();
+    void on_actionContactsTrig();
 
-    void on_actionOpen_triggered();
+    void on_actionNewQueryTrig();
 
-    void on_actionSave_triggered();
+    void on_actionCloseQueryTrig();
+
+    void on_actionRunQueryTrig();
+
+    void on_actionOpenTrig();
+
+    void on_actionSaveTrig();
 
 private:
     void setAddress();
@@ -127,6 +135,7 @@ private:
     void filling_tree();
 
 private:
+    QString userName_ = "";
     QString address_ = "http://127.0.0.1:8008/api3";
     std::map<QString, int> dbList_;
     Ui::MainWindow *ui;
@@ -166,5 +175,7 @@ private:
     QAction * deleteTableAction_ = nullptr;
     QAction * deleteEdgeAction_ = nullptr;
     QAction * deleteIndexAction_ = nullptr;
+    QAction * selectEdgeAction_ = nullptr;
+
     QList<QTreeWidgetItem*> tables_;
 };

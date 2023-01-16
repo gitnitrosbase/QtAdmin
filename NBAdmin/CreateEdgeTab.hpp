@@ -2,6 +2,8 @@
 
 #include <QMessageBox>
 #include <QWidget>
+#include <QStringList>
+
 #include "ui_CreateEdgeTab.h"
 #include "nb-samples.h"
 
@@ -19,6 +21,8 @@ public:
 
     void SetCurrentDatabase(QString name, int port);
 
+    void SetTables(QStringList & tables);
+
 private slots:
     void on_buttonBox_accepted();
 
@@ -28,4 +32,5 @@ private:
     Ui::CreateEdgeTab* ui;
     QString tableName_ = "";
     int port_ = 0;
+    QStringList tables_ = {};
 };
