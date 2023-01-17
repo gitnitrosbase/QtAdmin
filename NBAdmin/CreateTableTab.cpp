@@ -61,7 +61,7 @@ void CreateTableTab::addRow()
             QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
             for (auto item : tables)
             {
-                FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
+                if (item.toObject().find("type")->toInt() == 2) FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
             }
             //FKTableComboBox->insertItem(0, "none");
             FKTableComboBox->setCurrentIndex(0);
@@ -80,18 +80,12 @@ void CreateTableTab::addRow()
 
     ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
-    connect(nameLineEdit, SIGNAL(returnPressed()), this, SLOT(checkToAddRow()));
     connect(rmPushButton, SIGNAL(clicked()), this, SLOT(rmRow()));
 }
 
 void CreateTableTab::rmRow()
 {
     if (ui->tableWidget->rowCount() > 1) ui->tableWidget->removeRow(ui->tableWidget->currentRow());
-}
-
-void CreateTableTab::checkToAddRow()
-{
-    if (ui->tableWidget->currentRow() >= ui->tableWidget->rowCount()-1) addRow();
 }
 
 void CreateTableTab::on_pushButton_2_clicked()
@@ -139,3 +133,9 @@ void CreateTableTab::on_pushButton_2_clicked()
     check_error(connection);
     nb_disconnect(connection);
 }
+
+void CreateTableTab::on_addColumnButton_clicked()
+{
+    addRow();
+}
+

@@ -30,15 +30,12 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     createTableAction_ = new QAction(trUtf8("Create table"), this);
     createEdgeAction_ = new QAction(trUtf8("Create edge"), this);
     createIndexAction_ = new QAction(trUtf8("Create index"), this);
-
     selectAction_ = new QAction(trUtf8("Select * top 1000"), this);
-    modifyStructAction_ = new QAction(trUtf8("Modify structure"), this);
-
     deleteTableAction_ = new QAction(trUtf8("Delete table"), this);
     deleteIndexAction_ = new QAction(trUtf8("Delete Index"), this);
     deleteEdgeAction_ = new QAction(trUtf8("Delete Edge"), this);
-
     selectEdgeAction_ = new QAction(trUtf8("Select * top 1000"), this);
+    modifyTableAction_ = new QAction(trUtf8("Modify Struct"), this);
 
     connect(refreshAction_, &QAction::triggered, this, &MainWindow::filling_tree_slot);
     connect(stopAction_, &QAction::triggered, this, &MainWindow::on_actionStopTrig);
@@ -51,7 +48,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(createEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionCreateEdgeTrig);
     connect(createIndexAction_, &QAction::triggered, this, &MainWindow::on_actionCreateIndexTrig);
     connect(selectAction_, &QAction::triggered, this, &MainWindow::on_tableSelectActionTrig);
-    connect(modifyStructAction_, &QAction::triggered, this, &MainWindow::on_modifyStructActionTrig);
+    connect(modifyTableAction_, &QAction::triggered, this, &MainWindow::on_modifyTableActionTrig);
     connect(deleteTableAction_, &QAction::triggered, this, &MainWindow::on_deleteTableActionTrig);
     connect(deleteEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteEdgeTrig);
     connect(deleteIndexAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteIndexTrig);
@@ -141,8 +138,8 @@ void MainWindow::showContextMenu(const QPoint point)
     else if (tableFlag)
     {
         menu_->addAction(selectAction_);
-        //menu_->addAction(createTableAction_);
-        menu_->addAction(modifyStructAction_);
+        menu_->addAction(createTableAction_);
+        menu_->addAction(modifyTableAction_);
         menu_->addAction(deleteTableAction_);
     }
 
@@ -222,11 +219,12 @@ void MainWindow::on_actionDeleteIndexTrig()
     std::cout<<"delete index"<<std::endl;
     NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
     check_error(connection);
-    QString tmp = QString("DROP INDEX %1 [ON %2 ]")
+    QString tmp = QString("DROP INDEX %1 ON %2;")
             .arg(ui->treeWidget->currentItem()->text(0))
             .arg(ui->treeWidget->currentItem()->parent()->parent()->text(0));
     std::cout<<tmp.toStdString()<<std::endl;
     nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
+    check_error(connection);
     nb_disconnect(connection);
 }
 
@@ -240,9 +238,17 @@ void MainWindow::on_deleteTableActionTrig()
     nb_disconnect(connection);
 }
 
-void MainWindow::on_modifyStructActionTrig()
+void MainWindow::on_modifyTableActionTrig()
 {
-    QMessageBox::warning(this, "", "");
+    if (currentDatabase_ != "")
+    {
+        ModifyTableTab* tmp = new ModifyTableTab();
+        ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Modify"));
+        tmp->currentTable_ = ui->treeWidget->currentItem()->text(0);
+        tmp->port_ = dbList_.find(currentDatabase_)->second;
+        ui->tabWidget->setCurrentWidget(tmp);
+        tmp->printFromdb();
+    }
 }
 
 void MainWindow::on_tableSelectActionTrig()
@@ -291,7 +297,6 @@ void MainWindow::on_actionCreateTableTrig()
         ui->tabWidget->addTab(tmp, QString("Create Table"));
         tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
     }
-
 }
 
 void MainWindow::on_actionDeleteDatabaseTrig()

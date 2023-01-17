@@ -44,8 +44,6 @@ public slots:
 
     void rmRow();
 
-    void checkToAddRow();
-
     void on_pushButton_2_clicked();
 
 private:
@@ -68,4 +66,6 @@ public:
         "rowversion",
         "decimal"
     };
+private slots:
+    void on_addColumnButton_clicked();
 };

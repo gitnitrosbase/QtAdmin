@@ -40,6 +40,7 @@
 #include "CreateTableTab.hpp"
 #include "CreateEdgeTab.hpp"
 #include "CreateIndexTab.hpp"
+#include "ModifyTableTab.hpp"
 
 #include "ui_MainWindow.h"
 
@@ -57,7 +58,6 @@ public:
     ~MainWindow() = default;
 
 private slots:
-
 
     void filling_tree_slot();
 
@@ -79,7 +79,7 @@ private slots:
 
     void on_deleteTableActionTrig();
 
-    void on_modifyStructActionTrig();
+    void on_modifyTableActionTrig();
 
     void on_tableSelectActionTrig();
 
@@ -171,7 +171,7 @@ private:
     QAction * createEdgeAction_ = nullptr;
     QAction * createIndexAction_ = nullptr;
     QAction * selectAction_ = nullptr;
-    QAction * modifyStructAction_ = nullptr;
+    QAction * modifyTableAction_ = nullptr;
     QAction * deleteTableAction_ = nullptr;
     QAction * deleteEdgeAction_ = nullptr;
     QAction * deleteIndexAction_ = nullptr;
