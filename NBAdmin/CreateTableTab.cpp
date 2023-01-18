@@ -7,6 +7,7 @@ CreateTableTab::CreateTableTab(QWidget* parent) : QWidget(parent), ui(new Ui::Cr
 
     ui->tableWidget->setColumnCount(headerTable.count());
     ui->tableWidget->setHorizontalHeaderLabels(headerTable);
+
 }
 CreateTableTab::~CreateTableTab()
 {
@@ -25,6 +26,7 @@ void CreateTableTab::addRow()
     QLineEdit* nameLineEdit = new QLineEdit();
     QComboBox* typesComboBox = new QComboBox();
     QComboBox* FKTableComboBox = new QComboBox();
+
     QCheckBox* PKCheckBox = new QCheckBox();
     QCheckBox* FKCheckBox = new QCheckBox();
     QCheckBox* identityCheckBox = new QCheckBox();

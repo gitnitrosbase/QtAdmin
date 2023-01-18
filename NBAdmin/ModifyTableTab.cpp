@@ -19,8 +19,6 @@ void ModifyTableTab::printFromdb()
     ui->lineEdit->setText(currentTable_);
     ui->lineEdit->setReadOnly(true);
 
-    std::cout<<currentTable_.toStdString()<<std::endl;
-
     QJsonObject tableNames;
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
@@ -90,20 +88,21 @@ void ModifyTableTab::printFromdb()
                         notnullCheckBox->setEnabled(false);
                         //ui->tableWidget->resizeColumnsToContents();
                     }
-
                 }
             }
+            fieldCount_ = ui->tableWidget->rowCount();
+            std::cout<<"row count = "<<ui->tableWidget->rowCount()<<std::endl;
+            std::cout<<"fieldCount_ = "<<fieldCount_<<std::endl;
         }
         reply->deleteLater();
     });
-    fieldCount_ = ui->tableWidget->rowCount();
 }
 
 void ModifyTableTab::on_saveButton_clicked()
 {
     QString queryStr = "";
 
-    for (int i = fieldCount_ - 1; i < ui->tableWidget->rowCount(); i+=1)
+    for (int i = fieldCount_; i < ui->tableWidget->rowCount(); i+=1)
     {
         QString columnName = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
         QString typeName = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText();
@@ -114,7 +113,6 @@ void ModifyTableTab::on_saveButton_clicked()
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
         //QString comment = ui->tableWidget->itemAt(i, 7)->text();
-        std::cout<<columnName.toStdString()<<typeName.toStdString()<<checkPK<<checkFK<<checkIdentity<<checkNullable<<std::endl;
 
         QString subQueryStr = QString("ALTER TABLE %1 ADD %2").arg(currentTable_).arg(columnName);
 
@@ -135,19 +133,19 @@ void ModifyTableTab::on_saveButton_clicked()
 
         queryStr += subQueryStr;
         queryStr += ";";
-
-
-        ui->tableWidget->clear();
-        printFromdb();
-
-        std::cout<<queryStr.toStdString()<<std::endl;
     }
 
 
-//    NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
-//    nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
-//    check_error(connection);
-//    nb_disconnect(connection);
+    std::cout<<queryStr.toStdString()<<std::endl;
+
+    NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
+    nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
+    check_error(connection);
+    nb_disconnect(connection);
+
+    ui->tableWidget->clear();
+    ui->tableWidget->setRowCount(0);
+    printFromdb();
 }
 
 void ModifyTableTab::addRow()
@@ -208,7 +206,6 @@ void ModifyTableTab::addRow()
 
     ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
-    connect(nameLineEdit, SIGNAL(returnPressed()), this, SLOT(checkToAddRow()));
     connect(rmPushButton, SIGNAL(clicked()), this, SLOT(rmRow()));
 }
 
