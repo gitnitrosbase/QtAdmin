@@ -96,6 +96,8 @@ void CreateTableTab::on_pushButton_2_clicked()
     queryStr += ui->lineEdit->text();
     queryStr += "( ";
 
+    int identityFlag = 0;
+
     for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
     {
         QString columnName = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
@@ -120,8 +122,20 @@ void CreateTableTab::on_pushButton_2_clicked()
             return;
         }
 
+        int columnSeed = ui->SeedLineEdit->text().toInt();
+        int columnIdentity = ui->SeedLineEdit->text().toInt();
+        if (columnSeed <= 0 && columnIdentity <= 0)
+        {
+            QMessageBox::warning(this, "Warning", "Please, enter current database port!");
+            return;
+        }
+
         if (checkPK) subQueryStr+= "PRIMARY KEY NOT NULL ";
-        if (checkIdentity && (typeName == "int" || typeName == "bigint")) subQueryStr+= "IDENTITY (1,2) ";
+        if (checkIdentity && (typeName == "int" || typeName == "bigint"))
+        {
+            subQueryStr+= QString("IDENTITY (%1,%2) ").arg(columnSeed).arg(columnIdentity);
+            identityFlag+=1;
+        }
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
         if (ui->tableWidget->rowCount()-1 != i) subQueryStr+=" , ";
@@ -129,6 +143,12 @@ void CreateTableTab::on_pushButton_2_clicked()
     }
 
     queryStr += ");";
+
+    if (identityFlag > 1)
+    {
+        QMessageBox::warning(this, "Warning", "Only one identity column is allowed per table");
+        return;
+    }
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());

@@ -186,7 +186,7 @@ QPushButton:hover {
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="dep/res.qrc">
               <normaloff>:/images/RunbtnPic.svg</normaloff>:/images/RunbtnPic.svg</iconset>
             </property>
            </widget>
@@ -228,7 +228,7 @@ QPushButton:hover {
              <string/>
             </property>
             <property name="icon">
-             <iconset resource="res.qrc">
+             <iconset resource="dep/res.qrc">
               <normaloff>:/images/AddTab.svg</normaloff>:/images/AddTab.svg</iconset>
             </property>
            </widget>
@@ -332,7 +332,7 @@ color: rgb(255, 255, 255);
     <property name="title">
      <string>Database</string>
     </property>
-    <addaction name="actionCreate_database"/>
+    <addaction name="on_actionCreateTableTrig"/>
     <addaction name="actionOpen_database"/>
     <addaction name="actionRefresh"/>
     <addaction name="actionStop"/>
@@ -386,10 +386,7 @@ color: rgb(255, 255, 255);
    <addaction name="menuQuery"/>
    <addaction name="menuHelp"/>
   </widget>
-  <action name="actionCreate_database">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
+  <action name="on_actionCreateTableTrig">
    <property name="checked">
     <bool>false</bool>
    </property>
@@ -514,7 +511,7 @@ color: rgb(255, 255, 255);
   </action>
  </widget>
  <resources>
-  <include location="res.qrc"/>
+  <include location="dep/res.qrc"/>
  </resources>
  <connections/>
 </ui>

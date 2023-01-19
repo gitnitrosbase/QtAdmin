@@ -71,6 +71,8 @@ private slots:
 
     void on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*);
 
+    void on_actionCreateDBQueryTrig();
+
     void on_actionSelectEdgeTrig();
 
     void on_actionDeleteEdgeTrig();
@@ -91,35 +93,37 @@ private slots:
 
     void on_actionDeleteDatabaseTrig();
 
-    void on_actionCreateDatabaseTrig();
+//----------------------------------
 
-    void on_actionOpenDatabaseTrig();
+    void on_on_actionCreateTableTrig_triggered();
 
-    void on_actionRefreshTrig();
+    void on_actionOpen_database_triggered();
 
-    void on_actionStopTrig();
+    void on_actionRefresh_triggered();
 
-    void on_actionStartTrig();
+    void on_actionStop_triggered();
 
-    void on_actionBackupTrig();
+    void on_actionStart_triggered();
 
-    void on_actionRestoreTrig();
+    void on_actionBackup_triggered();
 
-    void on_actionDatabaseInfoTrig();
+    void on_actionRestore_triggered();
 
-    void on_actionInfoTrig();
+    void on_actionDatabase_Info_triggered();
 
-    void on_actionContactsTrig();
+    void on_actionNew_query_triggered();
 
-    void on_actionNewQueryTrig();
+    void on_actionClose_query_triggered();
 
-    void on_actionCloseQueryTrig();
+    void on_actionRun_query_triggered();
 
-    void on_actionRunQueryTrig();
+    void on_actionOpen_triggered();
 
-    void on_actionOpenTrig();
+    void on_actionSave_triggered();
 
-    void on_actionSaveTrig();
+    void on_actionInfo_triggered();
+
+    void on_actionContacts_triggered();
 
 private:
     void setAddress();
@@ -176,6 +180,7 @@ private:
     QAction * deleteEdgeAction_ = nullptr;
     QAction * deleteIndexAction_ = nullptr;
     QAction * selectEdgeAction_ = nullptr;
+    QAction * createDBQueryAction_ = nullptr;
 
     QList<QTreeWidgetItem*> tables_;
 };

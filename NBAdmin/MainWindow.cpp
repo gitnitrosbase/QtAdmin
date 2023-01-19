@@ -27,23 +27,24 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     restoreAction_ = new QAction(trUtf8("Restore"), this);
     deleteAction_ = new QAction(trUtf8("Delete"), this);
     databaseInfoAction_ = new QAction(trUtf8("Database info"), this);
-    createTableAction_ = new QAction(trUtf8("Create table"), this);
-    createEdgeAction_ = new QAction(trUtf8("Create edge"), this);
-    createIndexAction_ = new QAction(trUtf8("Create index"), this);
+    createTableAction_ = new QAction(trUtf8("Create"), this);
+    createEdgeAction_ = new QAction(trUtf8("Create"), this);
+    createIndexAction_ = new QAction(trUtf8("Create"), this);
     selectAction_ = new QAction(trUtf8("Select * top 1000"), this);
     deleteTableAction_ = new QAction(trUtf8("Delete table"), this);
     deleteIndexAction_ = new QAction(trUtf8("Delete Index"), this);
     deleteEdgeAction_ = new QAction(trUtf8("Delete Edge"), this);
     selectEdgeAction_ = new QAction(trUtf8("Select * top 1000"), this);
     modifyTableAction_ = new QAction(trUtf8("Modify Struct"), this);
+    createDBQueryAction_ = new QAction(trUtf8("Create Table"), this);
 
     connect(refreshAction_, &QAction::triggered, this, &MainWindow::filling_tree_slot);
-    connect(stopAction_, &QAction::triggered, this, &MainWindow::on_actionStopTrig);
-    connect(startAction_, &QAction::triggered, this, &MainWindow::on_actionStartTrig);
-    connect(backupAction_, &QAction::triggered, this, &MainWindow::on_actionBackupTrig);
-    connect(restoreAction_, &QAction::triggered, this, &MainWindow::on_actionRestoreTrig);
+    connect(stopAction_, &QAction::triggered, this, &MainWindow::on_actionStop_triggered);
+    connect(startAction_, &QAction::triggered, this, &MainWindow::on_actionStart_triggered);
+    connect(backupAction_, &QAction::triggered, this, &MainWindow::on_actionBackup_triggered);
+    connect(restoreAction_, &QAction::triggered, this, &MainWindow::on_actionRestore_triggered);
     connect(deleteAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteDatabaseTrig);
-    connect(databaseInfoAction_, &QAction::triggered, this, &MainWindow::on_actionDatabaseInfoTrig);
+    connect(databaseInfoAction_, &QAction::triggered, this, &MainWindow::on_actionOpen_database_triggered);
     connect(createTableAction_, &QAction::triggered, this, &MainWindow::on_actionCreateTableTrig);
     connect(createEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionCreateEdgeTrig);
     connect(createIndexAction_, &QAction::triggered, this, &MainWindow::on_actionCreateIndexTrig);
@@ -53,6 +54,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(deleteEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteEdgeTrig);
     connect(deleteIndexAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteIndexTrig);
     connect(selectEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionSelectEdgeTrig);
+    connect(createDBQueryAction_, &QAction::triggered, this, &MainWindow::on_actionCreateDBQueryTrig);
  }
 
 void MainWindow::filling_tree_slot()
@@ -138,7 +140,7 @@ void MainWindow::showContextMenu(const QPoint point)
     else if (tableFlag)
     {
         menu_->addAction(selectAction_);
-        menu_->addAction(createTableAction_);
+        menu_->addAction(createDBQueryAction_);
         menu_->addAction(modifyTableAction_);
         menu_->addAction(deleteTableAction_);
     }
@@ -170,6 +172,63 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTre
     {
         ui->label_2->setText(dbName);
         currentDatabase_ = dbName;
+    }
+}
+
+void MainWindow::on_actionCreateDBQueryTrig()
+{
+    if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
+    {
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 8;
+        obj["port"] = dbList_.find(currentDatabase_)->second;
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        connect(reply, &QNetworkReply::finished, [=]()
+        {
+            QString finalQuery = QString("CREATE TABLE %1 (").arg(ui->treeWidget->currentItem()->text(0));
+            if(reply->error() == QNetworkReply::NoError)
+            {
+                QString strReply = reply->readAll();
+                QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
+
+                for (auto item : tables)
+                {
+                    if (ui->treeWidget->currentItem()->text(0) == item.toObject().find("tablename")->toString())
+                    {
+
+                        for (auto fields : item.toObject().find("fields")->toArray())
+                        {
+                            QString query = "\n\t";
+                            query += QString(fields.toObject().find("name")->toString() + " ");
+                            query += QString(fieldsTypes_.at(fields.toObject().find("type")->toInt()) + " ").toUpper();
+                            if(fields.toObject().find("subtype")->toInt() == 1) query += "PRIMARY KEY NOT NULL";
+                            if (fields.toObject().find("linktable")->toString() != "")
+                            {
+                                query += QString("FOREIGN KEY(%1) REFERENCES %2").arg(ui->treeWidget->currentItem()->text(0)).arg(fields.toObject().find("linktable")->toString());
+                            }
+                            if (fields.toObject().find("seed")->toInt() != 0 && fields.toObject().find("increment")->toInt() != 0) query += QString("IDENTITY (%1,%2)").arg(fields.toObject().find("seed")->toInt()).arg(fields.toObject().find("increment")->toInt());
+                            if(fields.toObject().find("nullable")->toInt() == 0) query += "NOT NULL";
+                            query += ",";
+                            finalQuery+=query;
+                        }
+                        finalQuery.resize(finalQuery.size()-1);
+                        finalQuery+="\n);";
+                    }
+                }
+                push_button_plus_clicked();
+                ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+                TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+                //if (std::string(typeid(&currentTab).name()) == std::string("TabWindow"))
+                currentTab->textEdit_->setText(finalQuery);
+            }
+            reply->deleteLater();
+        });
     }
 }
 
@@ -329,210 +388,6 @@ void MainWindow::on_actionDeleteDatabaseTrig()
         }
         reply->deleteLater();
     });
-}
-
-void MainWindow::on_actionCreateDatabaseTrig()
-{
-    connectWindow_->show();
-    connectWindow_->setWindowTitle("Create database");
-    connectWindow_->address_ = this->address_;
-}
-void MainWindow::on_actionOpenDatabaseTrig()
-{
-    openWindow_->show();
-    openWindow_->setWindowTitle("Open database");
-    openWindow_->address_ = this->address_;
-}
-void MainWindow::on_actionRefreshTrig()
-{
-    filling_tree();
-}
-void MainWindow::on_actionStopTrig()
-{
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    const QUrl url(address_);
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    QJsonObject obj;
-    obj["cmd"] = 4;
-    obj["port"] = dbList_.find(currentDatabase_)->second;
-    QJsonDocument doc(obj);
-    QByteArray data = doc.toJson();
-    QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
-    {
-        if (reply->error() == QNetworkReply::NoError)
-        {
-            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-
-            QFile file("answerstartstop.txt");
-            file.open(QIODevice::ReadWrite);
-            file.write(reply_doc.toJson());
-            file.close();
-
-        }
-        reply->deleteLater();
-    });
-
-    filling_tree();
-
-}
-void MainWindow::on_actionStartTrig()
-{
-    QString name = "";
-    QString tmp = dbList_.find(currentDatabase_)->first;
-    for (auto item : tmp) if (item != " ") name += item; else break;
-
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    const QUrl url(address_);
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    QJsonObject obj;
-    obj["cmd"] = 1;
-    obj["port"] = dbList_.find(currentDatabase_)->second;
-    obj["dbname"] = name;
-    obj["dbpath"] = "";
-    QJsonDocument doc(obj);
-    QByteArray data = doc.toJson();
-    QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
-    {
-        if (reply->error() == QNetworkReply::NoError)
-        {
-            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-
-            QFile file("answerstartstop.txt");
-            file.open(QIODevice::ReadWrite);
-            file.write(reply_doc.toJson());
-            file.close();
-        }
-        reply->deleteLater();
-    });
-
-    filling_tree();
-}
-void MainWindow::on_actionBackupTrig()
-{
-    QString dbName;
-    for (int i = 0; i<currentDatabase_.count();i+=1)
-    {
-        if (currentDatabase_.at(i) != " ") dbName+=currentDatabase_.at(i);
-        else break;
-    }
-
-    backupWindow_->show();
-    backupWindow_->setWindowTitle("Backup");
-    backupWindow_->address_ = this->address_;
-    backupWindow_->dbName_ = dbName;
-    backupWindow_->dbPort_ = QString::number(dbList_.find(currentDatabase_)->second);
-    std::cout<<backupWindow_->dbName_.toStdString()<<std::endl;
-    std::cout<<backupWindow_->dbPort_.toInt()<<std::endl;
-}
-void MainWindow::on_actionRestoreTrig()
-{
-    QString name = "";
-    QString tmp = dbList_.find(currentDatabase_)->first;
-    for (auto item : tmp) if (item != " ") name += item; else break;
-
-    restoreWindow_->show();
-    restoreWindow_->Name_ = name;
-    restoreWindow_->Port_ = dbList_.find(currentDatabase_)->second;
-}
-void MainWindow::on_actionDatabaseInfoTrig()
-{
-    if (currentDatabase_ != "")
-    {
-        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        const QUrl url(address_);
-        QNetworkRequest request(url);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-        QJsonObject obj;
-        obj["cmd"] = 8;
-        obj["port"] = dbList_.find(currentDatabase_)->second;
-        QJsonDocument doc(obj);
-        QByteArray data = doc.toJson();
-        QNetworkReply *reply = mgr->post(request, data);
-        connect(reply, &QNetworkReply::finished, [=]()
-        {
-            if (reply->error() == QNetworkReply::NoError)
-            {
-                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-                QString output;
-                output+="Name: ";
-                output+=currentDatabase_;
-                output+="\nPort: ";
-                int port = dbList_[currentDatabase_];
-                output+=QString::number(port);
-                output+="\nVersion Database: ";
-                QJsonObject reply_obj = reply_doc.object();
-                QString str = reply_obj.find("version").value().toString();
-                output+=str;
-                QMessageBox::information(this, "Database info", output);
-            }
-            reply->deleteLater();
-        });
-    }
-    else QMessageBox::warning(this, "Warning", "Select database");
-}
-void MainWindow::on_actionInfoTrig()
-{
-    on_actionDatabaseInfoTrig();
-}
-void MainWindow::on_actionContactsTrig()
-{
-    QMessageBox::information(this,"Contacts", "Email: support@nitrosbase.com");
-}
-
-void MainWindow::on_actionNewQueryTrig()
-{
-    push_button_plus_clicked();
-}
-
-void MainWindow::on_actionCloseQueryTrig()
-{
-    ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
-}
-
-void MainWindow::on_actionRunQueryTrig()
-{
-    push_button_run_clicked();
-}
-
-void MainWindow::on_actionOpenTrig()
-{
-    TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-
-    QString path = QFileDialog::getOpenFileName(this, tr("Open"), "C:/");
-    QFile file(path);
-    file.open(QIODevice::ReadWrite);
-    if(file.isOpen())
-    {
-        QString tmp = file.readAll();
-        currentTab->setText(tmp);
-    }
-    else
-    {
-        QMessageBox::warning(this, "Warning", "Could not open the file");
-    }
-    file.close();
-}
-
-void MainWindow::on_actionSaveTrig()
-{
-    TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-
-    QString path = QFileDialog::getSaveFileName(this, tr("Save"), "C:/");;
-    QFile file(path);
-    file.open(QIODevice::ReadWrite);
-    if(file.isOpen())
-    {
-        file.write(currentTab->textFromTextEdit().toUtf8());
-    }
-    else
-    {
-        QMessageBox::warning(this, "Warning", "Could not open the file");
-    }
-    file.close();
 }
 
 void MainWindow::setAddress()
@@ -770,3 +625,230 @@ void MainWindow::filling_tree()
         reply->deleteLater();
     });
 }
+
+void MainWindow::on_on_actionCreateTableTrig_triggered()
+{
+    connectWindow_->show();
+    connectWindow_->setWindowTitle("Create database");
+    connectWindow_->address_ = this->address_;
+}
+
+
+void MainWindow::on_actionOpen_database_triggered()
+{
+    openWindow_->show();
+    openWindow_->setWindowTitle("Open database");
+    openWindow_->address_ = this->address_;
+}
+
+
+void MainWindow::on_actionRefresh_triggered()
+{
+    filling_tree();
+}
+
+
+void MainWindow::on_actionStop_triggered()
+{
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    const QUrl url(address_);
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonObject obj;
+    obj["cmd"] = 4;
+    obj["port"] = dbList_.find(currentDatabase_)->second;
+    QJsonDocument doc(obj);
+    QByteArray data = doc.toJson();
+    QNetworkReply *reply = mgr->post(request, data);
+    connect(reply, &QNetworkReply::finished, [=]()
+    {
+        if (reply->error() == QNetworkReply::NoError)
+        {
+            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+
+            QFile file("answerstartstop.txt");
+            file.open(QIODevice::ReadWrite);
+            file.write(reply_doc.toJson());
+            file.close();
+
+        }
+        reply->deleteLater();
+    });
+
+    filling_tree();
+}
+
+
+void MainWindow::on_actionStart_triggered()
+{
+    QString name = "";
+    QString tmp = dbList_.find(currentDatabase_)->first;
+    for (auto item : tmp) if (item != " ") name += item; else break;
+
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    const QUrl url(address_);
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonObject obj;
+    obj["cmd"] = 1;
+    obj["port"] = dbList_.find(currentDatabase_)->second;
+    obj["dbname"] = name;
+    obj["dbpath"] = "";
+    QJsonDocument doc(obj);
+    QByteArray data = doc.toJson();
+    QNetworkReply *reply = mgr->post(request, data);
+    connect(reply, &QNetworkReply::finished, [=]()
+    {
+        if (reply->error() == QNetworkReply::NoError)
+        {
+            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+
+            QFile file("answerstartstop.txt");
+            file.open(QIODevice::ReadWrite);
+            file.write(reply_doc.toJson());
+            file.close();
+        }
+        reply->deleteLater();
+    });
+
+    filling_tree();
+}
+
+
+void MainWindow::on_actionBackup_triggered()
+{
+    QString dbName;
+    for (int i = 0; i<currentDatabase_.count();i+=1)
+    {
+        if (currentDatabase_.at(i) != " ") dbName+=currentDatabase_.at(i);
+        else break;
+    }
+
+    backupWindow_->show();
+    backupWindow_->setWindowTitle("Backup");
+    backupWindow_->address_ = this->address_;
+    backupWindow_->dbName_ = dbName;
+    backupWindow_->dbPort_ = QString::number(dbList_.find(currentDatabase_)->second);
+    std::cout<<backupWindow_->dbName_.toStdString()<<std::endl;
+    std::cout<<backupWindow_->dbPort_.toInt()<<std::endl;
+}
+
+
+void MainWindow::on_actionRestore_triggered()
+{
+    QString name = "";
+    QString tmp = dbList_.find(currentDatabase_)->first;
+    for (auto item : tmp) if (item != " ") name += item; else break;
+
+    restoreWindow_->show();
+    restoreWindow_->Name_ = name;
+    restoreWindow_->Port_ = dbList_.find(currentDatabase_)->second;
+}
+
+
+void MainWindow::on_actionDatabase_Info_triggered()
+{
+    if (currentDatabase_ != "")
+    {
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 8;
+        obj["port"] = dbList_.find(currentDatabase_)->second;
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        connect(reply, &QNetworkReply::finished, [=]()
+        {
+            if (reply->error() == QNetworkReply::NoError)
+            {
+                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+                QString output;
+                output+="Name: ";
+                output+=currentDatabase_;
+                output+="\nPort: ";
+                int port = dbList_[currentDatabase_];
+                output+=QString::number(port);
+                output+="\nVersion Database: ";
+                QJsonObject reply_obj = reply_doc.object();
+                QString str = reply_obj.find("version").value().toString();
+                output+=str;
+                QMessageBox::information(this, "Database info", output);
+            }
+            reply->deleteLater();
+        });
+    }
+    else QMessageBox::warning(this, "Warning", "Select database");
+}
+
+
+void MainWindow::on_actionNew_query_triggered()
+{
+    push_button_plus_clicked();
+}
+
+
+void MainWindow::on_actionClose_query_triggered()
+{
+    ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
+}
+
+
+void MainWindow::on_actionRun_query_triggered()
+{
+    push_button_run_clicked();
+}
+
+
+void MainWindow::on_actionOpen_triggered()
+{
+    TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+
+    QString path = QFileDialog::getOpenFileName(this, tr("Open"), "C:/");
+    QFile file(path);
+    file.open(QIODevice::ReadWrite);
+    if(file.isOpen())
+    {
+        QString tmp = file.readAll();
+        currentTab->setText(tmp);
+    }
+    else
+    {
+        QMessageBox::warning(this, "Warning", "Could not open the file");
+    }
+    file.close();
+}
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
+
+    QString path = QFileDialog::getSaveFileName(this, tr("Save"), "C:/");;
+    QFile file(path);
+    file.open(QIODevice::ReadWrite);
+    if(file.isOpen())
+    {
+        file.write(currentTab->textFromTextEdit().toUtf8());
+    }
+    else
+    {
+        QMessageBox::warning(this, "Warning", "Could not open the file");
+    }
+    file.close();
+}
+
+
+void MainWindow::on_actionInfo_triggered()
+{
+    on_actionDatabase_Info_triggered();
+}
+
+
+void MainWindow::on_actionContacts_triggered()
+{
+    QMessageBox::information(this,"Contacts", "Email: support@nitrosbase.com");
+}
+

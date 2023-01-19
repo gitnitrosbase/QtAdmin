@@ -89,6 +89,7 @@ void ModifyTableTab::printFromdb()
                         //ui->tableWidget->resizeColumnsToContents();
                     }
                 }
+                break;
             }
             fieldCount_ = ui->tableWidget->rowCount();
             std::cout<<"row count = "<<ui->tableWidget->rowCount()<<std::endl;

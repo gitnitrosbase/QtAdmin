@@ -21,8 +21,34 @@ void OpenWindow::OpenDatabase()
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QJsonObject obj;
     obj["cmd"] = 1;
-    obj["port"] = ui->InputPort->text().toInt();
-    obj["dbname"] = ui->InputName->text().toStdString().c_str();
+
+    QString dbname = ui->InputName->text().toStdString().c_str();
+    if (dbname == "")
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter correct database name!");
+        return;
+    }
+    else
+    {
+        auto nullIterAlp = alp_.find('!');
+        for (auto symbol : dbname)
+        {
+            if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
+            {
+                QMessageBox::warning(this, "Warning", "Please, enter correct database name!");
+                return;
+            }
+        }
+    }
+
+    int dbport = ui->InputPort->text().toInt();
+    if (dbport <= 0)
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter current database port!");
+        return;
+    }
+    obj["port"] = dbport;
+    obj["dbname"] = dbname;
     obj["dbpath"] = ui->InputPath->text().toStdString().c_str();
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
