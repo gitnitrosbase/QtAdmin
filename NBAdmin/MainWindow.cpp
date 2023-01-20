@@ -327,9 +327,11 @@ void MainWindow::on_actionCreateEdgeTrig()
 {
     if (currentDatabase_ != "")
     {
-        CreateEdgeTab* tmp = new CreateEdgeTab(this);
-        ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Create Edge"));
+        CreateEdgeTab* tmp = new CreateEdgeTab();
+        tmp->setWindowTitle("Create edge");
         tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
+        tmp->show();
+        tmp->setWindowIcon(QIcon(":/images/favicon.ico"));
 
         QStringList tables = {};
         for (int i = 0; i < ui->treeWidget->currentItem()->parent()->child(0)->childCount(); i+=1)
@@ -346,6 +348,7 @@ void MainWindow::on_actionCreateIndexTrig()
         CreateIndexTab* tmp = new CreateIndexTab(this);
         ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Create Index"));
         tmp->SetCurrentDatabase(QString(ui->treeWidget->currentItem()->parent()->text(0)), dbList_.find(currentDatabase_)->second);
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
     }
 }
 void MainWindow::on_actionCreateTableTrig()

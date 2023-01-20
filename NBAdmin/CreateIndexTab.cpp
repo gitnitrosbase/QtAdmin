@@ -5,13 +5,54 @@ CreateIndexTab::CreateIndexTab(QWidget* parent) : QWidget(parent), ui(new Ui::Cr
     ui->setupUi(this);
     ui->tableWidget->setColumnCount(2);
     ui->tableWidget->setHorizontalHeaderLabels(QStringList{"Column", ""});
-    on_pushButton_clicked();
 }
 void CreateIndexTab::SetCurrentDatabase(QString name, int port)
 {
     ui->label->setText("Create Index in " + name);
     tableName_ = name;
     port_ = port;
+
+    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+    const QUrl url(address_);
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    QJsonObject obj;
+    obj["cmd"] = 8;
+    obj["port"] = port_;
+    QJsonDocument doc(obj);
+    QByteArray data = doc.toJson();
+    QNetworkReply *reply = mgr->post(request, data);
+    connect(reply, &QNetworkReply::finished, [=]()
+    {
+        if(reply->error() == QNetworkReply::NoError)
+        {
+            QString strReply = reply->readAll();
+            QFile replyFile("./replyFileIndex");
+            replyFile.open(QIODevice::WriteOnly);
+            replyFile.write(strReply.toUtf8());
+
+            QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
+
+            for (auto item : tables)
+            {
+                std::cout<<item.toObject().find("tablename")->toString().toStdString()<<std::endl;
+                if (tableName_ == item.toObject().find("tablename")->toString())
+                {
+                    for (auto fields : item.toObject().find("fields")->toArray())
+                    {
+                        std::cout<<fields.toObject().find("name")->toString().toStdString()<<"-"<<fields.toObject().find("subtype")->toInt()<<"-"<<fields.toObject().find("linktable")->toString().toStdString()<<std::endl;
+                        if (fields.toObject().find("linktable")->toString() == "" && fields.toObject().find("subtype")->toInt() == 0)
+                        {
+                            tableList_ += fields.toObject().find("name")->toString();
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+        reply->deleteLater();
+        on_pushButton_clicked();
+    });
 }
 CreateIndexTab::~CreateIndexTab()
 {
@@ -20,42 +61,45 @@ CreateIndexTab::~CreateIndexTab()
 
 void CreateIndexTab::on_pushButton_2_clicked()
 {
-    try
+    QString query = QString("CREATE INDEX %1 ON %2 (").arg(ui->lineEdit->text()).arg(tableName_);
+
+    for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)
     {
-        QString query = QString("CREATE INDEX %1 ON %2 (").arg(ui->lineEdit->text()).arg(tableName_);
-
-        for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)
-        {
-            QString columnIndex = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
-            query+=columnIndex;
-            query+=",";
-        }
-        query.resize(query.count() - 1);
-        query+=");";
-
-        std::cout<<query.toStdString()<<std::endl;
-
-        NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
-        nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
-        check_error(connection);
-        nb_disconnect(connection);
+        QString columnIndex = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
+        query+=columnIndex;
+        query+=",";
     }
-    catch (...)
-    {
-        QMessageBox::warning(this, "Warning", "Please repeat your query");
-    }
+    query.resize(query.count() - 1);
+    query+=");";
+
+    std::cout<<query.toStdString()<<std::endl;
+
+    NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
+    nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
+    check_error(connection);
+    nb_disconnect(connection);
 }
 
 void CreateIndexTab::on_pushButton_clicked()
 {
-    QLineEdit* lineEdit = new QLineEdit();
+    QStringList tmp = {};
+    for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
+    {
+        tmp+=ui->tableWidget->itemAt(0,i)->text();
+        std::cout<<tmp.at(i).toStdString()<<std::endl;
+    }
+
+    QComboBox* comboBox = new QComboBox();
     QPushButton* button = new QPushButton("X");
 
     connect(button, SIGNAL(clicked()), this, SLOT(rmRow()));
 
     ui->tableWidget->insertRow(ui->tableWidget->rowCount());
-    ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, lineEdit);
+    ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, comboBox);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 1, button);
+
+    comboBox->addItems(tableList_);
+
 }
 
 void CreateIndexTab::rmRow()

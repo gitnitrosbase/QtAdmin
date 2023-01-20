@@ -83,6 +83,7 @@ void CreateTableTab::addRow()
     ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
     connect(rmPushButton, SIGNAL(clicked()), this, SLOT(rmRow()));
+    connect(typesComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){checkIdentity(index);});
 }
 
 void CreateTableTab::rmRow()
@@ -161,3 +162,18 @@ void CreateTableTab::on_addColumnButton_clicked()
     addRow();
 }
 
+void CreateTableTab::checkIdentity(int index)
+{
+//    std::cout<<index<<std::endl;
+//    QTableWidgetItem* tmp = dynamic_cast<QTableWidgetItem*>(this->parent());
+//    QCheckBox* checkBoxLink = dynamic_cast<QCheckBox*>(ui->tableWidget->itemAt(3,tmp->row()));
+
+//    if (index == 1 || index == 2)
+//    {
+//        checkBoxLink->setCheckable(0);
+//    }
+//    else
+//    {
+//        checkBoxLink->setCheckable(1);
+//    }
+}

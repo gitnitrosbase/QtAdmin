@@ -46,6 +46,8 @@ public slots:
 
     void on_pushButton_2_clicked();
 
+    void checkIdentity(int index);
+
 private:
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};
     Ui::CreateTableTab* ui;

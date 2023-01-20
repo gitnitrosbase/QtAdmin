@@ -3,7 +3,16 @@
 #include <QMessageBox>
 #include <QWidget>
 #include <QPushButton>
-#include <QLineEdit>
+#include <QComboBox>
+#include <QStringList>
+#include <QFile>
+
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <QJsonArray>
 
 #include "ui_CreateIndexTab.h"
 #include "nb-samples.h"
@@ -31,4 +40,6 @@ private:
     Ui::CreateIndexTab* ui;
     QString tableName_ = "";
     int port_ = 0;
+    QString address_ = "http://127.0.0.1:8008/api3";
+    QStringList tableList_ = {};
 };

@@ -88,8 +88,8 @@ void ModifyTableTab::printFromdb()
                         notnullCheckBox->setEnabled(false);
                         //ui->tableWidget->resizeColumnsToContents();
                     }
+                    break;
                 }
-                break;
             }
             fieldCount_ = ui->tableWidget->rowCount();
             std::cout<<"row count = "<<ui->tableWidget->rowCount()<<std::endl;
