@@ -53,9 +53,15 @@ public:
     QString currentTable_ = "";
     QString query_ = "";
     QString address_ = "http://127.0.0.1:8008/api3";
+    bool identityFlag_ = false;
+    bool PKFlag_ = false;
 
 private slots:
     void on_addRowButton_clicked();
+
+    void checkIdentity(int index);
+
+    void blockOtherIdentity(QCheckBox* item, int state);
 
 private:
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};

@@ -35,12 +35,12 @@ void CreateIndexTab::SetCurrentDatabase(QString name, int port)
 
             for (auto item : tables)
             {
-                std::cout<<item.toObject().find("tablename")->toString().toStdString()<<std::endl;
+                //std::cout<<item.toObject().find("tablename")->toString().toStdString()<<std::endl;
                 if (tableName_ == item.toObject().find("tablename")->toString())
                 {
                     for (auto fields : item.toObject().find("fields")->toArray())
                     {
-                        std::cout<<fields.toObject().find("name")->toString().toStdString()<<"-"<<fields.toObject().find("subtype")->toInt()<<"-"<<fields.toObject().find("linktable")->toString().toStdString()<<std::endl;
+                        //std::cout<<fields.toObject().find("name")->toString().toStdString()<<"-"<<fields.toObject().find("subtype")->toInt()<<"-"<<fields.toObject().find("linktable")->toString().toStdString()<<std::endl;
                         if (fields.toObject().find("linktable")->toString() == "" && fields.toObject().find("subtype")->toInt() == 0)
                         {
                             tableList_ += fields.toObject().find("name")->toString();
@@ -72,7 +72,7 @@ void CreateIndexTab::on_pushButton_2_clicked()
     query.resize(query.count() - 1);
     query+=");";
 
-    std::cout<<query.toStdString()<<std::endl;
+    //std::cout<<query.toStdString()<<std::endl;
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
@@ -82,17 +82,18 @@ void CreateIndexTab::on_pushButton_2_clicked()
 
 void CreateIndexTab::on_pushButton_clicked()
 {
-    QStringList tmp = {};
-    for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
+    if (tableList_.count() <= 0)
     {
-        tmp+=ui->tableWidget->itemAt(0,i)->text();
-        std::cout<<tmp.at(i).toStdString()<<std::endl;
+        ui->pushButton->setEnabled(false);
+        return;
     }
 
     QComboBox* comboBox = new QComboBox();
     QPushButton* button = new QPushButton("X");
 
     connect(button, SIGNAL(clicked()), this, SLOT(rmRow()));
+    connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrenttableList(index);});
+
 
     ui->tableWidget->insertRow(ui->tableWidget->rowCount());
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, comboBox);
@@ -106,6 +107,31 @@ void CreateIndexTab::rmRow()
 {
     if (ui->tableWidget->rowCount() > 0)
     {
-        if (ui->tableWidget->rowCount() > 1) ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+        ui->pushButton->setEnabled(true);
+
+        if (ui->tableWidget->rowCount() > 1)
+        {
+            tableList_ += dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))->currentText();
+            ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+        }
     }
+
+//    for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
+//    {
+//        dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))->clear();
+//        dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))->addItems(tableList_);
+//    }
+}
+
+void CreateIndexTab::setCurrenttableList(int index)
+{
+//    if (ui->tableWidget->rowCount() > 0)tableList_+= dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))->currentText();
+//    //std::cout<<index<<std::endl;
+//    //tableList_.removeAt(0 + std::find(tableList_.begin(), tableList_.end(), ));
+//    tableList_.removeAt(index);
+
+//    for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
+//    {
+//        if (std::find(tableList_.begin(), tableList_.end(), dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 0))->currentText())))
+//    }
 }

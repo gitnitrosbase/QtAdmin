@@ -358,6 +358,7 @@ void MainWindow::on_actionCreateTableTrig()
         CreateTableTab* tmp = new CreateTableTab(this);
         ui->tabWidget->addTab(tmp, QString("Create Table"));
         tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
+        ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
     }
 }
 

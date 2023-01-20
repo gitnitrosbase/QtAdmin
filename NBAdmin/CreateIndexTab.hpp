@@ -14,6 +14,8 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 
+#include <algorithm>
+
 #include "ui_CreateIndexTab.h"
 #include "nb-samples.h"
 
@@ -35,6 +37,8 @@ private slots:
     void on_pushButton_clicked();
 
     void rmRow();
+
+    void setCurrenttableList(int index);
 
 private:
     Ui::CreateIndexTab* ui;

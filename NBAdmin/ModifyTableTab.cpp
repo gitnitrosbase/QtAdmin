@@ -61,13 +61,21 @@ void ModifyTableTab::printFromdb()
 
                         nameLineEdit->setText(fields.toObject().find("name")->toString());
                         typesComboBox->addItem(fieldsTypes_.at(fields.toObject().find("type")->toInt()));
-                        if(fields.toObject().find("subtype")->toInt() == 1) PKCheckBox->setCheckState(Qt::CheckState::Checked);
+                        if(fields.toObject().find("subtype")->toInt() == 1)
+                        {
+                            PKCheckBox->setCheckState(Qt::CheckState::Checked);
+                            PKFlag_ = true;
+                        }
                         if (fields.toObject().find("linktable")->toString() != "")
                         {
                             FKCheckBox->setCheckState(Qt::CheckState::Checked);
                             FKTableComboBox->addItem(fields.toObject().find("linktable")->toString());
                         }
-                        if (fields.toObject().find("seed")->toInt() != 0 && fields.toObject().find("increment")->toInt() != 0) identityCheckBox->setCheckState(Qt::CheckState::Checked);
+                        if (fields.toObject().find("seed")->toInt() != 0 && fields.toObject().find("increment")->toInt() != 0)
+                        {
+                            identityCheckBox->setCheckState(Qt::CheckState::Checked);
+                            identityFlag_ = true;
+                        }
                         if(fields.toObject().find("nullable")->toInt() == 0) notnullCheckBox->setCheckState(Qt::CheckState::Checked);
 
                         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
@@ -127,7 +135,7 @@ void ModifyTableTab::on_saveButton_clicked()
             return;
         }
 
-        if (checkPK) subQueryStr+= "PRIMARY KEY NOT NULL ";
+        if (checkPK) subQueryStr+= "PRIMARY KEY ";
         if (checkIdentity && (typeName == "int" || typeName == "bigint")) subQueryStr+= "IDENTITY (1,2) ";
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
@@ -208,6 +216,29 @@ void ModifyTableTab::addRow()
     ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
     connect(rmPushButton, SIGNAL(clicked()), this, SLOT(rmRow()));
+    connect(typesComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){checkIdentity(index);});
+    connect(identityCheckBox, QOverload<int>::of(&QCheckBox::stateChanged), this, [=](int state){blockOtherIdentity(identityCheckBox,state);});
+    connect(PKCheckBox, QOverload<int>::of(&QCheckBox::stateChanged), this, [=](int state)
+    {
+        if (state == Qt::CheckState::Checked)
+        {
+            FKCheckBox->setEnabled(false);
+            notnullCheckBox->setCheckState(Qt::CheckState::Checked);
+        }
+        else FKCheckBox->setEnabled(true);
+
+        if (state == Qt::CheckState::Checked)
+        for (int i = fieldCount_; i< ui->tableWidget->rowCount(); i+=1)
+        {
+            if (PKCheckBox != dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 2)))
+            {
+                dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 2))->setEnabled(false);
+            }
+        }
+        else for (int i = fieldCount_; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 2))->setEnabled(true);
+    });
+    if (PKFlag_) PKCheckBox->setEnabled(false);
+    if (identityFlag_) identityCheckBox->setEnabled(false);
 }
 
 
@@ -221,3 +252,32 @@ void ModifyTableTab::on_addRowButton_clicked()
     addRow();
 }
 
+void ModifyTableTab::checkIdentity(int index)
+{
+    std::cout<<index<<std::endl;
+    QCheckBox* checkBoxLink = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 5));
+
+    if (index == 1 || index == 2)
+    {
+        checkBoxLink->setEnabled(true);
+    }
+    else
+    {
+        checkBoxLink->setEnabled(false);
+    }
+}
+
+void ModifyTableTab::blockOtherIdentity(QCheckBox* item, int state)
+{
+
+    if (state == Qt::CheckState::Checked)
+    for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)
+    {
+        if (item != dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5)))
+        {
+            dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(false);
+            //if (state == Qt::CheckState::Unchecked) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
+        }
+    }
+    else for (int i = fieldCount_; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
+}
