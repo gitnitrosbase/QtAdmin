@@ -112,6 +112,8 @@ QString TabWindow::from_nbvalue(NBValue value)
 
 void TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query)
 {
+    QStringList headers = {};
+
     QList<QStandardItem*> tmp;
     std::cout<<"start exec"<<std::endl;
     nb_execute_sql(connection , query.toStdU16String().c_str(), size_t(query.size()));
@@ -122,9 +124,11 @@ void TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* mode
         NBValue name;
         nb_field_name(connection, i, &name);
         tmp.push_back(new QStandardItem(from_nbvalue(name)));
+        headers += from_nbvalue(name);
     }
 
     model->setColumnCount(field_count);
+    model->setHorizontalHeaderLabels(headers);
 
     int row_count = 0;
     while (nb_fetch_row(connection) == NB_OK)
