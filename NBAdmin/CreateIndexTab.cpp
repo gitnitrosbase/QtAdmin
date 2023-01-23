@@ -1,4 +1,4 @@
-#include "CreateIndexTab.hpp"
+    #include "CreateIndexTab.hpp"
 
 CreateIndexTab::CreateIndexTab(QWidget* parent) : QWidget(parent), ui(new Ui::CreateIndexTab)
 {
@@ -35,12 +35,10 @@ void CreateIndexTab::SetCurrentDatabase(QString name, int port)
 
             for (auto item : tables)
             {
-                //std::cout<<item.toObject().find("tablename")->toString().toStdString()<<std::endl;
                 if (tableName_ == item.toObject().find("tablename")->toString())
                 {
                     for (auto fields : item.toObject().find("fields")->toArray())
                     {
-                        //std::cout<<fields.toObject().find("name")->toString().toStdString()<<"-"<<fields.toObject().find("subtype")->toInt()<<"-"<<fields.toObject().find("linktable")->toString().toStdString()<<std::endl;
                         if (fields.toObject().find("linktable")->toString() == "" && fields.toObject().find("subtype")->toInt() == 0)
                         {
                             tableList_ += fields.toObject().find("name")->toString();
@@ -72,8 +70,6 @@ void CreateIndexTab::on_pushButton_2_clicked()
     query.resize(query.count() - 1);
     query+=");";
 
-    //std::cout<<query.toStdString()<<std::endl;
-
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
     check_error(connection);
@@ -82,6 +78,8 @@ void CreateIndexTab::on_pushButton_2_clicked()
 
 void CreateIndexTab::on_pushButton_clicked()
 {
+    if (ui->tableWidget->rowCount() == tableList_.count()) return;
+
     if (tableList_.count() <= 0)
     {
         ui->pushButton->setEnabled(false);
@@ -125,6 +123,10 @@ void CreateIndexTab::rmRow()
 
 void CreateIndexTab::setCurrenttableList(int index)
 {
+//    std::cout<<ui->tableWidget->currentRow()<<std::endl;
+//    if (ui->tableWidget->currentRow() >= 0) std::cout<<dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))->currentText().toStdString()<<" --> "<<tableList_.at(index).toStdString()<<std::endl;
+
+
 //    if (ui->tableWidget->rowCount() > 0)tableList_+= dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))->currentText();
 //    //std::cout<<index<<std::endl;
 //    //tableList_.removeAt(0 + std::find(tableList_.begin(), tableList_.end(), ));
