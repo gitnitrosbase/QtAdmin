@@ -19,6 +19,8 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
 
     gridLayout_->addWidget(splitter_, 0, 0);
 
+    subLayout_->setSpacing(0);
+    gridLayout_->setSpacing(0);
 
     QFont font;
     font.setPixelSize(16);
