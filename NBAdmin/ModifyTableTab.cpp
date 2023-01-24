@@ -36,10 +36,6 @@ void ModifyTableTab::printFromdb()
         if(reply->error() == QNetworkReply::NoError)
         {
             QString strReply = reply->readAll();
-//            QFile replyFile("./replyFile");
-//            replyFile.open(QIODevice::WriteOnly);
-//            replyFile.write(strReply.toUtf8());
-
             QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
 
             for (auto item : tables)
@@ -276,7 +272,6 @@ void ModifyTableTab::blockOtherIdentity(QCheckBox* item, int state)
         if (item != dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5)))
         {
             dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(false);
-            //if (state == Qt::CheckState::Unchecked) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
         }
     }
     else for (int i = fieldCount_; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);

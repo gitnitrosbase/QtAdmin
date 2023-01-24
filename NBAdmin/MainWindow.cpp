@@ -163,7 +163,7 @@ void MainWindow::push_button_plus_clicked()
 }
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
-    ui->tabWidget->removeTab(index);
+    if (ui->tabWidget->count() > 1) ui->tabWidget->removeTab(index);
 }
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*)
 {
@@ -174,7 +174,6 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTre
         currentDatabase_ = dbName;
     }
 }
-
 void MainWindow::on_actionCreateDBQueryTrig()
 {
     if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
@@ -224,14 +223,12 @@ void MainWindow::on_actionCreateDBQueryTrig()
                 push_button_plus_clicked();
                 ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
                 TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-                //if (std::string(typeid(&currentTab).name()) == std::string("TabWindow"))
                 currentTab->textEdit_->setText(finalQuery);
             }
             reply->deleteLater();
         });
     }
 }
-
 void MainWindow::on_actionSelectEdgeTrig()
 {
     QString fromId = "";
@@ -258,7 +255,6 @@ void MainWindow::on_actionSelectEdgeTrig()
     push_button_plus_clicked();
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
     TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-    //if (std::string(typeid(&currentTab).name()) == std::string("TabWindow"))
     currentTab->textEdit_->setText(tmp);
     push_button_run_clicked();
 }
@@ -854,5 +850,19 @@ void MainWindow::on_actionInfo_triggered()
 void MainWindow::on_actionContacts_triggered()
 {
     QMessageBox::information(this,"Contacts", "Email: support@nitrosbase.com");
+}
+
+
+void MainWindow::on_treeWidget_itemExpanded(QTreeWidgetItem *item)
+{
+    if(ui->label_2->text() != "")
+    {
+        ui->actionRefresh->setEnabled(true);
+        ui->actionStop->setEnabled(true);
+        ui->actionStart->setEnabled(true);
+        ui->actionBackup->setEnabled(true);
+        ui->actionRestore->setEnabled(true);
+        ui->actionDatabase_Info->setEnabled(true);
+    }
 }
 

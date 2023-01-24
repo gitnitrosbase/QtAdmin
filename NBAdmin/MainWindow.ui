@@ -387,6 +387,9 @@ color: rgb(255, 255, 255);
    <addaction name="menuHelp"/>
   </widget>
   <action name="on_actionCreateTableTrig">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
    <property name="checked">
     <bool>false</bool>
    </property>
@@ -401,6 +404,9 @@ color: rgb(255, 255, 255);
    <property name="checkable">
     <bool>false</bool>
    </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
    <property name="enabled">
     <bool>true</bool>
    </property>
@@ -413,7 +419,7 @@ color: rgb(255, 255, 255);
     <bool>false</bool>
    </property>
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Refresh</string>
@@ -421,7 +427,7 @@ color: rgb(255, 255, 255);
   </action>
   <action name="actionStop">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -429,26 +435,32 @@ color: rgb(255, 255, 255);
   </action>
   <action name="actionStart">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Start</string>
    </property>
   </action>
   <action name="actionBackup">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Backup</string>
    </property>
   </action>
   <action name="actionRestore">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Restore</string>
    </property>
   </action>
   <action name="actionDatabase_Info">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>Database Info</string>
    </property>

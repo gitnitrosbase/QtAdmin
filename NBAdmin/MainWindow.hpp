@@ -125,6 +125,8 @@ private slots:
 
     void on_actionContacts_triggered();
 
+    void on_treeWidget_itemExpanded(QTreeWidgetItem *item);
+
 private:
     void setAddress();
 
