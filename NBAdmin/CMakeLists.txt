@@ -56,6 +56,7 @@ set(UI_FILES
     CreateEdgeTab.ui
     CreateIndexTab.ui
     ModifyTableTab.ui
+    TabWindow.ui
     )
 
 set(NITROSBASE

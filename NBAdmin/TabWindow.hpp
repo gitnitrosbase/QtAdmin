@@ -25,13 +25,19 @@
 
 #include "syntexHightlight.hpp"
 
+//#include "ui_TabWindow.h"
+
+//QT_BEGIN_NAMESPACE
+//namespace Ui { class TabWindow; }
+//QT_END_NAMESPACE
+
 class TabWindow : public QWidget
 {
     Q_OBJECT
 public:
     explicit TabWindow(QWidget* parent = nullptr);
 
-    ~TabWindow() = default;
+    ~TabWindow();
 
 public slots:
     void selectThousandQuery(QString table);
@@ -65,6 +71,7 @@ public:
     QFont font;
     SyntaxHighlighter* syntaxHighLight_ = nullptr;
 
+    //Ui::TabWindow* ui;
 
 public:
     int dbPort_;

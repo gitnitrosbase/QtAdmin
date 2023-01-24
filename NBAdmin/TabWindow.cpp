@@ -1,7 +1,10 @@
 #include "TabWindow.hpp"
 
 TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
+  //,ui(new Ui::TabWindow)
 {
+    //ui->setupUi(this);
+
     gridLayout_ = new QGridLayout(this);
     splitter_ = new QSplitter(Qt::Vertical, this);
     textEdit_ = new QTextEdit(this);
@@ -22,10 +25,18 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
     subLayout_->setSpacing(0);
     gridLayout_->setSpacing(0);
 
+    subLayout_->setMargin(0);
+    gridLayout_->setMargin(0);
+
     QFont font;
     font.setPixelSize(16);
     textEdit_->setFont(font);
     syntaxHighLight_ = new SyntaxHighlighter(textEdit_->document());
+}
+
+TabWindow::~TabWindow()
+{
+    //delete ui;
 }
 
 void TabWindow::selectThousandQuery(QString table)
@@ -62,7 +73,7 @@ void TabWindow::push_button_run_clicked()
 
     delete comboBox_;
     comboBox_ = new QComboBox(this);
-    gridLayout_->addWidget(comboBox_, 1, 0);
+    subLayout_->addWidget(comboBox_, 0, 0);
     connect(comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
 
     std::string tmp = textEdit_->toPlainText().toStdString();
