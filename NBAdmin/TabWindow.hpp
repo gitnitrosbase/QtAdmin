@@ -8,6 +8,7 @@
 #include <QTableWidget>
 #include <QComboBox>
 #include <QMessageBox>
+#include <QSplitter>
 
 #include <QTableView>
 #include <QStandardItemModel>
@@ -53,8 +54,11 @@ private:
 public:
     QTableView* tableWidget_ = nullptr;
     QGridLayout* gridLayout_ = nullptr;
+    QWidget* subWidget_ = nullptr;
+    QGridLayout* subLayout_ = nullptr;
     QTextEdit* textEdit_ = nullptr;
     QComboBox* comboBox_ = nullptr;
+    QSplitter* splitter_ = nullptr;
     std::vector<std::string> input_queries_;
     std::vector<QStandardItemModel*> models_;
     QMenu* rightClickMenu_ = nullptr;

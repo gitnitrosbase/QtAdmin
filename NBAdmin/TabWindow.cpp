@@ -3,12 +3,22 @@
 TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
 {
     gridLayout_ = new QGridLayout(this);
+    splitter_ = new QSplitter(Qt::Vertical, this);
     textEdit_ = new QTextEdit(this);
-    tableWidget_ = new QTableView(this);
+    subWidget_ = new QWidget(this);
     comboBox_ = new QComboBox(this);
-    gridLayout_->addWidget(textEdit_, 0, 0);
-    gridLayout_->addWidget(comboBox_, 1, 0);
-    gridLayout_->addWidget(tableWidget_, 2, 0);
+    tableWidget_ = new QTableView(this);
+    subLayout_ = new QGridLayout();
+
+    subWidget_->setLayout(subLayout_);
+    subLayout_->addWidget(comboBox_, 0, 0);
+    subLayout_->addWidget(tableWidget_, 1, 0);
+
+    splitter_->addWidget(textEdit_);
+    splitter_->addWidget(subWidget_);
+
+    gridLayout_->addWidget(splitter_, 0, 0);
+
 
     QFont font;
     font.setPixelSize(16);
@@ -113,7 +123,6 @@ QString TabWindow::from_nbvalue(NBValue value)
 void TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query)
 {
     QStringList headers = {};
-
     QList<QStandardItem*> tmp;
     std::cout<<"start exec"<<std::endl;
     nb_execute_sql(connection , query.toStdU16String().c_str(), size_t(query.size()));
