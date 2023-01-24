@@ -314,7 +314,7 @@ void MainWindow::on_tableSelectActionTrig()
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
         //if (std::string(typeid(&currentTab).name()) == std::string("TabWindow"))
-        currentTab->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0)));
+        currentTab->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0) + ";"));
     }
     push_button_run_clicked();
 }

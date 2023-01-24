@@ -130,21 +130,31 @@ bool TabWindow::check_query(NB_HANDLE connection)
         return false;
     }
 }
-QString TabWindow::from_nbvalue(NBValue value)
+QString TabWindow::from_nbvalue(NBValue v)
 {
     QString output = "";
-    if (value.type == NB_DATA_U16STRING)
+
+    switch ( v.type )
     {
-        for (int i = 0; i < value.len; i += 1) output += value.str[i];
+        case NB_DATA_INT: output = QString::number(v.intv); break;
+
+        case NB_DATA_DATETIME: for (int i = 0; i< v.len; i+=1) output+=v.str[i]; break;
+
+        case NB_DATA_STRING: for (int i = 0; i< v.len; i+=1) output+=v.str[i]; break;
+
+        case NB_DATA_U16STRING: for (int i = 0; i< v.len; i+=1) output+=v.str[i]; break;
+
+        case NB_DATA_DECIMAL: for (int i = 0; i< v.len; i+=1) output+=v.str[i]; break;
+
+        case NB_DATA_INT64: output = QString::number(v.int64v); break;
+
+        case NB_DATA_DOUBLE: output = QString::number(v.dbl); break;
+
+        case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
+
+        case NB_DATA_BINARY: output += *(&v.str); break;
     }
-    else if (value.type == NB_DATA_INT64)
-    {
-        output += QString::number(value.int64v);
-    }
-    else if (value.type == NB_DATA_INT)
-    {
-        output+= QString::number(value.intv);
-    }
+
     return output;
 }
 
