@@ -51,6 +51,9 @@ public slots:
     void push_button_run_clicked();
 
 private:
+
+    void cleanMemory(std::vector<QStandardItemModel*> models);
+
     bool check_query(NB_HANDLE connection);
 
     QString from_nbvalue(NBValue value);

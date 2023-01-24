@@ -44,6 +44,15 @@ void TabWindow::selectThousandQuery(QString table)
     NB_HANDLE connection;
 }
 
+void TabWindow::cleanMemory(std::vector<QStandardItemModel*> models)
+{
+    for(auto item : models)
+    {
+        delete item;
+    }
+    models.clear();
+}
+
 QString TabWindow::textFromTextEdit()
 {
     return textEdit_->toPlainText();
@@ -65,9 +74,9 @@ void TabWindow::push_button_run_clicked()
     int start = clock();
     std::cout<<"start click"<<std::endl;
 
-    for (auto item : models_) delete item;
-    models_.clear();
 
+
+    models_.clear();
 
     input_queries_.clear();
 
@@ -79,14 +88,20 @@ void TabWindow::push_button_run_clicked()
     std::string tmp = textEdit_->toPlainText().toStdString();
 
     std::string::size_type beg = 0;
-            for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
-            {
-                input_queries_.push_back(tmp.substr(beg, end - beg));
-                beg = end + 1;
-            }
+    for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
+    {
+        input_queries_.push_back(tmp.substr(beg, end - beg));
+        beg = end + 1;
+    }
 
-            input_queries_.push_back(tmp.substr(beg));
 
+    for (auto &item : input_queries_)
+    {
+        while (item.at(0) == '\n' ||  item.at(0) == '\t' || item.at(0) == ' ')
+        {
+            item.erase(0,1);
+        }
+    }
 
     for (int i = 0; i<int(input_queries_.size());i+=1)
     {
