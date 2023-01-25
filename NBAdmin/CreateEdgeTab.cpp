@@ -36,6 +36,8 @@ void CreateEdgeTab::on_buttonBox_accepted()
     nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
     check_error(connection);
     nb_disconnect(connection);
+
+    this->close();
 }
 
 void CreateEdgeTab::on_buttonBox_rejected()

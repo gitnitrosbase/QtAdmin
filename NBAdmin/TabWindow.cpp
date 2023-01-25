@@ -87,12 +87,20 @@ void TabWindow::push_button_run_clicked()
 
     std::string tmp = textEdit_->toPlainText().toStdString();
 
+    if (tmp.back() != ';') tmp.push_back(';');
+
+//    if (std::find(tmp.begin(), tmp.end(), ';') == std::string::iterator())
+//    {
+//        input_queries_.push_back(";");
+//    }
+
     std::string::size_type beg = 0;
     for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
     {
         input_queries_.push_back(tmp.substr(beg, end - beg));
         beg = end + 1;
     }
+
 
 
     for (auto &item : input_queries_)

@@ -63,7 +63,7 @@ void CreateIndexTab::on_pushButton_2_clicked()
 
     for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)
     {
-        QString columnIndex = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
+        QString columnIndex = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 0))->currentText();
         query+=columnIndex;
         query+=",";
     }
