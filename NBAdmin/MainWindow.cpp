@@ -165,9 +165,17 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
     if (ui->tabWidget->count() > 1) ui->tabWidget->removeTab(index);
 }
-void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem *current, QTreeWidgetItem*)
+void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWidgetItem* to)
 {
-    QString dbName = current->text(0);
+    QString dbNameTmp = from->text(0);
+    QString dbName = "";
+
+    for (auto &item : dbNameTmp)
+    {
+        if (item != ' ') dbName += item;
+        else break;
+    }
+
     if(dbList_.count(dbName) > 0 && dbList_.find(dbName) != dbList_.find("-1"))
     {
         ui->label_2->setText(dbName);
@@ -491,7 +499,7 @@ void MainWindow::filling_tree()
                 if (item_db.toObject().find("run").value().toBool() == true) dbName->setIcon(0, QIcon(":/images/true.png"));
                 else if (item_db.toObject().find("run").value().toBool() == false) dbName->setIcon(0, QIcon(":/images/false.png"));
 
-                dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString() + " " + QString::number(item_db.toObject().find("port").value().toInt())), item_db.toObject().find("port").value().toInt()));
+                dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()), item_db.toObject().find("port").value().toInt()));
                 QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
                 QUrl url(address_);
                 QNetworkRequest request(url);
