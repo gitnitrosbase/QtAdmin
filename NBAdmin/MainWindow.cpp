@@ -98,7 +98,16 @@ void MainWindow::showContextMenu(const QPoint point)
     bool dbFlag = false;
     for (auto item : dbList_)
     {
-        if (ui->treeWidget->currentItem()->text(0) == item.first)
+        QString dbNameTmp = ui->treeWidget->currentItem()->text(0);
+        QString dbName = "";
+
+        for (auto &item : dbNameTmp)
+        {
+            if (item != ' ') dbName += item;
+            else break;
+        }
+
+        if (dbName == item.first)
         {
             dbFlag = true;
             break;
@@ -458,15 +467,21 @@ void MainWindow::filling_tree()
 
     userName_ = userName;
 
-    if (dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->currentItem()) == dynamic_cast<QTreeWidgetItem*>(ui->treeWidget->topLevelItem(0)) && ui->treeWidget->topLevelItemCount() != 0)
-    {
-        return;
-    }
     tables_.clear();
-    ui->treeWidget->takeTopLevelItem(0);
+
+    delete ui->treeWidget;
+
+    ui->treeWidget = new QTreeWidget(ui->splitter);
+    ui->splitter->addWidget(ui->tabWidget);
+
+    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+    connect(ui->treeWidget, &QTreeWidget::currentItemChanged, this, &MainWindow::on_treeWidget_currentItemChanged);
+    ui->treeWidget->setStyleSheet("QHeaderView::section {color: black;padding: 2px;height:0px;border: 0px solid #567dbc;border-left:0px;border-right:0px;background: white;}");
+
     QTreeWidgetItem* username = new QTreeWidgetItem();
     username->setText(0, userName);
-    ui->treeWidget->addTopLevelItem(username);
+    //ui->treeWidget->addTopLevelItem(username);
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
     QNetworkRequest request(url);
@@ -494,7 +509,7 @@ void MainWindow::filling_tree()
                                            + " "
                                            + QString::number(item_db.toObject().find("port").value().toInt())
                                            ));
-                username->addChild(dbName);
+                ui->treeWidget->addTopLevelItem(dbName);
 
                 if (item_db.toObject().find("run").value().toBool() == true) dbName->setIcon(0, QIcon(":/images/true.png"));
                 else if (item_db.toObject().find("run").value().toBool() == false) dbName->setIcon(0, QIcon(":/images/false.png"));
