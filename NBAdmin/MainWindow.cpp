@@ -70,14 +70,14 @@ void MainWindow::showContextMenu(const QPoint point)
 
     QString parentItem = "";
 
-    if (ui->treeWidget->currentItem() != ui->treeWidget->topLevelItem(0))
-    {
-        for (int i = 0; i<ui->treeWidget->currentItem()->parent()->text(0); i+=1)
-        {
-            if (ui->treeWidget->currentItem()->parent()->text(0)[i] != " ") parentItem += ui->treeWidget->currentItem()->parent()->text(0)[i];
-            else break;
-        }
-    }
+//    if (ui->treeWidget->currentItem() != ui->treeWidget->topLevelItem(0))
+//    {
+//        for (int i = 0; i<ui->treeWidget->currentItem()->parent()->text(0); i+=1)
+//        {
+//            if (ui->treeWidget->currentItem()->parent()->text(0)[i] != " ") parentItem += ui->treeWidget->currentItem()->parent()->text(0)[i];
+//            else break;
+//        }
+//    }
 
     for (int i = 0; i<ui->treeWidget->currentItem()->text(0).count(); i+=1)
     {
