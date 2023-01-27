@@ -41,6 +41,7 @@
 #include "CreateEdgeTab.hpp"
 #include "CreateIndexTab.hpp"
 #include "ModifyTableTab.hpp"
+#include "InfoWindow.hpp"
 
 #include "ui_MainWindow.h"
 
@@ -147,6 +148,7 @@ private:
     Ui::MainWindow *ui;
     QString currentDatabase_ = "";
     ConnectWindow* connectWindow_ = nullptr;
+    InfoWindow* infoWindow_;
     OpenWindow* openWindow_ = nullptr;
     BackupWindow* backupWindow_ = nullptr;
     RestoreWindow* restoreWindow_ = nullptr;

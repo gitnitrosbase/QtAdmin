@@ -27,6 +27,7 @@ set(PROJECT_HEADERS
     CreateEdgeTab.hpp
     CreateIndexTab.hpp
     ModifyTableTab.hpp
+    InfoWindow.hpp
     )
 
 set(PROJECT_SOURCES

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Info</class>
- <widget class="QWidget" name="Info">
+ <class>InfoWindow</class>
+ <widget class="QWidget" name="InfoWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -86,7 +86,6 @@
         <property name="font">
          <font>
           <family>Segoe UI Semibold</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -202,7 +201,6 @@
         <property name="font">
          <font>
           <family>Segoe UI Semibold</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -232,7 +230,6 @@
         <property name="font">
          <font>
           <family>Segoe UI Semibold</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -285,7 +282,6 @@
         <property name="font">
          <font>
           <family>Segoe UI Semibold</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -315,7 +311,6 @@
         <property name="font">
          <font>
           <family>Segoe UI Semibold</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -350,7 +345,6 @@
      <property name="font">
       <font>
        <family>Segoe UI Semibold</family>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -434,7 +428,6 @@
         <property name="font">
          <font>
           <family>Segoe UI Semibold</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>
@@ -464,7 +457,6 @@
         <property name="font">
          <font>
           <family>Segoe UI Semibold</family>
-          <weight>75</weight>
           <bold>true</bold>
          </font>
         </property>

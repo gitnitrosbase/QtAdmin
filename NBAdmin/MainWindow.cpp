@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     openWindow_ = new OpenWindow();
     backupWindow_ = new BackupWindow();
     restoreWindow_ = new RestoreWindow();
+    infoWindow_ = new InfoWindow();
     ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
     ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
 
@@ -788,17 +789,12 @@ void MainWindow::on_actionDatabase_Info_triggered()
             if (reply->error() == QNetworkReply::NoError)
             {
                 QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-                QString output;
-                output+="Name: ";
-                output+=currentDatabase_;
-                output+="\nPort: ";
                 int port = dbList_[currentDatabase_];
-                output+=QString::number(port);
-                output+="\nVersion Database: ";
                 QJsonObject reply_obj = reply_doc.object();
                 QString str = reply_obj.find("version").value().toString();
-                output+=str;
-                QMessageBox::information(this, "Database info", output);
+
+                infoWindow_->setInformation(currentDatabase_, dbList_[currentDatabase_], reply_obj.find("version").value().toString());
+                infoWindow_->show();
             }
             reply->deleteLater();
         });
