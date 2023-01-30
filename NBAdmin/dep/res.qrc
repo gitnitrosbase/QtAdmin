@@ -1,9 +1,14 @@
 <RCC>
     <qresource prefix="/">
-    <file>images/favicon.ico</file>
-    <file>images/AddTab.svg</file>
-    <file>images/true.png</file>
-    <file>images/false.png</file>
-    <file>images/RunbtnPic.svg</file>
+        <file>images/favicon.ico</file>
+        <file>images/AddTab.svg</file>
+        <file>images/true.png</file>
+        <file>images/false.png</file>
+        <file>images/RunbtnPic.svg</file>
+        <file>images/arrow.svg</file>
+        <file>images/checked_icon-icons.com_65162.svg</file>
+        <file>images/icons8-close.svg</file>
+        <file>images/icons8-selected-close.svg</file>
+        <file>images/lines.svg</file>
     </qresource>
 </RCC>

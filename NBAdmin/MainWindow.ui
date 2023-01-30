@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+   <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -23,6 +23,9 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
      <number>0</number>
@@ -123,6 +126,17 @@
           </item>
           <item>
            <widget class="QLabel" name="label">
+            <property name="font">
+             <font>
+              <family>Segoe UI Semibold</family>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: #555;</string>
+            </property>
             <property name="text">
              <string>Current database: </string>
             </property>
@@ -143,6 +157,14 @@
           </item>
           <item>
            <widget class="QLabel" name="label_2">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+             </font>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">color: #555;</string>
+            </property>
             <property name="text">
              <string/>
             </property>
@@ -247,19 +269,82 @@ QPushButton:hover {
         <height>500</height>
        </size>
       </property>
+      <property name="styleSheet">
+       <string notr="true">QSplitter::handle
+{
+
+	border-right: 1px solid rgb(202, 202, 202);
+	border-left: 1px solid rgb(202, 202, 202);	
+}
+QScrollBar:vertical {
+	width: 6px;
+    background: #fff;
+}
+QScrollBar::handle:vertical {
+    background: #ececec;
+}</string>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="QTreeWidget" name="treeWidget">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="maximumSize">
         <size>
          <width>16777215</width>
          <height>16777215</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTreeWidget {
+	border:0px solid rgb(204, 204, 204);
+	padding-left: 5px;
+}
+
+QHeaderView::section {
+	color: #555;	
+	background-color: rgb(255, 255, 255);
+	border: 0px;
+	height: 0px;
+}
+
+QTreeView::branch {
+   height: 0px;
+}
+
+QTreeWidget::item {
+	border: 0px;
+	font-size: 12px;
+    color: #555;
+} 
+
+QScrollBar:vertical {
+    border: 2px solid grey;
+    background: #32CC99;
+    height: 15px;
+    margin: 0px 20px 0 20px;
+}
+</string>
+       </property>
        <column>
         <property name="text">
          <string notr="true">1</string>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI Semilight</family>
+          <pointsize>12</pointsize>
+         </font>
         </property>
        </column>
       </widget>
@@ -267,11 +352,60 @@ QPushButton:hover {
        <property name="enabled">
         <bool>true</bool>
        </property>
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
          <height>0</height>
         </size>
+       </property>
+       <property name="font">
+        <font>
+         <family>Segoe UI Semibold</family>
+         <pointsize>12</pointsize>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTabWidget::pane { 
+     border-top: 1px solid #C2C7CB;;
+}
+
+QTabWidget::tab-bar {
+    left: 5px; 
+}
+
+QTabBar::tab {
+    border: 0px;
+	background: #fff;
+    color: #9fa0a0;
+	padding: 8px 5px;  
+}
+
+QTabBar::tab:selected {
+    color: #0085c7;
+ 	border-bottom: 2px solid #0085c7;
+}
+ QTabBar::close-button {
+		width: 12px;
+		height: 12px;
+		image: url(:/images/icons8-close.svg);
+		background-color: transparent;
+		border: 0 px;
+ }
+
+ QTabBar::close-button:hover { 
+	image: url(:/images/icons8-selected-close.svg);
+}
+
+
+</string>
        </property>
        <property name="currentIndex">
         <number>-1</number>
@@ -302,23 +436,40 @@ QPushButton:hover {
      <x>0</x>
      <y>0</y>
      <width>878</width>
-     <height>21</height>
+     <height>27</height>
     </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Ignored" vsizetype="Minimum">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
    <property name="styleSheet">
     <string notr="true">QMenuBar:item:selected {
-background-color: rgba(127, 127, 127, 0.75); 
+	background-color: rgba(127, 127, 127, 0.75);
+	color: rgb(255, 255, 255);
+}
+QMenuBar:item {
+	/*color: #555;*/
 }</string>
    </property>
    <widget class="QMenu" name="menuDatabase">
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">QMenu {
 background-color: rgba(255, 255, 255, 0.9); 
 padding: 4px 0px;
 border: 1px solid rgb(0, 0, 0);
-}
-QMenu:item {
-
 }
 QMenu:item:selected {
 background-color: rgba(127, 127, 127, 0.75); 
@@ -342,6 +493,11 @@ color: rgb(255, 255, 255);
     <addaction name="actionDatabase_Info"/>
    </widget>
    <widget class="QMenu" name="menuQuery">
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">QMenu {
 background-color: rgba(255, 255, 255, 0.9); 
@@ -364,6 +520,11 @@ color: rgb(255, 255, 255);
     <addaction name="actionSave"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
+    <property name="font">
+     <font>
+      <pointsize>12</pointsize>
+     </font>
+    </property>
     <property name="styleSheet">
      <string notr="true">QMenu {
 background-color: rgba(255, 255, 255, 0.9); 
@@ -387,9 +548,6 @@ color: rgb(255, 255, 255);
    <addaction name="menuHelp"/>
   </widget>
   <action name="on_actionCreateTableTrig">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
    <property name="checked">
     <bool>false</bool>
    </property>
@@ -402,9 +560,6 @@ color: rgb(255, 255, 255);
   </action>
   <action name="actionOpen_database">
    <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="checked">
     <bool>false</bool>
    </property>
    <property name="enabled">
@@ -459,7 +614,7 @@ color: rgb(255, 255, 255);
   </action>
   <action name="actionDatabase_Info">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="text">
     <string>Database Info</string>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>405</width>
-    <height>197</height>
+    <height>214</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,6 +17,12 @@
    <string notr="true">background:rgb(255, 255, 255);</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <property name="horizontalSpacing">
+    <number>10</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>0</number>
+   </property>
    <item row="1" column="0">
     <widget class="QLabel" name="patch">
      <property name="sizePolicy">
@@ -44,6 +50,9 @@
        <weight>75</weight>
        <bold>true</bold>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"> color: #555;</string>
      </property>
      <property name="text">
       <string>Backup path: </string>
@@ -93,11 +102,15 @@
         </property>
         <property name="font">
          <font>
-          <family>Segoe UI Semibold</family>
+          <family>Segoe UI</family>
           <pointsize>18</pointsize>
-          <weight>75</weight>
+          <weight>62</weight>
           <bold>true</bold>
          </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">color: #555;
+font-weight: 500;</string>
         </property>
         <property name="text">
          <string>Backup</string>
@@ -115,6 +128,28 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    color: #fff;
+    background-color: #6c757d;
+    border: none;
+}
+QPushButton:hover {
+	background-color: #5a6268;
+}</string>
+     </property>
      <property name="text">
       <string>Cancel</string>
      </property>
@@ -123,6 +158,9 @@
    <item row="1" column="1" colspan="3">
     <widget class="QWidget" name="horizontalWidget" native="true">
      <layout class="QHBoxLayout" name="horizontalLayout_3">
+      <property name="spacing">
+       <number>0</number>
+      </property>
       <item>
        <widget class="QLineEdit" name="InputPath">
         <property name="minimumSize">
@@ -136,6 +174,22 @@
           <width>16777215</width>
           <height>40</height>
          </size>
+        </property>
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">#InputPath {
+	border: 1px solid #999;
+}
+
+
+#InputPath:focus {
+	border-color: #80bdff;
+}</string>
         </property>
        </widget>
       </item>
@@ -158,6 +212,11 @@
           <width>30</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">border: 1px solid #999;
+border-left: 0px;
+background-color: rgb(255, 255, 255);</string>
         </property>
         <property name="text">
          <string>...</string>
@@ -190,6 +249,29 @@
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>80</width>
+       <height>40</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <family>Segoe UI</family>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton {
+    color: #fff;
+	background-color: #007bff;
+	border: 1px solid #007bff;
+}
+QPushButton:hover {
+	background-color: #0069d9;
+    border-color: #0062cc;
+}</string>
      </property>
      <property name="text">
       <string>Backup</string>

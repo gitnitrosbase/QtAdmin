@@ -10,7 +10,13 @@ void ConnectWindow::createDatabase()
 
 }
 
-void ConnectWindow::on_buttonBox_accepted()
+void ConnectWindow::on_pushButton_clicked()
+{
+    QString Filename = QFileDialog::getExistingDirectory(this,tr("Open Path"),"C:/");
+    ui->InputPath->setText(Filename);
+}
+
+void ConnectWindow::on_Create_clicked()
 {
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
@@ -60,13 +66,9 @@ void ConnectWindow::on_buttonBox_accepted()
     this->close();
 }
 
-void ConnectWindow::on_buttonBox_rejected()
+
+void ConnectWindow::on_Cancel_clicked()
 {
     this->close();
 }
 
-void ConnectWindow::on_pushButton_clicked()
-{
-    QString Filename = QFileDialog::getExistingDirectory(this,tr("Open Path"),"C:/");
-    ui->InputPath->setText(Filename);
-}

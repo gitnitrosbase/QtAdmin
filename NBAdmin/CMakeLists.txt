@@ -57,6 +57,7 @@ set(UI_FILES
     CreateEdgeTab.ui
     CreateIndexTab.ui
     ModifyTableTab.ui
+    ConnectWindow.ui
     TabWindow.ui
     )
 
@@ -73,3 +74,10 @@ set(RES_FILES
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Network ${PROJECT_SOURCE_DIR}/dep/nbclient.dll)
+
+install(FILES $<TARGET_FILE:Qt5::Widgets> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+install(FILES $<TARGET_FILE:Qt5::Core> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+install(FILES $<TARGET_FILE:Qt5::Gui> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+install(FILES $<TARGET_FILE:Qt5::Network> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+install(FILES ${PROJECT_SOURCE_DIR}/dep/nbclient.dll DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+install(FILES ${PROJECT_SOURCE_DIR}/dep/styles DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)

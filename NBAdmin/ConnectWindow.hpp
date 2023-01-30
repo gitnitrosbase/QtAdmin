@@ -35,11 +35,11 @@ public slots:
     void createDatabase();
 
 private slots:
-    void on_buttonBox_accepted();
-
-    void on_buttonBox_rejected();
-
     void on_pushButton_clicked();
+
+    void on_Create_clicked();
+
+    void on_Cancel_clicked();
 
 private:
     Ui::ConnectWindow* ui;

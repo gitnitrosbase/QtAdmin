@@ -37,7 +37,7 @@ public slots:
     void OpenDatabase();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_buttonPath_clicked();
 
 public:
     QString address_ = "http://127.0.0.1:8008/api3";

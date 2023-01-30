@@ -63,7 +63,7 @@ void OpenWindow::OpenDatabase()
     this->close();
 }
 
-void OpenWindow::on_pushButton_clicked()
+void OpenWindow::on_buttonPath_clicked()
 {
     QString Filename = QFileDialog::getExistingDirectory(
                 this,tr("Open Path"),
@@ -71,3 +71,4 @@ void OpenWindow::on_pushButton_clicked()
                 );
     ui->InputPath->setText(Filename);
 }
+
