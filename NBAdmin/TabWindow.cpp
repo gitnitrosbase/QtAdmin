@@ -30,6 +30,9 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
 
     comboBox_->setStyleSheet(styles_);
 
+    textEdit_->setFrameStyle(0);
+    tableWidget_->setFrameStyle(0);
+
     QFont font;
     font.setPixelSize(16);
     textEdit_->setFont(font);
