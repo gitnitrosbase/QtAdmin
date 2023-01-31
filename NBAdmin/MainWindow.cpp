@@ -193,6 +193,14 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWi
         ui->label_2->setText(dbName);
         currentDatabase_ = dbName;
     }
+
+    ui->actionRefresh->setEnabled(true);
+    ui->actionStart->setEnabled(true);
+    ui->actionStop->setEnabled(true);
+    ui->actionBackup->setEnabled(true);
+    ui->actionRestore->setEnabled(true);
+    ui->actionDatabase_Info->setEnabled(true);
+    ui->actionInfo->setEnabled(true);
 }
 void MainWindow::on_actionCreateDBQueryTrig()
 {

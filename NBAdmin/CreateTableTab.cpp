@@ -31,7 +31,7 @@ void CreateTableTab::addRow()
     QCheckBox* FKCheckBox = new QCheckBox();
     QCheckBox* identityCheckBox = new QCheckBox();
     QCheckBox* notnullCheckBox = new QCheckBox();
-    QPushButton* rmPushButton = new QPushButton("X");
+    QPushButton* rmPushButton = new QPushButton();
 
     typesComboBox->setStyleSheet("background-color: #ffffff");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
@@ -175,6 +175,8 @@ void CreateTableTab::on_pushButton_2_clicked()
     nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
     check_error(connection);
     nb_disconnect(connection);
+
+    QMessageBox::information(this, "", " The table has been created");
 }
 
 void CreateTableTab::on_addColumnButton_clicked()

@@ -28,13 +28,7 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
     subLayout_->setMargin(0);
     gridLayout_->setMargin(0);
 
-    //textEdit_->setFrameStyle(0);
-    //tableWidget_->setFrameStyle(0);
-    //comboBox_->setFrame(0);
-    QFile styles("./styles");
-    styles.open(QIODevice::ReadOnly);
-    comboBox_->setStyleSheet(styles.readAll());
-    styles.close();
+    comboBox_->setStyleSheet(styles_);
 
     QFont font;
     font.setPixelSize(16);
@@ -93,10 +87,7 @@ void TabWindow::push_button_run_clicked()
     subLayout_->addWidget(comboBox_, 0, 0);
     connect(comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
 
-    QFile styles("./styles");
-    styles.open(QIODevice::ReadOnly);
-    comboBox_->setStyleSheet(styles.readAll());
-    styles.close();
+    comboBox_->setStyleSheet(styles_);
 
     std::string tmp = textEdit_->toPlainText().toStdString();
 

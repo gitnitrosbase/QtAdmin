@@ -130,7 +130,6 @@
              <font>
               <family>Segoe UI Semibold</family>
               <pointsize>12</pointsize>
-              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -368,7 +367,6 @@ QScrollBar:vertical {
         <font>
          <family>Segoe UI Semibold</family>
          <pointsize>12</pointsize>
-         <weight>75</weight>
          <bold>true</bold>
         </font>
        </property>
@@ -614,7 +612,7 @@ color: rgb(255, 255, 255);
   </action>
   <action name="actionDatabase_Info">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Database Info</string>
@@ -662,7 +660,7 @@ color: rgb(255, 255, 255);
   </action>
   <action name="actionInfo">
    <property name="enabled">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
     <string>Info</string>

@@ -137,6 +137,9 @@ QPushButton:hover {
 }
 </string>
        </property>
+       <property name="text">
+        <string>1</string>
+       </property>
       </widget>
      </item>
      <item row="1" column="0">
@@ -185,7 +188,6 @@ QPushButton:hover {
         <font>
          <family>Segoe UI</family>
          <pointsize>12</pointsize>
-         <weight>50</weight>
          <bold>false</bold>
         </font>
        </property>
@@ -193,6 +195,9 @@ QPushButton:hover {
         <string notr="true">QLineEdit {
 	border: 1px solid #ced4da;
 }</string>
+       </property>
+       <property name="text">
+        <string>1</string>
        </property>
       </widget>
      </item>
@@ -221,7 +226,6 @@ QPushButton:hover {
      <property name="font">
       <font>
        <family>Segoe UI Semibold</family>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -425,7 +429,6 @@ QScrollBar::handle:horizontal {
       <font>
        <family>Segoe UI Semibold</family>
        <pointsize>24</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -449,7 +452,6 @@ QScrollBar::handle:horizontal {
       <font>
        <family>Segoe UI Semibold</family>
        <pointsize>13</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -483,7 +485,6 @@ QScrollBar::handle:horizontal {
       <font>
        <family>Segoe UI Semibold</family>
        <pointsize>13</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>

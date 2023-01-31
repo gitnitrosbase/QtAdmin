@@ -106,7 +106,7 @@ void ModifyTableTab::printFromdb()
 void ModifyTableTab::on_saveButton_clicked()
 {
     QString queryStr = "";
-
+    int identityFlag = 0;
     for (int i = fieldCount_; i < ui->tableWidget->rowCount(); i+=1)
     {
         QString columnName = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
@@ -132,7 +132,11 @@ void ModifyTableTab::on_saveButton_clicked()
         }
 
         if (checkPK) subQueryStr+= "PRIMARY KEY ";
-        if (checkIdentity && (typeName == "int" || typeName == "bigint")) subQueryStr+= "IDENTITY (1,2) ";
+        if (checkIdentity && (typeName == "int" || typeName == "bigint"))
+        {
+            subQueryStr+= QString("IDENTITY (%1,%2) ").arg(ui->SeedLineEdit->text()).arg(ui->IncrementLineEdit->text());
+            identityFlag+=1;
+        }
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
 
@@ -140,6 +144,11 @@ void ModifyTableTab::on_saveButton_clicked()
         queryStr += ";";
     }
 
+    if (identityFlag > 1)
+    {
+        QMessageBox::warning(this, "Warning", "Only one identity column is allowed per table");
+        return;
+    }
 
     std::cout<<queryStr.toStdString()<<std::endl;
 
@@ -151,6 +160,8 @@ void ModifyTableTab::on_saveButton_clicked()
     ui->tableWidget->clear();
     ui->tableWidget->setRowCount(0);
     printFromdb();
+
+    QMessageBox::information(this, "", " The table has been changed");
 }
 
 void ModifyTableTab::addRow()
@@ -162,7 +173,7 @@ void ModifyTableTab::addRow()
     QCheckBox* FKCheckBox = new QCheckBox();
     QCheckBox* identityCheckBox = new QCheckBox();
     QCheckBox* notnullCheckBox = new QCheckBox();
-    QPushButton* rmPushButton = new QPushButton("X");
+    QPushButton* rmPushButton = new QPushButton("");
 
     typesComboBox->setStyleSheet("background-color: #ffffff");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
