@@ -29,6 +29,8 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
     gridLayout_->setMargin(0);
 
     comboBox_->setStyleSheet(styles_);
+    textEdit_->setStyleSheet(styles_);
+    tableWidget_->setStyleSheet(styles_);
 
     textEdit_->setFrameStyle(0);
     tableWidget_->setFrameStyle(0);
@@ -79,8 +81,6 @@ void TabWindow::push_button_run_clicked()
     int start = clock();
     std::cout<<"start click"<<std::endl;
 
-
-
     models_.clear();
 
     input_queries_.clear();
@@ -95,20 +95,12 @@ void TabWindow::push_button_run_clicked()
     std::string tmp = textEdit_->toPlainText().toStdString();
 
     if (tmp.back() != ';') tmp.push_back(';');
-
-//    if (std::find(tmp.begin(), tmp.end(), ';') == std::string::iterator())
-//    {
-//        input_queries_.push_back(";");
-//    }
-
     std::string::size_type beg = 0;
     for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
     {
         input_queries_.push_back(tmp.substr(beg, end - beg));
         beg = end + 1;
     }
-
-
 
     for (auto &item : input_queries_)
     {
