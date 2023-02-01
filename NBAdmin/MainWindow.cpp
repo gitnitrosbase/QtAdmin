@@ -67,6 +67,25 @@ void MainWindow::filling_tree_slot()
 
 void MainWindow::showContextMenu(const QPoint point)
 {
+    QTreeWidgetItem* tmp = ui->treeWidget->currentItem();
+
+    while(tmp->parent() != nullptr)
+    {
+        tmp = tmp->parent();
+    }
+
+    QString dbNameTmp = tmp->text(0);
+    QString dbName = "";
+
+    for (auto &item : dbNameTmp)
+    {
+        if (item != ' ') dbName += item;
+        else break;
+    }
+
+    ui->label_2->setText(dbName);
+    currentDatabase_ = dbName;
+
     menu_->clear();
 
     QString currentItem = "";
@@ -179,7 +198,21 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 }
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWidgetItem* to)
 {
-    QString dbNameTmp = from->text(0);
+
+//    if(dbList_.count(dbName) > 0 && dbList_.find(dbName) != dbList_.find("-1"))
+//    {
+//        ui->label_2->setText(dbName);
+//        currentDatabase_ = dbName;
+//    }
+
+    QTreeWidgetItem* tmp = ui->treeWidget->currentItem();
+
+    while(tmp->parent() != nullptr)
+    {
+        tmp = tmp->parent();
+    }
+
+    QString dbNameTmp = tmp->text(0);
     QString dbName = "";
 
     for (auto &item : dbNameTmp)
@@ -188,11 +221,8 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWi
         else break;
     }
 
-    if(dbList_.count(dbName) > 0 && dbList_.find(dbName) != dbList_.find("-1"))
-    {
-        ui->label_2->setText(dbName);
-        currentDatabase_ = dbName;
-    }
+    ui->label_2->setText(dbName);
+    currentDatabase_ = dbName;
 
     ui->actionRefresh->setEnabled(true);
     ui->actionStart->setEnabled(true);
