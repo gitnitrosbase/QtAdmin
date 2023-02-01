@@ -161,7 +161,7 @@ void ModifyTableTab::on_saveButton_clicked()
     ui->tableWidget->setRowCount(0);
     printFromdb();
 
-    QMessageBox::information(this, "", " The table has been changed");
+    QMessageBox::information(this, "", "The table has been changed");
 }
 
 void ModifyTableTab::addRow()

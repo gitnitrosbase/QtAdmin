@@ -5,6 +5,7 @@
 #include <QLineEdit>
 #include <QGridLayout>
 #include <QPushButton>
+#include <QMessageBox>
 
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>

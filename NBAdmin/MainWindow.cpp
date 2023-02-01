@@ -416,6 +416,7 @@ void MainWindow::on_actionDeleteDatabaseTrig()
         }
         reply->deleteLater();
     });
+    QMessageBox::information(this, "", "The database has been deleted");
 }
 
 void MainWindow::setAddress()

@@ -65,6 +65,8 @@ void ConnectWindow::on_Create_clicked()
     });
 
     this->close();
+
+    QMessageBox::information(this, "", "The database has been created");
 }
 
 

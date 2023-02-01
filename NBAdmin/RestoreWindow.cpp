@@ -45,5 +45,6 @@ void RestoreWindow::on_Restore_clicked()
         reply->deleteLater();
     });
     this->close();
+    QMessageBox::information(this, "", "The database has been restored");
 }
 
