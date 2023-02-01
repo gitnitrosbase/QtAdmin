@@ -26,8 +26,7 @@ void BackupWindow::backupDatabase()
         QNetworkReply *reply = mgr->post(request, data);
         connect(reply, &QNetworkReply::finished, [=]()
         {
-            if (reply->error() == QNetworkReply::NoError) std::cout<<"db open"<<std::endl;
-            else std::cout<<"error!"<<std::endl;
+            if (reply->error() == QNetworkReply::NoError) std::cout<<reply->readAll().toStdString()<<std::endl;
 
             reply->deleteLater();
         });

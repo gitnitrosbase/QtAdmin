@@ -74,6 +74,7 @@ void CreateIndexTab::on_pushButton_2_clicked()
     nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
     check_error(connection);
     nb_disconnect(connection);
+    QMessageBox::information(this, "", " The index has been created");
 }
 
 void CreateIndexTab::on_pushButton_clicked()
@@ -87,7 +88,7 @@ void CreateIndexTab::on_pushButton_clicked()
     }
 
     QComboBox* comboBox = new QComboBox();
-    QPushButton* button = new QPushButton("X");
+    QPushButton* button = new QPushButton("");
 
     connect(button, SIGNAL(clicked()), this, SLOT(rmRow()));
     connect(comboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrenttableList(index);});

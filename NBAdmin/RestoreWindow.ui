@@ -65,8 +65,7 @@
          <font>
           <family>Segoe UI Semibold</family>
           <pointsize>18</pointsize>
-          <weight>62</weight>
-          <bold>true</bold>
+          <bold>false</bold>
          </font>
         </property>
         <property name="styleSheet">
@@ -105,7 +104,6 @@ font-weight: 500;</string>
       <font>
        <family>Segoe UI Semibold</family>
        <pointsize>12</pointsize>
-       <weight>75</weight>
        <bold>true</bold>
       </font>
      </property>
@@ -217,7 +215,7 @@ background-color: rgb(255, 255, 255);</string>
     </spacer>
    </item>
    <item row="3" column="2">
-    <widget class="QPushButton" name="Open">
+    <widget class="QPushButton" name="Restore">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
        <horstretch>0</horstretch>

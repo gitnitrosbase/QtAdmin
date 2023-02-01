@@ -12,14 +12,19 @@ void RestoreWindow::on_pushButton_clicked()
     ui->InputPath->setText(Filename);
 }
 
-void RestoreWindow::on_Open_clicked()
+void RestoreWindow::on_Cancel_clicked()
+{
+    this->close();
+}
+
+void RestoreWindow::on_Restore_clicked()
 {
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
     QNetworkRequest request(url);
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
     QJsonObject obj;
-    obj["cmd"] = 10;
+    obj["cmd"] = 6;
     obj["port"] = Port_;
     obj["dbname"] = Name_.toStdString().c_str();
     obj["dbpath"] = "";
@@ -32,16 +37,13 @@ void RestoreWindow::on_Open_clicked()
         if (reply->error() == QNetworkReply::NoError)
         {
             QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-            QFile file("answer.txt");
+            QFile file("answerRestore.txt");
             file.open(QIODevice::ReadWrite);
             file.write(reply_doc.toJson());
             file.close();
         }
         reply->deleteLater();
     });
-}
-
-void RestoreWindow::on_Cancel_clicked()
-{
     this->close();
 }
+

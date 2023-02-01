@@ -63,6 +63,7 @@ void ConnectWindow::on_Create_clicked()
 
         reply->deleteLater();
     });
+
     this->close();
 }
 

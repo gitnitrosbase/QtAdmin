@@ -27,9 +27,9 @@ public:
 private slots:
     void on_pushButton_clicked();
 
-    void on_Open_clicked();
-
     void on_Cancel_clicked();
+
+    void on_Restore_clicked();
 
 private:
     Ui::RestoreWindow* ui;

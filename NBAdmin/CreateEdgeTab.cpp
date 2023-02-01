@@ -26,7 +26,7 @@ void CreateEdgeTab::SetTables(QStringList & tables)
     ui->pathTo->addItems(tables);
 }
 
-void CreateEdgeTab::on_buttonBox_accepted()
+void CreateEdgeTab::on_Create_clicked()
 {
     QString query = QString("CREATE TABLE %1 AS EDGE %2 %3 ;").arg(ui->edgeName->text()).arg(ui->pathFrom->currentText()).arg(ui->pathTo->currentText());
 
@@ -40,10 +40,12 @@ void CreateEdgeTab::on_buttonBox_accepted()
     this->close();
 }
 
-void CreateEdgeTab::on_buttonBox_rejected()
+
+void CreateEdgeTab::on_Cancel_clicked()
 {
     ui->edgeName->clear();
     ui->pathFrom->clear();
     ui->pathTo->clear();
     this->close();
 }
+

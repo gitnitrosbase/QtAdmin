@@ -22,7 +22,7 @@ void OpenWindow::OpenDatabase()
     QJsonObject obj;
     obj["cmd"] = 1;
 
-    QString dbname = ui->InputName->text().toStdString().c_str();
+    QString dbname = ui->InputName->text();
     if (dbname == "")
     {
         QMessageBox::warning(this, "Warning", "Please, enter correct database name!");
@@ -48,14 +48,14 @@ void OpenWindow::OpenDatabase()
         return;
     }
     obj["port"] = dbport;
-    obj["dbname"] = dbname;
+    obj["dbname"] = dbname.toStdString().c_str();
     obj["dbpath"] = ui->InputPath->text().toStdString().c_str();
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QNetworkReply *reply = mgr->post(request, data);
     connect(reply, &QNetworkReply::finished, [=]()
     {
-        if (reply->error() == QNetworkReply::NoError) std::cout<<"db open"<<std::endl;
+        if (reply->error() == QNetworkReply::NoError) std::cout<<reply->readAll().toStdString()<<std::endl;
         else std::cout<<"error!"<<std::endl;
 
         reply->deleteLater();

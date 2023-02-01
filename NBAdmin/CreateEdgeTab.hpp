@@ -24,9 +24,9 @@ public:
     void SetTables(QStringList & tables);
 
 private slots:
-    void on_buttonBox_accepted();
+    void on_Create_clicked();
 
-    void on_buttonBox_rejected();
+    void on_Cancel_clicked();
 
 private:
     Ui::CreateEdgeTab* ui;
