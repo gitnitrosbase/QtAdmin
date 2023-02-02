@@ -113,6 +113,31 @@ void CreateTableTab::rmRow()
 
 void CreateTableTab::on_pushButton_2_clicked()
 {
+    QString tableName = ui->lineEdit->text();
+
+    if (tableName == "")
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter correct table name!");
+        return;
+    }
+    else if (tableName.at(0).isNumber())
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter correct table name!");
+        return;
+    }
+    else
+    {
+        auto nullIterAlp = alp_.find('!');
+        for (auto symbol : tableName)
+        {
+            if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
+            {
+                QMessageBox::warning(this, "Warning", "Please, enter correct table name!");
+                return;
+            }
+        }
+    }
+
     QString queryStr = "CREATE TABLE ";
     queryStr += ui->lineEdit->text();
     queryStr += "( ";

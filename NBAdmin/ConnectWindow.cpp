@@ -67,7 +67,6 @@ void ConnectWindow::on_Create_clicked()
     emit refreshTree();
 }
 
-
 void ConnectWindow::on_Cancel_clicked()
 {
     this->close();

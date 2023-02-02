@@ -59,6 +59,32 @@ CreateIndexTab::~CreateIndexTab()
 
 void CreateIndexTab::on_pushButton_2_clicked()
 {
+    QString indexName = ui->lineEdit->text();
+
+    if (indexName == "")
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
+        return;
+    }
+    else if (indexName.at(0).isNumber())
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
+        return;
+    }
+    else
+    {
+        auto nullIterAlp = alp_.find('!');
+        for (auto symbol : indexName)
+        {
+            if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
+            {
+                QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
+                return;
+            }
+        }
+    }
+
+
     QString query = QString("CREATE INDEX %1 ON %2 (").arg(ui->lineEdit->text()).arg(tableName_);
 
     for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)

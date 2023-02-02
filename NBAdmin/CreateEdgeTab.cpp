@@ -28,6 +28,31 @@ void CreateEdgeTab::SetTables(QStringList & tables)
 
 void CreateEdgeTab::on_Create_clicked()
 {
+    QString edgeName = ui->edgeName->text();
+
+    if (edgeName == "")
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
+        return;
+    }
+    else if (edgeName.at(0).isNumber())
+    {
+        QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
+        return;
+    }
+    else
+    {
+        auto nullIterAlp = alp_.find('!');
+        for (auto symbol : edgeName)
+        {
+            if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
+            {
+                QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
+                return;
+            }
+        }
+    }
+
     QString query = QString("CREATE TABLE %1 AS EDGE %2 %3 ;").arg(ui->edgeName->text()).arg(ui->pathFrom->currentText()).arg(ui->pathTo->currentText());
 
     std::cout<<query.toStdString()<<std::endl;

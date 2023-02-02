@@ -355,6 +355,7 @@ void MainWindow::on_deleteTableActionTrig()
     QString tmp = QString("DROP TABLE %1").arg(ui->treeWidget->currentItem()->text(0));
     nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
     nb_disconnect(connection);
+    filling_tree();
 }
 
 void MainWindow::on_modifyTableActionTrig()
