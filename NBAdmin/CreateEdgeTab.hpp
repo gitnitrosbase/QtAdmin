@@ -17,19 +17,17 @@ class CreateEdgeTab : public QWidget
     Q_OBJECT
 public:
     explicit CreateEdgeTab(QWidget* parent = nullptr);
-
     ~CreateEdgeTab();
-
     void SetCurrentDatabase(QString name, int port);
-
     void SetTables(QStringList & tables);
+
 signals:
     void refreshTree();
 
 private slots:
     void on_Create_clicked();
-
     void on_Cancel_clicked();
+    bool check_query(NB_HANDLE connection);
 
 private:
     Ui::CreateEdgeTab* ui;

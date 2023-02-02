@@ -60,10 +60,9 @@ public:
 
 private slots:
     void on_addRowButton_clicked();
-
     void checkIdentity(int index);
-
     void blockOtherIdentity(QCheckBox* item, int state);
+    bool check_query(NB_HANDLE connection);
 
 private:
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};

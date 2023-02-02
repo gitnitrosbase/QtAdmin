@@ -42,14 +42,12 @@ public:
 
 public slots:
     void addRow();
-
     void rmRow();
-
     void on_pushButton_2_clicked();
-
     void checkIdentity(int index);
-
     void blockOtherIdentity(QCheckBox* item, int state);
+    bool check_query(NB_HANDLE connection);
+
 signals:
     void refreshTree();
 

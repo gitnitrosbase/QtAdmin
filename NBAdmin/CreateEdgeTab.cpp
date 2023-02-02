@@ -28,14 +28,14 @@ void CreateEdgeTab::SetTables(QStringList & tables)
 
 void CreateEdgeTab::on_Create_clicked()
 {
-    QString edgeName = ui->edgeName->text();
+    QString name = ui->edgeName->text();
 
-    if (edgeName == "")
+    if (name == "")
     {
         QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
         return;
     }
-    else if (edgeName.at(0).isNumber())
+    else if (name.at(0).isNumber())
     {
         QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
         return;
@@ -43,7 +43,7 @@ void CreateEdgeTab::on_Create_clicked()
     else
     {
         auto nullIterAlp = alp_.find('!');
-        for (auto symbol : edgeName)
+        for (auto symbol : name)
         {
             if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
             {
@@ -59,9 +59,12 @@ void CreateEdgeTab::on_Create_clicked()
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
-    check_error(connection);
+    if (!check_query(connection))
+    {
+        nb_disconnect(connection);
+        return;
+    }
     nb_disconnect(connection);
-
     this->close();
     emit refreshTree();
 }
@@ -75,3 +78,13 @@ void CreateEdgeTab::on_Cancel_clicked()
     this->close();
 }
 
+bool CreateEdgeTab::check_query(NB_HANDLE connection)
+{
+    if (nb_errno(connection) == NB_OK) return true;
+    else
+    {
+        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
+        return false;
+    }
+}

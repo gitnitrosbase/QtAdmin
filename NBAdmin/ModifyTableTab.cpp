@@ -154,7 +154,11 @@ void ModifyTableTab::on_saveButton_clicked()
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
-    check_error(connection);
+    if (!check_query(connection))
+    {
+        nb_disconnect(connection);
+        return;
+    }
     nb_disconnect(connection);
 
     ui->tableWidget->clear();
@@ -287,4 +291,15 @@ void ModifyTableTab::blockOtherIdentity(QCheckBox* item, int state)
         }
     }
     else for (int i = fieldCount_; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
+}
+
+bool ModifyTableTab::check_query(NB_HANDLE connection)
+{
+    if (nb_errno(connection) == NB_OK) return true;
+    else
+    {
+        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
+        return false;
+    }
 }

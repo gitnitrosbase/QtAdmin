@@ -59,14 +59,14 @@ CreateIndexTab::~CreateIndexTab()
 
 void CreateIndexTab::on_pushButton_2_clicked()
 {
-    QString indexName = ui->lineEdit->text();
+    QString name = ui->lineEdit->text();
 
-    if (indexName == "")
+    if (name == "")
     {
         QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
         return;
     }
-    else if (indexName.at(0).isNumber())
+    else if (name.at(0).isNumber())
     {
         QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
         return;
@@ -74,7 +74,7 @@ void CreateIndexTab::on_pushButton_2_clicked()
     else
     {
         auto nullIterAlp = alp_.find('!');
-        for (auto symbol : indexName)
+        for (auto symbol : name)
         {
             if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
             {
@@ -83,7 +83,6 @@ void CreateIndexTab::on_pushButton_2_clicked()
             }
         }
     }
-
 
     QString query = QString("CREATE INDEX %1 ON %2 (").arg(ui->lineEdit->text()).arg(tableName_);
 
@@ -98,7 +97,11 @@ void CreateIndexTab::on_pushButton_2_clicked()
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
-    check_error(connection);
+    if (!check_query(connection))
+    {
+        nb_disconnect(connection);
+        return;
+    }
     nb_disconnect(connection);
     QMessageBox::information(this, "", " The index has been created");
     emit refreshTree();
@@ -164,4 +167,15 @@ void CreateIndexTab::setCurrenttableList(int index)
 //    {
 //        if (std::find(tableList_.begin(), tableList_.end(), dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 0))->currentText())))
 //    }
+}
+
+bool CreateIndexTab::check_query(NB_HANDLE connection)
+{
+    if (nb_errno(connection) == NB_OK) return true;
+    else
+    {
+        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
+        return false;
+    }
 }

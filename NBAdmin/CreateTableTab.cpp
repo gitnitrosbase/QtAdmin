@@ -113,14 +113,14 @@ void CreateTableTab::rmRow()
 
 void CreateTableTab::on_pushButton_2_clicked()
 {
-    QString tableName = ui->lineEdit->text();
+    QString name = ui->lineEdit->text();
 
-    if (tableName == "")
+    if (name == "")
     {
         QMessageBox::warning(this, "Warning", "Please, enter correct table name!");
         return;
     }
-    else if (tableName.at(0).isNumber())
+    else if (name.at(0).isNumber())
     {
         QMessageBox::warning(this, "Warning", "Please, enter correct table name!");
         return;
@@ -128,7 +128,7 @@ void CreateTableTab::on_pushButton_2_clicked()
     else
     {
         auto nullIterAlp = alp_.find('!');
-        for (auto symbol : tableName)
+        for (auto symbol : name)
         {
             if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
             {
@@ -198,7 +198,12 @@ void CreateTableTab::on_pushButton_2_clicked()
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
-    check_error(connection);
+    if (!check_query(connection))
+    {
+        nb_disconnect(connection);
+        return;
+    }
+    nb_disconnect(connection);
     nb_disconnect(connection);
 
     QMessageBox::information(this, "", " The table has been created");
@@ -238,4 +243,15 @@ void CreateTableTab::blockOtherIdentity(QCheckBox* item, int state)
         }
     }
     else for (int i = 0; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
+}
+
+bool CreateTableTab::check_query(NB_HANDLE connection)
+{
+    if (nb_errno(connection) == NB_OK) return true;
+    else
+    {
+        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
+        return false;
+    }
 }
