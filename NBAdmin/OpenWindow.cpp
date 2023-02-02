@@ -61,6 +61,10 @@ void OpenWindow::OpenDatabase()
         reply->deleteLater();
     });
     this->close();
+
+    QMessageBox::information(this, "", "The database has been opened");
+
+    emit refreshTree();
 }
 
 void OpenWindow::on_buttonPath_clicked()

@@ -38,6 +38,7 @@ void CreateEdgeTab::on_Create_clicked()
     nb_disconnect(connection);
 
     this->close();
+    emit refreshTree();
 }
 
 

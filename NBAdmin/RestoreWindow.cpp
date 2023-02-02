@@ -46,5 +46,6 @@ void RestoreWindow::on_Restore_clicked()
     });
     this->close();
     QMessageBox::information(this, "", "The database has been restored");
+    emit refreshTree();
 }
 

@@ -39,6 +39,8 @@ private slots:
     void rmRow();
 
     void setCurrenttableList(int index);
+signals:
+    void refreshTree();
 
 private:
     Ui::CreateIndexTab* ui;

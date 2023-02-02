@@ -31,8 +31,8 @@ class ConnectWindow : public QDialog
 public:
     ConnectWindow(QWidget* parent = nullptr);
     ~ConnectWindow() = default;
-public slots:
-    void createDatabase();
+signals:
+    void refreshTree();
 
 private slots:
     void on_pushButton_clicked();

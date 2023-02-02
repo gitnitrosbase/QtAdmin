@@ -49,6 +49,8 @@ public slots:
     void checkIdentity(int index);
 
     void blockOtherIdentity(QCheckBox* item, int state);
+signals:
+    void refreshTree();
 
 private:
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};

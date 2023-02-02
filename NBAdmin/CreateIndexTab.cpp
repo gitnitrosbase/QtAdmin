@@ -75,6 +75,7 @@ void CreateIndexTab::on_pushButton_2_clicked()
     check_error(connection);
     nb_disconnect(connection);
     QMessageBox::information(this, "", " The index has been created");
+    emit refreshTree();
 }
 
 void CreateIndexTab::on_pushButton_clicked()

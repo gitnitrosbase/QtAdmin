@@ -58,6 +58,10 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(createDBQueryAction_, &QAction::triggered, this, &MainWindow::on_actionCreateDBQueryTrig);
 
     ui->treeWidget->setFrameStyle(0);
+
+    connect(connectWindow_, &ConnectWindow::refreshTree, this, &MainWindow::filling_tree_slot);
+    connect(openWindow_, &OpenWindow::refreshTree, this, &MainWindow::filling_tree_slot);
+    connect(restoreWindow_, &RestoreWindow::refreshTree, this, &MainWindow::filling_tree_slot);
 }
 
 void MainWindow::filling_tree_slot()
@@ -325,6 +329,7 @@ void MainWindow::on_actionDeleteEdgeTrig()
     QString tmp = QString("DROP TABLE %1").arg(ui->treeWidget->currentItem()->text(0));
     nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
     nb_disconnect(connection);
+    filling_tree();
 }
 
 void MainWindow::on_actionDeleteIndexTrig()
@@ -339,6 +344,7 @@ void MainWindow::on_actionDeleteIndexTrig()
     nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
     check_error(connection);
     nb_disconnect(connection);
+    filling_tree();
 }
 
 void MainWindow::on_deleteTableActionTrig()
@@ -361,6 +367,7 @@ void MainWindow::on_modifyTableActionTrig()
         tmp->port_ = dbList_.find(currentDatabase_)->second;
         ui->tabWidget->setCurrentWidget(tmp);
         tmp->printFromdb();
+        connect(tmp, &ModifyTableTab::refreshTree, this, &MainWindow::filling_tree_slot);
     }
 }
 
@@ -393,6 +400,7 @@ void MainWindow::on_actionCreateEdgeTrig()
             tables.push_back(ui->treeWidget->currentItem()->parent()->child(0)->child(i)->text(0));
         }
         tmp->SetTables(tables);
+        connect(tmp, &CreateEdgeTab::refreshTree, this, &MainWindow::filling_tree_slot);
     }
 }
 void MainWindow::on_actionCreateIndexTrig()
@@ -403,6 +411,7 @@ void MainWindow::on_actionCreateIndexTrig()
         ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Create Index"));
         tmp->SetCurrentDatabase(QString(ui->treeWidget->currentItem()->parent()->text(0)), dbList_.find(currentDatabase_)->second);
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+        connect(tmp, &CreateIndexTab::refreshTree, this, &MainWindow::filling_tree_slot);
     }
 }
 void MainWindow::on_actionCreateTableTrig()
@@ -413,6 +422,7 @@ void MainWindow::on_actionCreateTableTrig()
         ui->tabWidget->addTab(tmp, QString("Create Table"));
         tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
+        connect(tmp, &CreateTableTab::refreshTree, this, &MainWindow::filling_tree_slot);
     }
 }
 
@@ -447,6 +457,7 @@ void MainWindow::on_actionDeleteDatabaseTrig()
         reply->deleteLater();
     });
     QMessageBox::information(this, "", "The database has been deleted");
+    filling_tree();
 }
 
 void MainWindow::setAddress()

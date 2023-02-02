@@ -30,6 +30,8 @@ public:
     OpenWindow(QWidget* parent = nullptr);
 
     ~OpenWindow() = default;
+signals:
+    void refreshTree();
 
 public slots:
     void cancel_clicked();

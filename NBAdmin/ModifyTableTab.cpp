@@ -162,6 +162,7 @@ void ModifyTableTab::on_saveButton_clicked()
     printFromdb();
 
     QMessageBox::information(this, "", "The table has been changed");
+    emit refreshTree();
 }
 
 void ModifyTableTab::addRow()

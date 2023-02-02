@@ -46,6 +46,8 @@ public slots:
     //void checkToAddRow();
     void on_saveButton_clicked();
     void printFromdb();
+signals:
+    void refreshTree();
 
 public:
     int fieldCount_ = 0;

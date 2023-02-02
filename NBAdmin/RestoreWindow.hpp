@@ -21,8 +21,10 @@ class RestoreWindow : public QWidget
     Q_OBJECT
 public:
     RestoreWindow(QWidget* parent = nullptr);
-
     ~RestoreWindow() = default;
+
+signals:
+    void refreshTree();
 
 private slots:
     void on_pushButton_clicked();

@@ -22,6 +22,8 @@ public:
     void SetCurrentDatabase(QString name, int port);
 
     void SetTables(QStringList & tables);
+signals:
+    void refreshTree();
 
 private slots:
     void on_Create_clicked();

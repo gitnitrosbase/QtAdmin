@@ -5,10 +5,6 @@ ConnectWindow::ConnectWindow(QWidget* parent) : QDialog(parent), ui(new Ui::Conn
     ui->setupUi(this);
     setWindowIcon(QIcon(":/images/favicon.ico"));
 }
-void ConnectWindow::createDatabase()
-{
-
-}
 
 void ConnectWindow::on_pushButton_clicked()
 {
@@ -67,6 +63,8 @@ void ConnectWindow::on_Create_clicked()
     this->close();
 
     QMessageBox::information(this, "", "The database has been created");
+
+    emit refreshTree();
 }
 
 

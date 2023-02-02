@@ -177,6 +177,8 @@ void CreateTableTab::on_pushButton_2_clicked()
     nb_disconnect(connection);
 
     QMessageBox::information(this, "", " The table has been created");
+
+    emit refreshTree();
 }
 
 void CreateTableTab::on_addColumnButton_clicked()
