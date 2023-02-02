@@ -937,4 +937,3 @@ void MainWindow::on_treeWidget_itemExpanded(QTreeWidgetItem *item)
         ui->actionDatabase_Info->setEnabled(true);
     }
 }
-
