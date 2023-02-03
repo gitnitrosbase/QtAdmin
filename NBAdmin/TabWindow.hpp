@@ -40,8 +40,6 @@ public:
     ~TabWindow();
 
 public slots:
-    void selectThousandQuery(QString table);
-
     QString textFromTextEdit();
 
     void setText(QString input);
@@ -68,8 +66,8 @@ public:
     QTextEdit* textEdit_ = nullptr;
     QComboBox* comboBox_ = nullptr;
     QSplitter* splitter_ = nullptr;
-    std::vector<std::string> input_queries_;
-    std::vector<QStandardItemModel*> models_;
+    QList<QString> input_queries_;
+    QList<QStandardItemModel*> models_;
     QMenu* rightClickMenu_ = nullptr;
     QFont font;
     SyntaxHighlighter* syntaxHighLight_ = nullptr;

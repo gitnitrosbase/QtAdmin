@@ -198,7 +198,10 @@ void MainWindow::push_button_plus_clicked()
 }
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
-    if (ui->tabWidget->count() > 1) ui->tabWidget->removeTab(index);
+    if (ui->tabWidget->count() > 1)
+    {
+        ui->tabWidget->removeTab(index);
+    }
 }
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWidgetItem* to)
 {

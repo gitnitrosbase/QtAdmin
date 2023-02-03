@@ -44,20 +44,17 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
 TabWindow::~TabWindow()
 {
     //delete ui;
-}
 
-void TabWindow::selectThousandQuery(QString table)
-{
-    NB_HANDLE connection;
+    for (auto item : models_)
+    {
+        delete item;
+    }
+    models_.clear();
 }
 
 void TabWindow::cleanMemory(std::vector<QStandardItemModel*> models)
 {
-    for(auto item : models)
-    {
-        delete item;
-    }
-    models.clear();
+
 }
 
 QString TabWindow::textFromTextEdit()
@@ -67,21 +64,16 @@ QString TabWindow::textFromTextEdit()
 
 void TabWindow::setText(QString input)
 {
-    std::cout<<input.toStdString()<<std::endl;
     textEdit_->setText(input);
 }
 
 void TabWindow::setCurrentIndex(int index)
 {
-    std::cout<<"start set current"<<std::endl;
     tableWidget_->setModel(models_.at(index));
 }
 void TabWindow::push_button_run_clicked()
 {
     int start = clock();
-    std::cout<<"start click"<<std::endl;
-
-    models_.clear();
 
     input_queries_.clear();
 
@@ -98,7 +90,8 @@ void TabWindow::push_button_run_clicked()
     std::string::size_type beg = 0;
     for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
     {
-        input_queries_.push_back(tmp.substr(beg, end - beg));
+        std::string str = tmp.substr(beg, end - beg);
+        input_queries_.push_back(QString::fromStdString(str));
         beg = end + 1;
     }
 
@@ -106,21 +99,40 @@ void TabWindow::push_button_run_clicked()
     {
         while (item.at(0) == '\n' ||  item.at(0) == '\t' || item.at(0) == ' ')
         {
-            item.erase(0,1);
+            item.remove(0,1);
         }
     }
 
-    for (int i = 0; i<int(input_queries_.size());i+=1)
-    {
-        models_.push_back(new QStandardItemModel());
+    // remove all models in answers
 
-        NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort_, u"TESTUSER", u"1234" );
-        check_error(connection);
-        exec_select_query(connection, models_.back(), QString::fromStdString(input_queries_.at(i)));
-        nb_disconnect(connection);
-        comboBox_->addItem(QString::fromStdString(input_queries_.at(i)));
+    for (auto item : models_)
+    {
+        delete item;
     }
-    std::cout<<"end click"<<std::endl;
+    models_.clear();
+
+    // create new empty models
+
+    for (auto &item : input_queries_)
+    {
+        models_.push_back(new QStandardItemModel);
+    }
+
+    // fill empty models
+    if (models_.count() == input_queries_.count())
+    {
+        for (int i = 0; i < models_.count(); i+=1)
+        {
+            NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort_, u"TESTUSER", u"1234" );
+            check_query(connection);
+            exec_select_query(connection, models_.at(i), input_queries_.at(i));
+            check_query(connection);
+            nb_disconnect(connection);
+        }
+    }
+
+    // add input queries to comboBox
+    comboBox_->addItems(QStringList(input_queries_));
 
     int end = clock();
     int t = (end - start) / CLOCKS_PER_SEC;
@@ -167,7 +179,6 @@ void TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* mode
 {
     QStringList headers = {};
     QList<QStandardItem*> tmp;
-    std::cout<<"start exec"<<std::endl;
     nb_execute_sql(connection , query.toStdU16String().c_str(), size_t(query.size()));
     check_query(connection);
     int field_count = nb_field_count(connection);
@@ -195,5 +206,4 @@ void TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* mode
         }
         model->appendRow(tmp);
     }
-    std::cout<<"end exec"<<std::endl;
 }
