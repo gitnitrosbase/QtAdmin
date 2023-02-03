@@ -202,13 +202,6 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 }
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWidgetItem* to)
 {
-
-//    if(dbList_.count(dbName) > 0 && dbList_.find(dbName) != dbList_.find("-1"))
-//    {
-//        ui->label_2->setText(dbName);
-//        currentDatabase_ = dbName;
-//    }
-
     QTreeWidgetItem* tmp = ui->treeWidget->currentItem();
 
     while(tmp->parent() != nullptr)
@@ -379,7 +372,6 @@ void MainWindow::on_tableSelectActionTrig()
         push_button_plus_clicked();
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-        //if (std::string(typeid(&currentTab).name()) == std::string("TabWindow"))
         currentTab->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0) + ";"));
     }
     push_button_run_clicked();
