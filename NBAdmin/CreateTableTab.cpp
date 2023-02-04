@@ -4,7 +4,7 @@
 CreateTableTab::CreateTableTab(QWidget* parent) : QWidget(parent), ui(new Ui::CreateTableTab)
 {
     ui->setupUi(this);
-
+    this->setObjectName("CreateTableTab");
     ui->tableWidget->setColumnCount(headerTable.count());
     ui->tableWidget->setHorizontalHeaderLabels(headerTable);
 

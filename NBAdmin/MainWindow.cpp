@@ -71,60 +71,20 @@ void MainWindow::filling_tree_slot()
 
 void MainWindow::showContextMenu(const QPoint point)
 {
-    QTreeWidgetItem* tmp = ui->treeWidget->currentItem();
-
-    while(tmp->parent() != nullptr)
+    if (ui->treeWidget->currentItem() == nullptr)
     {
-        tmp = tmp->parent();
+        menu_->addAction(refreshAction_);
     }
-
-    QString dbNameTmp = tmp->text(0);
-    QString dbName = "";
-
-    for (auto &item : dbNameTmp)
+    else
     {
-        if (item != ' ') dbName += item;
-        else break;
-    }
+        QTreeWidgetItem* tmp = ui->treeWidget->currentItem();
 
-    ui->label_2->setText(dbName);
-    currentDatabase_ = dbName;
-
-    menu_->clear();
-
-    QString currentItem = "";
-
-    QString parentItem = "";
-
-    if (ui->treeWidget->currentItem()->parent() != nullptr)
-    {
-        for (int i = 0; i<ui->treeWidget->currentItem()->parent()->text(0); i+=1)
+        while(tmp->parent() != nullptr)
         {
-            if (ui->treeWidget->currentItem()->parent()->text(0)[i] != " ") parentItem += ui->treeWidget->currentItem()->parent()->text(0)[i];
-            else break;
+            tmp = tmp->parent();
         }
-    }
 
-    for (int i = 0; i<ui->treeWidget->currentItem()->text(0).count(); i+=1)
-    {
-        if (ui->treeWidget->currentItem()->text(0)[i] != " ") currentItem += ui->treeWidget->currentItem()->text(0)[i];
-        else break;
-    }
-
-    bool tableFlag = false;
-    for (auto item : tables_)
-    {
-        if (item->text(0) == ui->treeWidget->currentItem()->text(0))
-        {
-            tableFlag = true;
-            break;
-        }
-    }
-
-    bool dbFlag = false;
-    for (auto item : dbList_)
-    {
-        QString dbNameTmp = ui->treeWidget->currentItem()->text(0);
+        QString dbNameTmp = tmp->text(0);
         QString dbName = "";
 
         for (auto &item : dbNameTmp)
@@ -133,51 +93,98 @@ void MainWindow::showContextMenu(const QPoint point)
             else break;
         }
 
-        if (dbName == item.first)
-        {
-            dbFlag = true;
-            break;
-        }
-    }
+        ui->label_2->setText(dbName);
+        currentDatabase_ = dbName;
 
-    if (dbFlag)
-    {
-        menu_->addAction(refreshAction_);
-        menu_->addAction(stopAction_);
-        menu_->addAction(startAction_);
-        menu_->addAction(backupAction_);
-        menu_->addAction(restoreAction_);
-        menu_->addAction(deleteAction_);
-        menu_->addAction(databaseInfoAction_);
-    }
-    else if (parentItem == "Indexes")
-    {
-        std::cout<<parentItem.toStdString()<<std::endl;
-        menu_->addAction(deleteIndexAction_);
-    }
-    else if (parentItem == "Edges")
-    {
-        menu_->addAction(selectEdgeAction_);
-        menu_->addAction(deleteEdgeAction_);
-    }
-    else if (currentItem == "Tables")
-    {
-        menu_->addAction(createTableAction_);
-    }
-    else if (currentItem == "Edges")
-    {
-        menu_->addAction(createEdgeAction_);
-    }
-    else if (currentItem == "Indexes")
-    {
-        menu_->addAction(createIndexAction_);
-    }
-    else if (tableFlag)
-    {
-        menu_->addAction(selectAction_);
-        menu_->addAction(createDBQueryAction_);
-        menu_->addAction(modifyTableAction_);
-        menu_->addAction(deleteTableAction_);
+        menu_->clear();
+
+        QString currentItem = "";
+
+        QString parentItem = "";
+
+        if (ui->treeWidget->currentItem()->parent() != nullptr)
+        {
+            for (int i = 0; i<ui->treeWidget->currentItem()->parent()->text(0); i+=1)
+            {
+                if (ui->treeWidget->currentItem()->parent()->text(0)[i] != " ") parentItem += ui->treeWidget->currentItem()->parent()->text(0)[i];
+                else break;
+            }
+        }
+
+        for (int i = 0; i<ui->treeWidget->currentItem()->text(0).count(); i+=1)
+        {
+            if (ui->treeWidget->currentItem()->text(0)[i] != " ") currentItem += ui->treeWidget->currentItem()->text(0)[i];
+            else break;
+        }
+
+        bool tableFlag = false;
+        for (auto item : tables_)
+        {
+            if (item->text(0) == ui->treeWidget->currentItem()->text(0))
+            {
+                tableFlag = true;
+                break;
+            }
+        }
+
+        bool dbFlag = false;
+        for (auto item : dbList_)
+        {
+            QString dbNameTmp = ui->treeWidget->currentItem()->text(0);
+            QString dbName = "";
+
+            for (auto &item : dbNameTmp)
+            {
+                if (item != ' ') dbName += item;
+                else break;
+            }
+
+            if (dbName == item.first)
+            {
+                dbFlag = true;
+                break;
+            }
+        }
+
+        if (dbFlag)
+        {
+            menu_->addAction(refreshAction_);
+            menu_->addAction(stopAction_);
+            menu_->addAction(startAction_);
+            menu_->addAction(backupAction_);
+            menu_->addAction(restoreAction_);
+            menu_->addAction(deleteAction_);
+            menu_->addAction(databaseInfoAction_);
+        }
+        else if (parentItem == "Indexes")
+        {
+            std::cout<<parentItem.toStdString()<<std::endl;
+            menu_->addAction(deleteIndexAction_);
+        }
+        else if (parentItem == "Edges")
+        {
+            menu_->addAction(selectEdgeAction_);
+            menu_->addAction(deleteEdgeAction_);
+        }
+        else if (currentItem == "Tables")
+        {
+            menu_->addAction(createTableAction_);
+        }
+        else if (currentItem == "Edges")
+        {
+            menu_->addAction(createEdgeAction_);
+        }
+        else if (currentItem == "Indexes")
+        {
+            menu_->addAction(createIndexAction_);
+        }
+        else if (tableFlag)
+        {
+            menu_->addAction(selectAction_);
+            menu_->addAction(createDBQueryAction_);
+            menu_->addAction(modifyTableAction_);
+            menu_->addAction(deleteTableAction_);
+        }
     }
 
     menu_->popup(ui->treeWidget->viewport()->mapToGlobal(point));
@@ -200,6 +207,10 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
     if (ui->tabWidget->count() > 1)
     {
+//        if (ui->tabWidget->widget(index)->objectName() == "TabWindow")
+//        {
+//            dynamic_cast<TabWindow*>(ui->tabWidget->widget(index))->~TabWindow();
+//        }
         ui->tabWidget->removeTab(index);
     }
 }
@@ -508,16 +519,7 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
-    QString userName = "";
-    DWORD size=1024;
-    char buf[1024];
-    GetUserName(buf, &size);
-    userName = buf;
-
-    userName_ = userName;
-
     tables_.clear();
-
     delete ui->treeWidget;
 
     ui->treeWidget = new QTreeWidget(ui->splitter);
@@ -528,9 +530,6 @@ void MainWindow::filling_tree()
     connect(ui->treeWidget, &QTreeWidget::currentItemChanged, this, &MainWindow::on_treeWidget_currentItemChanged);
     ui->treeWidget->setStyleSheet("QHeaderView::section {color: black;padding: 2px;height:0px;border: 0px solid #567dbc;border-left:0px;border-right:0px;background: white;}");
 
-    QTreeWidgetItem* username = new QTreeWidgetItem();
-    username->setText(0, userName);
-    //ui->treeWidget->addTopLevelItem(username);
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
     QNetworkRequest request(url);

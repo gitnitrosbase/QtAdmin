@@ -3,6 +3,7 @@
 CreateIndexTab::CreateIndexTab(QWidget* parent) : QWidget(parent), ui(new Ui::CreateIndexTab)
 {
     ui->setupUi(this);
+    this->setObjectName("CreateIndexTab");
     ui->tableWidget->setColumnCount(2);
     ui->tableWidget->setHorizontalHeaderLabels(QStringList{"Column", ""});
 }

@@ -4,7 +4,7 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent)
   //,ui(new Ui::TabWindow)
 {
     //ui->setupUi(this);
-
+    this->setObjectName("TabWindow");
     gridLayout_ = new QGridLayout(this);
     splitter_ = new QSplitter(Qt::Vertical, this);
     textEdit_ = new QTextEdit(this);
