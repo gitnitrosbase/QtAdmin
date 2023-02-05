@@ -152,25 +152,24 @@ bool TabWindow::check_query(NB_HANDLE connection)
 QString TabWindow::from_nbvalue(NBValue v)
 {
     std::string output = "";
+
+    if (v.null == true) return QString("null");
+
     switch ( v.type )
     {
         case NB_DATA_INT: output = std::to_string(v.intv); break;
-
         case NB_DATA_DATETIME: for (int i = 0; i< v.len; i+=1) output += v.str[i]; break;
-
         case NB_DATA_STRING: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-
         case NB_DATA_U16STRING: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-
         case NB_DATA_DECIMAL: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-
-    case NB_DATA_INT64: output = std::to_string(v.int64v); break;
-
+        case NB_DATA_INT64: output = std::to_string(v.int64v); break;
         case NB_DATA_DOUBLE: output = std::to_string(v.dbl); break;
-
         case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
-
         case NB_DATA_BINARY: output += *(&v.str); break;
+        case NB_DATA_DATE: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
+        case NB_DATA_NONE : output = "none"; break;
+        case NB_DATA_ROWVERSION: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
+        case NB_DATA_URI: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
     }
     return QString::fromStdString(output);
 }
