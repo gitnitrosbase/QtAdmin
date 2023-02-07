@@ -70,6 +70,10 @@ void TabWindow::setText(QString input)
 void TabWindow::setCurrentIndex(int index)
 {
     tableWidget_->setModel(models_.at(index));
+    if (models_.at(index)->columnCount() == 1 && models_.at(index)->rowCount() == 1)
+    {
+        tableWidget_->resizeColumnToContents(0);
+    }
 }
 void TabWindow::push_button_run_clicked()
 {
@@ -85,7 +89,7 @@ void TabWindow::push_button_run_clicked()
     comboBox_->setStyleSheet(styles_);
 
     std::string tmp = textEdit_->toPlainText().toStdString();
-
+    QStringList reqTypesList;
     if (tmp.back() != ';') tmp.push_back(';');
     std::string::size_type beg = 0;
     for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
@@ -125,14 +129,14 @@ void TabWindow::push_button_run_clicked()
         {
             NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort_, u"TESTUSER", u"1234" );
             check_query(connection);
-            exec_select_query(connection, models_.at(i), input_queries_.at(i));
+            reqTypesList.push_back(exec_select_query(connection, models_.at(i), input_queries_.at(i)));
             check_query(connection);
             nb_disconnect(connection);
         }
     }
 
     // add input queries to comboBox
-    comboBox_->addItems(QStringList(input_queries_));
+    comboBox_->addItems(reqTypesList);
 
     int end = clock();
     int t = (end - start) / CLOCKS_PER_SEC;
@@ -144,8 +148,8 @@ bool TabWindow::check_query(NB_HANDLE connection)
     if (nb_errno(connection) == NB_OK) return true;
     else
     {
-        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
-        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
+        //QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        //std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
         return false;
     }
 }
@@ -174,12 +178,19 @@ QString TabWindow::from_nbvalue(NBValue v)
     return QString::fromStdString(output);
 }
 
-void TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query)
+QString TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query)
 {
     QStringList headers = {};
     QList<QStandardItem*> tmp;
     nb_execute_sql(connection , query.toStdU16String().c_str(), size_t(query.size()));
-    check_query(connection);
+
+    if (check_query(connection) == false)
+    {
+        tmp.push_back(new QStandardItem(QString::number(nb_errno( connection )) + ": " + QString(nb_err_text_utf8( connection ))));
+        model->appendRow(tmp);
+        return reqTypes_.at(0);
+    }
+
     int field_count = nb_field_count(connection);
     for (int i = 0;i< field_count; i+=1)
     {
@@ -205,4 +216,7 @@ void TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* mode
         }
         model->appendRow(tmp);
     }
+    int reqType, tmp2;
+    nb_get_change_info(connection, &reqType, &tmp2);
+    return reqTypes_.at(reqType);
 }
