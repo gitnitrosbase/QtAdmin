@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(backupAction_, &QAction::triggered, this, &MainWindow::on_actionBackup_triggered);
     connect(restoreAction_, &QAction::triggered, this, &MainWindow::on_actionRestore_triggered);
     connect(deleteAction_, &QAction::triggered, this, &MainWindow::on_actionDeleteDatabaseTrig);
-    connect(databaseInfoAction_, &QAction::triggered, this, &MainWindow::on_actionOpen_database_triggered);
+    connect(databaseInfoAction_, &QAction::triggered, this, &MainWindow::on_actionDatabase_Info_triggered);
     connect(createTableAction_, &QAction::triggered, this, &MainWindow::on_actionCreateTableTrig);
     connect(createEdgeAction_, &QAction::triggered, this, &MainWindow::on_actionCreateEdgeTrig);
     connect(createIndexAction_, &QAction::triggered, this, &MainWindow::on_actionCreateIndexTrig);
