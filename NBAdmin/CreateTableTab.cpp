@@ -204,7 +204,6 @@ void CreateTableTab::on_pushButton_2_clicked()
         return;
     }
     nb_disconnect(connection);
-    nb_disconnect(connection);
 
     QMessageBox::information(this, "", " The table has been created");
 
