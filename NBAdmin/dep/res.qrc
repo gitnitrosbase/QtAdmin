@@ -7,8 +7,8 @@
         <file>images/RunbtnPic.svg</file>
         <file>images/arrow.svg</file>
         <file>images/checked_icon-icons.com_65162.svg</file>
-        <file>images/icons8-close.svg</file>
         <file>images/icons8-selected-close.svg</file>
         <file>images/lines.svg</file>
+        <file>images/icons8-close.svg</file>
     </qresource>
 </RCC>

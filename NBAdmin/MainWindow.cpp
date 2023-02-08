@@ -492,7 +492,7 @@ QString MainWindow::paintText(QString str, int color)
     {
         case 0 : output = QString("<span style=\" color:#ff0000;\">%1</span>").arg(str); break;
         case 1 : output = QString("<span style=\" color:#008000;\">%1</span>").arg(str); break;
-        case 2 : output = QString("<span style=\" color:#0000FF;\">%1</span>").arg(str); break;
+        case 2 : output = QString("<span style=\" color:#0085c7;\">%1</span>").arg(str); break;
     }
     return output;
 }
@@ -528,7 +528,8 @@ void MainWindow::filling_tree()
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(ui->treeWidget, &QTreeWidget::currentItemChanged, this, &MainWindow::on_treeWidget_currentItemChanged);
-    ui->treeWidget->setStyleSheet("QHeaderView::section {color: black;padding: 2px;height:0px;border: 0px solid #567dbc;border-left:0px;border-right:0px;background: white;} QTreeView::item{color: #555;} QTreeWidget {font-size: 12pt;}");
+
+    ui->treeWidget->setStyleSheet("QHeaderView::section {color: black;padding: 2px;height:0px;border: 0px solid #567dbc;border-left:0px;border-right:0px;background: white;} QTreeView::item{color: #555;} QTreeWidget {font-size: 12pt;} QTreeView::branch:hover {}");
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
