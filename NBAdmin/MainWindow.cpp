@@ -315,6 +315,24 @@ void MainWindow::on_actionSelectEdgeTrig()
     std::reverse(fromId.begin(), fromId.end());
     std::reverse(toId.begin(), toId.end());
 
+    QString fromPK;
+    QString toPK;
+
+    QTreeWidgetItem* fromidColumns = ui->treeWidget->currentItem()->parent()->child(0);
+    for (int i = 0; i < fromidColumns->childCount(); i+=1)
+    {
+        if(fromidColumns->child(i)->child(1)->text(0) == "1")
+        {
+            fromPK = fromidColumns->child(i)->child(0)->text(0);
+        }
+        if(fromidColumns->child(i)->child(1)->text(0) == "1")
+        {
+            fromPK = fromidColumns->child(i)->child(0)->text(0);
+        }
+    }
+
+
+
     QString tmp = QString("SELECT TOP 1000 t1.id, t2.id FROM %1 t JOIN %2 t1 on t.fromid = t1.id JOIN %3 t2 on t.toid = t2.id;")
             .arg(ui->treeWidget->currentItem()->text(0))
             .arg(fromId)
@@ -633,6 +651,17 @@ void MainWindow::filling_tree()
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     columnItem->addChild(field);
+
+                                    QTreeWidgetItem* fieldName = new QTreeWidgetItem();
+                                    fieldName->setText(0, fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second);
+                                    fieldName->setHidden(true);
+                                    field->addChild(fieldName);
+
+                                    QTreeWidgetItem* fieldTipe = new QTreeWidgetItem();
+                                    if (item_field.toObject().find("subtype")->toInt() == 1) fieldTipe->setText(0, "1");
+                                    else fieldTipe->setText(0, "0");
+                                    fieldTipe->setHidden(true);
+                                    field->addChild(fieldTipe);
                                 }
 
                                 columnItem->setText(0, QString("Columns (" + QString::number(fields_array.count()) + ")"));

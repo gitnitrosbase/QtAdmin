@@ -23,31 +23,57 @@ void SyntaxHighlighter::highlightBlock( const QString& text )
             setFormat( index, LEN, fmt );
         }
     }
+
+
+    QTextCharFormat multiLineCommentFormat;
+    multiLineCommentFormat.setForeground(commentColor_);
+
+    QRegularExpression startExpression("/\\*");
+    QRegularExpression endExpression("\\*/");
+
+    setCurrentBlockState(0);
+
+    int startIndex = 0;
+    if (previousBlockState() != 1) startIndex = text.indexOf(startExpression);
+
+    while (startIndex >= 0) {
+        QRegularExpressionMatch endMatch;
+        int endIndex = text.indexOf(endExpression, startIndex, &endMatch);
+        int commentLength;
+        if (endIndex == -1) {
+            setCurrentBlockState(1);
+            commentLength = text.length() - startIndex;
+        } else {
+            commentLength = endIndex - startIndex + endMatch.capturedLength();
+        }
+        setFormat(startIndex, commentLength, multiLineCommentFormat);
+        startIndex = text.indexOf(startExpression, startIndex + commentLength);
+    }
+    {
+        QTextCharFormat multiLineCommentFormat;
+        multiLineCommentFormat.setForeground(commentColor_);
+
+        QRegularExpression startExpression("--");
+        QRegularExpression endExpression("$");
+
+        setCurrentBlockState(0);
+
+        int startIndex = 0;
+        if (previousBlockState() != 1) startIndex = text.indexOf(startExpression);
+
+        while (startIndex >= 0) {
+            QRegularExpressionMatch endMatch;
+            int endIndex = text.indexOf(endExpression, startIndex, &endMatch);
+            int commentLength;
+            if (endIndex == -1) {
+                setCurrentBlockState(1);
+                commentLength = text.length() - startIndex;
+            } else {
+                commentLength = endIndex - startIndex + endMatch.capturedLength();
+            }
+            setFormat(startIndex, commentLength, multiLineCommentFormat);
+            startIndex = text.indexOf(startExpression, startIndex + commentLength);
+        }
+    }
 }
-//        QTextCharFormat multiLineCommentFormat;
-//        multiLineCommentFormat.setForeground(Qt::red);
 
-//        QRegularExpression startExpression("/\\*");
-//        QRegularExpression endExpression("\\*/");
-
-//        setCurrentBlockState(0);
-
-//        int startIndex = 0;
-//        if (previousBlockState() != 1)
-//            startIndex = text.indexOf(startExpression);
-
-//        while (startIndex >= 0) {
-//            QRegularExpressionMatch endMatch;
-//            int endIndex = text.indexOf(endExpression, startIndex, &endMatch);
-//            int commentLength;
-//            if (endIndex == -1) {
-//                setCurrentBlockState(1);
-//                commentLength = text.length() - startIndex;
-//            } else {
-//                commentLength = endIndex - startIndex
-//                                + endMatch.capturedLength();
-//            }
-//            setFormat(startIndex, commentLength, multiLineCommentFormat);
-//            startIndex = text.indexOf(startExpression,
-//                                      startIndex + commentLength);
-//        }

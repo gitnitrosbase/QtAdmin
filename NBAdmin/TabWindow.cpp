@@ -88,7 +88,9 @@ void TabWindow::push_button_run_clicked()
 
     comboBox_->setStyleSheet(styles_);
 
-    std::string tmp = textEdit_->toPlainText().toStdString();
+    std::string tmp;
+    if (textEdit_->textCursor().selectedText().count() == 0) tmp = textEdit_->toPlainText().toStdString();
+    else tmp = textEdit_->textCursor().selectedText().toStdString();
     QStringList reqTypesList;
     if (tmp.back() != ';') tmp.push_back(';');
     std::string::size_type beg = 0;

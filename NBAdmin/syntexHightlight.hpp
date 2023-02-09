@@ -12,35 +12,9 @@ public:
     SyntaxHighlighter( QTextDocument* parent );
 
     void highlightBlock( const QString& text );
-//        QTextCharFormat multiLineCommentFormat;
-//        multiLineCommentFormat.setForeground(Qt::red);
-
-//        QRegularExpression startExpression("/\\*");
-//        QRegularExpression endExpression("\\*/");
-
-//        setCurrentBlockState(0);
-
-//        int startIndex = 0;
-//        if (previousBlockState() != 1)
-//            startIndex = text.indexOf(startExpression);
-
-//        while (startIndex >= 0) {
-//            QRegularExpressionMatch endMatch;
-//            int endIndex = text.indexOf(endExpression, startIndex, &endMatch);
-//            int commentLength;
-//            if (endIndex == -1) {
-//                setCurrentBlockState(1);
-//                commentLength = text.length() - startIndex;
-//            } else {
-//                commentLength = endIndex - startIndex
-//                                + endMatch.capturedLength();
-//            }
-//            setFormat(startIndex, commentLength, multiLineCommentFormat);
-//            startIndex = text.indexOf(startExpression,
-//                                      startIndex + commentLength);
-//        }
 
 private:
+    QColor commentColor_ = QColor("#008000");
     std::vector<std::pair<QString, QColor> > alp =
         {
             {"SELECT ",QColor("#0085c7")},
@@ -75,6 +49,21 @@ private:
             {"BY ",QColor("#0085c7")},
             {"DISTINCT ",QColor("#0085c7")},
             {"THEN ",QColor("#0085c7")},
-            {"ON ",QColor("#0085c7")}
+            {"ON ",QColor("#0085c7")},
+            {"VARCHAR",QColor("#0085c7")},
+            {"PRIMARY KEY ",QColor("#0085c7")},
+            {"NOT",QColor("#0085c7")},
+            {"NULL",QColor("#0085c7")},
+            {"INT ",QColor("#0085c7")},
+            {"IDENTITY",QColor("#0085c7")},
+            {"FLOAT ",QColor("#0085c7")},
+            {"VARBINARY ",QColor("#0085c7")},
+            {"NVARCHAR",QColor("#0085c7")},
+            {"DECIMAL",QColor("#0085c7")},
+            {"DATE ",QColor("#0085c7")},
+            {"DATETIME ",QColor("#0085c7")},
+            {"BIT ",QColor("#0085c7")},
+            {"DOUBLE ",QColor("#0085c7")},
+
         };
 };
