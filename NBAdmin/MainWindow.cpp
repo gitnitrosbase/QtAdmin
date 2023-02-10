@@ -563,6 +563,16 @@ void MainWindow::filling_tree()
         if(reply->error() == QNetworkReply::NoError)
         {
             QJsonDocument copyReply = QJsonDocument::fromJson(reply->readAll());
+
+            QFile dbsInfo("dbsInfo.txt");
+            dbsInfo.open(QIODevice::ReadWrite);
+            if (dbsInfo.isOpen())
+            {
+                dbsInfo.write(copyReply.toJson());
+                dbsInfo.close();
+            }
+
+
             QJsonObject Responce = copyReply.object();
             QJsonArray tmpArray = Responce["list"].toArray();
             dbList_.clear();
@@ -578,8 +588,10 @@ void MainWindow::filling_tree()
                                            ));
                 ui->treeWidget->addTopLevelItem(dbName);
 
-                if (item_db.toObject().find("run").value().toBool() == true) dbName->setIcon(0, QIcon(":/images/true.png"));
-                else if (item_db.toObject().find("run").value().toBool() == false) dbName->setIcon(0, QIcon(":/images/false.png"));
+                if (item_db.toObject().find("run").value().toBool(false) == true) dbName->setIcon(0, QIcon(":/images/true.png"));
+                else if (item_db.toObject().find("run").value().toBool(false) == false) dbName->setIcon(0, QIcon(":/images/false.png"));
+
+                bool runDBFlag = item_db.toObject().find("run").value().toBool(false);
 
                 dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()), item_db.toObject().find("port").value().toInt()));
                 QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
@@ -597,12 +609,11 @@ void MainWindow::filling_tree()
 
                 connect(reply_table, &QNetworkReply::finished, [=]()
                 {
-                    if(reply_table->error() == QNetworkReply::NoError)
+                    if(reply_table->error() == QNetworkReply::NoError && runDBFlag)
                     {
                         QJsonDocument copy_reply_table = QJsonDocument::fromJson(reply_table->readAll());
                         QJsonObject Responce = copy_reply_table.object();
                         QJsonArray tmpArray = Responce["data"].toArray();
-
 
                         QFile filename(QString("file" + QString::number(i) + ".txt"));
                         filename.open(QIODevice::ReadWrite);
@@ -654,13 +665,13 @@ void MainWindow::filling_tree()
 
                                     QTreeWidgetItem* fieldName = new QTreeWidgetItem();
                                     fieldName->setText(0, item_field.toObject().find("name")->toString());
-                                    //fieldName->setHidden(true);
+                                    fieldName->setHidden(true);
                                     field->addChild(fieldName);
 
                                     QTreeWidgetItem* fieldTipe = new QTreeWidgetItem();
                                     if (item_field.toObject().find("subtype")->toInt() == 1) fieldTipe->setText(0, "1");
                                     else fieldTipe->setText(0, "0");
-                                    //fieldTipe->setHidden(true);
+                                    fieldTipe->setHidden(true);
                                     field->addChild(fieldTipe);
                                 }
 
@@ -775,7 +786,7 @@ void MainWindow::on_actionStop_triggered()
         }
         reply->deleteLater();
     });
-
+    Sleep(3000);
     filling_tree();
 }
 
@@ -811,7 +822,7 @@ void MainWindow::on_actionStart_triggered()
         }
         reply->deleteLater();
     });
-
+//    Sleep(3000);
     filling_tree();
 }
 

@@ -21,6 +21,7 @@
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QList>
+#include <QTimer>
 
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
