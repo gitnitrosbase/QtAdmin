@@ -80,6 +80,7 @@ void TabWindow::push_button_run_clicked()
     int start = clock();
 
     input_queries_.clear();
+    reqTypesList_.clear();
 
     delete comboBox_;
     comboBox_ = new QComboBox(this);
@@ -91,7 +92,6 @@ void TabWindow::push_button_run_clicked()
     std::string tmp;
     if (textEdit_->textCursor().selectedText().count() == 0) tmp = textEdit_->toPlainText().toStdString();
     else tmp = textEdit_->textCursor().selectedText().toStdString();
-    QStringList reqTypesList;
     if (tmp.back() != ';') tmp.push_back(';');
     std::string::size_type beg = 0;
     for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
@@ -127,23 +127,43 @@ void TabWindow::push_button_run_clicked()
     // fill empty models
     if (models_.count() == input_queries_.count())
     {
-        for (int i = 0; i < models_.count(); i+=1)
+        std::thread th1([=]()
         {
-            NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort_, u"TESTUSER", u"1234" );
-            check_query(connection);
-            reqTypesList.push_back(exec_select_query(connection, models_.at(i), input_queries_.at(i)));
-            check_query(connection);
-            nb_disconnect(connection);
-        }
+            for (int i = 0; i < models_.count(); i+=1)
+            {
+                NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort_, u"TESTUSER", u"1234" );
+                check_query(connection);
+                reqTypesList_.push_back(exec_select_query(connection, models_.at(i), input_queries_.at(i)));
+                check_query(connection);
+                nb_disconnect(connection);
+            }
+        });
+
+        th1.join();
     }
 
     // add input queries to comboBox
-    comboBox_->addItems(reqTypesList);
+    comboBox_->addItems(reqTypesList_);
 
     int end = clock();
     int t = (end - start) / CLOCKS_PER_SEC;
     std::cout<<t<<std::endl;
 }
+
+//QList<QStandardItemModel*> TabWindow::get_models_from_db(QList<QString> &input_queries)
+//{
+//    QList<QStandardItemModel*> output;
+
+//    for (int i = 0; i < input_queries; i+=1)
+//    {
+//        NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort_, u"TESTUSER", u"1234" );
+//        check_query(connection);
+//        reqTypesList.push_back(exec_select_query(connection, models_.at(i), input_queries_.at(i)));
+//        check_query(connection);
+//        nb_disconnect(connection);
+//    }
+//    return output;
+//}
 
 bool TabWindow::check_query(NB_HANDLE connection)
 {

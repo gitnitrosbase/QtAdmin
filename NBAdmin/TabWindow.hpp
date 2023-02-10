@@ -58,6 +58,8 @@ private:
 
     QString exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query);
 
+    QList<QStandardItemModel*> &get_models_from_db(QList<QString> &input_queries);
+
 public:
     QTableView* tableWidget_ = nullptr;
     QGridLayout* gridLayout_ = nullptr;
@@ -68,12 +70,20 @@ public:
     QSplitter* splitter_ = nullptr;
     QList<QString> input_queries_;
     QList<QStandardItemModel*> models_;
+    QStringList reqTypesList_;
     QMenu* rightClickMenu_ = nullptr;
     QFont font;
     SyntaxHighlighter* syntaxHighLight_ = nullptr;
     QString styles_ = "QTextEdit {	border: 0;}QComboBox {	font: 10pt \"Segoe UI\";    color: #555;	border: 1px solid #ced4da;}QComboBox::drop-down {    border: 0px;}QComboBox::down-arrow {	image: url(:/images/arrow.svg);	width: 10px;	height: 10px;}QComboBox::on {	border: 4px solid #c2dbfe;}QComboBox QListView {	font-size: 12px;	border: 1px solid rgba(0,0,0,10%);	padding: 5px;		background-color: #fff;	outline: 0px;}QComboBox QListView::item {	font: 10pt \"Segoe UI\";	padding-left: 10px;	background-color: #fff;	}QComboBox QListView::item {		background-color: #1e90ff;}QComboBox QListView::item::selectd {	background-color: #1e90ff;}QTableView {	border: 0px;}";
     QList<QString> reqTypes_ = {"NONE", "SELECT", "INSERT", "UPDATE", "DELETE", "TRANSACTION", "ANOTHER"};
     //Ui::TabWindow* ui;
+    struct queryObject
+    {
+        QString queryText_;
+        QStandardItemModel* queryModel_;
+        QString queryType_;
+    };
+    //QList<queryObject>
 
 public:
     int dbPort_;
