@@ -7,3 +7,4 @@ syntaxHighlightingExample/build/
 /build-NBAdmin-Qt_5_12_12_mingw73_64-Debug
 /*.7z
 /NBAdmin_win
+/NBAdmin/*.user
