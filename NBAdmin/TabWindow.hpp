@@ -39,6 +39,9 @@ public:
 
     ~TabWindow();
 
+signals:
+    void refresh_tree();
+
 public slots:
     QString textFromTextEdit();
 

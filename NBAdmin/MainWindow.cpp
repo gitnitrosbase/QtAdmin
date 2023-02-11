@@ -201,7 +201,9 @@ void MainWindow::push_button_run_clicked()
 }
 void MainWindow::push_button_plus_clicked()
 {
-    ui->tabWidget->insertTab(ui->tabWidget->count(), new TabWindow(this), QString("Query " + QString::number(ui->tabWidget->count()+1)));
+    TabWindow* tmp = new TabWindow(this);
+    ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Query " + QString::number(ui->tabWidget->count()+1)));
+    connect(tmp, &TabWindow::refresh_tree, this, &MainWindow::on_actionRefresh_triggered);
 }
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {

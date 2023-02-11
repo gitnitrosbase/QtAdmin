@@ -118,7 +118,6 @@ void TabWindow::push_button_run_clicked()
     models_.clear();
 
     // create new empty models
-
     for (auto &item : input_queries_)
     {
         models_.push_back(new QStandardItemModel);
@@ -134,6 +133,7 @@ void TabWindow::push_button_run_clicked()
                 NB_HANDLE connection = nb_connect( u"127.0.0.1", dbPort_, u"TESTUSER", u"1234" );
                 check_query(connection);
                 reqTypesList_.push_back(exec_select_query(connection, models_.at(i), input_queries_.at(i)));
+                if (reqTypesList_.back() == "ANOTHER") emit refresh_tree();
                 check_query(connection);
                 nb_disconnect(connection);
             }
