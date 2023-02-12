@@ -14,6 +14,14 @@ ModifyTableTab::~ModifyTableTab()
     delete ui;
 }
 
+void ModifyTableTab::checkToAddRow(QString text)
+{
+    if(text != "" && backLineEdit_ != nullptr && backLineEdit_->text() == text)
+    {
+        addRow();
+    }
+}
+
 void ModifyTableTab::printFromdb()
 {
     ui->lineEdit->setText(currentTable_);
@@ -98,6 +106,8 @@ void ModifyTableTab::printFromdb()
             fieldCount_ = ui->tableWidget->rowCount();
             std::cout<<"row count = "<<ui->tableWidget->rowCount()<<std::endl;
             std::cout<<"fieldCount_ = "<<fieldCount_<<std::endl;
+
+            addRow();
         }
         reply->deleteLater();
     });
@@ -180,6 +190,8 @@ void ModifyTableTab::addRow()
     QCheckBox* notnullCheckBox = new QCheckBox();
     QPushButton* rmPushButton = new QPushButton("");
 
+    backLineEdit_ = nameLineEdit;
+
     typesComboBox->setStyleSheet("background-color: #ffffff");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
@@ -215,6 +227,7 @@ void ModifyTableTab::addRow()
             FKTableComboBox->setCurrentIndex(0);
         }
     });
+    std::cout<<ui->tableWidget->rowCount()<<std::endl;
     ui->tableWidget->insertRow(ui->tableWidget->rowCount());
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, nameLineEdit);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 1, typesComboBox);
@@ -224,6 +237,8 @@ void ModifyTableTab::addRow()
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 5, identityCheckBox);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 6, notnullCheckBox);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 8, rmPushButton);
+
+    QObject::connect(nameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkToAddRow(QString)));
 
     ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
@@ -259,10 +274,10 @@ void ModifyTableTab::rmRow()
     if (ui->tableWidget->rowCount() > 1) ui->tableWidget->removeRow(ui->tableWidget->currentRow());
 }
 
-void ModifyTableTab::on_addRowButton_clicked()
-{
-    addRow();
-}
+//void ModifyTableTab::on_addRowButton_clicked()
+//{
+//    addRow();
+//}
 
 void ModifyTableTab::checkIdentity(int index)
 {

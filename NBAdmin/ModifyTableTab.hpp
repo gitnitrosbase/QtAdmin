@@ -46,6 +46,7 @@ public slots:
     //void checkToAddRow();
     void on_saveButton_clicked();
     void printFromdb();
+    void checkToAddRow(QString text);
 signals:
     void refreshTree();
 
@@ -59,7 +60,7 @@ public:
     bool PKFlag_ = false;
 
 private slots:
-    void on_addRowButton_clicked();
+    //void on_addRowButton_clicked();
     void checkIdentity(int index);
     void blockOtherIdentity(QCheckBox* item, int state);
     bool check_query(NB_HANDLE connection);
@@ -80,4 +81,5 @@ private:
         "decimal"
     };
     Ui::ModifyTableTab* ui;
+    QLineEdit* backLineEdit_ = nullptr;
 };
