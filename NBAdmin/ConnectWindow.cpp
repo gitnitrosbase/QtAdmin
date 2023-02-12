@@ -12,6 +12,13 @@ void ConnectWindow::on_pushButton_clicked()
     ui->InputPath->setText(Filename);
 }
 
+void ConnectWindow::clear_fields()
+{
+    ui->lineEdit->setText("");
+    ui->lineEdit_2->setText("");
+    ui->InputPath->setText("");
+}
+
 void ConnectWindow::on_Create_clicked()
 {
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
@@ -65,10 +72,12 @@ void ConnectWindow::on_Create_clicked()
     QMessageBox::information(this, "", "The database has been created");
 
     emit refreshTree();
+    clear_fields();
 }
 
 void ConnectWindow::on_Cancel_clicked()
 {
+    clear_fields();
     this->close();
 }
 

@@ -485,6 +485,7 @@ void MainWindow::on_actionDeleteDatabaseTrig()
     });
     QMessageBox::information(this, "", "The database has been deleted");
     filling_tree();
+    ui->label_2->setText("");
 }
 
 void MainWindow::setAddress()
@@ -590,10 +591,7 @@ void MainWindow::filling_tree()
                                            ));
                 ui->treeWidget->addTopLevelItem(dbName);
 
-                if (item_db.toObject().find("run").value().toBool(false) == true) dbName->setIcon(0, QIcon(":/images/true.png"));
-                else if (item_db.toObject().find("run").value().toBool(false) == false) dbName->setIcon(0, QIcon(":/images/false.png"));
-
-                bool runDBFlag = item_db.toObject().find("run").value().toBool(false);
+                //dbName->setIcon(0, QIcon(":/images/true.png"));
 
                 dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()), item_db.toObject().find("port").value().toInt()));
                 QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
@@ -611,7 +609,7 @@ void MainWindow::filling_tree()
 
                 connect(reply_table, &QNetworkReply::finished, [=]()
                 {
-                    if(reply_table->error() == QNetworkReply::NoError && runDBFlag)
+                    if(reply_table->error() == QNetworkReply::NoError)
                     {
                         QJsonDocument copy_reply_table = QJsonDocument::fromJson(reply_table->readAll());
                         QJsonObject Responce = copy_reply_table.object();
@@ -621,6 +619,14 @@ void MainWindow::filling_tree()
                         filename.open(QIODevice::ReadWrite);
                         filename.write(copy_reply_table.toJson());
                         filename.close();
+
+                        if (Responce.find("err")->toInt() > 0)
+                        {
+                            dbName->setIcon(0, QIcon(":/images/false.png"));
+                            return;
+                        }
+                        else dbName->setIcon(0, QIcon(":/images/true.png"));
+
 
                         QTreeWidgetItem* dbTables = new QTreeWidgetItem();
                         dbName->addChild(dbTables);
@@ -788,7 +794,6 @@ void MainWindow::on_actionStop_triggered()
         }
         reply->deleteLater();
     });
-    Sleep(3000);
     filling_tree();
 }
 
@@ -824,7 +829,6 @@ void MainWindow::on_actionStart_triggered()
         }
         reply->deleteLater();
     });
-//    Sleep(3000);
     filling_tree();
 }
 

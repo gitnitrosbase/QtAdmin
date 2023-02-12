@@ -27,6 +27,8 @@ void CreateTableTab::addRow()
     QComboBox* typesComboBox = new QComboBox();
     QComboBox* FKTableComboBox = new QComboBox();
 
+    backLineEdit_ = nameLineEdit;
+
     QCheckBox* PKCheckBox = new QCheckBox();
     QCheckBox* FKCheckBox = new QCheckBox();
     QCheckBox* identityCheckBox = new QCheckBox();
@@ -82,6 +84,8 @@ void CreateTableTab::addRow()
 
     ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
+    QObject::connect(nameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkToAddRow(QString)));
+
     connect(rmPushButton, SIGNAL(clicked()), this, SLOT(rmRow()));
     connect(typesComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){checkIdentity(index);});
     connect(identityCheckBox, QOverload<int>::of(&QCheckBox::stateChanged), this, [=](int state){blockOtherIdentity(identityCheckBox,state);});
@@ -104,6 +108,14 @@ void CreateTableTab::addRow()
         }
         else for (int i = 0; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 2))->setEnabled(true);
     });
+}
+
+void CreateTableTab::checkToAddRow(QString text)
+{
+    if(text != "" && backLineEdit_ != nullptr && backLineEdit_->text() == text)
+    {
+        addRow();
+    }
 }
 
 void CreateTableTab::rmRow()
@@ -154,8 +166,6 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkFK == true) nameFK = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 4))->currentText();
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
-        //QString comment = ui->tableWidget->itemAt(i, 7)->text();
-        //std::cout<<columnName.toStdString()<<typeName.toStdString()<<checkPK<<checkFK<<checkIdentity<<checkNullable<<std::endl;
 
         QString subQueryStr = columnName;
         subQueryStr+=" ";

@@ -47,6 +47,8 @@ public slots:
     void checkIdentity(int index);
     void blockOtherIdentity(QCheckBox* item, int state);
     bool check_query(NB_HANDLE connection);
+private slots:
+    void checkToAddRow(QString text);
 
 signals:
     void refreshTree();
@@ -54,6 +56,7 @@ signals:
 private:
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};
     Ui::CreateTableTab* ui;
+    QLineEdit* backLineEdit_ = nullptr;
 public:
     QString currentDatabase_ = "";
     QString address_ = "http://127.0.0.1:8008/api3";

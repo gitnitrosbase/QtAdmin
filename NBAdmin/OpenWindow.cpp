@@ -10,7 +10,15 @@ OpenWindow::OpenWindow(QWidget* parent) : QWidget(parent), ui(new Ui::OpenWindow
 
 void OpenWindow::cancel_clicked()
 {
+    clear_fields();
     this->close();
+}
+
+void OpenWindow::clear_fields()
+{
+    ui->InputName->setText("");
+    ui->InputPort->setText("");
+    ui->InputPath->setText("");
 }
 
 void OpenWindow::OpenDatabase()
@@ -65,6 +73,7 @@ void OpenWindow::OpenDatabase()
     QMessageBox::information(this, "", "The database has been opened");
 
     emit refreshTree();
+    clear_fields();
 }
 
 void OpenWindow::on_buttonPath_clicked()
