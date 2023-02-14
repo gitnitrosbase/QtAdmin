@@ -673,14 +673,14 @@ void MainWindow::filling_tree()
 
                                     QTreeWidgetItem* fieldName = new QTreeWidgetItem();
                                     fieldName->setText(0, item_field.toObject().find("name")->toString());
-                                    fieldName->setHidden(true);
                                     field->addChild(fieldName);
+                                    fieldName->setHidden(true);
 
                                     QTreeWidgetItem* fieldTipe = new QTreeWidgetItem();
                                     if (item_field.toObject().find("subtype")->toInt() == 1) fieldTipe->setText(0, "1");
                                     else fieldTipe->setText(0, "0");
-                                    fieldTipe->setHidden(true);
                                     field->addChild(fieldTipe);
+                                    fieldTipe->setHidden(true);
                                 }
 
                                 columnItem->setText(0, QString("Columns (" + QString::number(fields_array.count()) + ")"));
