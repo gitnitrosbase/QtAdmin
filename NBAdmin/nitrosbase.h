@@ -131,12 +131,13 @@ enum DATABASE_QUERY_TYPE
     DATABASE_BULK_GETINFO,
 
     DATABASE_BULKINSERT, //reserved
-    DATABASE_INSERTFROMLOG,
-    DATABASE_UPDATEFROMLOG,
-    DATABASE_DELETEFROMLOG,
+    //DATABASE_INSERTFROMLOG,
+    //DATABASE_UPDATEFROMLOG,
+    //DATABASE_DELETEFROMLOG,
 
     DATABASE_INSERTLINKFROMLOG,
     DATABASE_DELETELINKFROMLOG,
+    DATABASE_TRANSACTION_STARTSTOP
 };
 
 enum DATABASE_QUERY_SUBTYPE
@@ -261,5 +262,7 @@ extern "C" {
     NB_EXTERN const char16_t *nb_get_build( NB_HANDLE connection );
     NB_EXTERN const char *nb_get_build_utf8( NB_HANDLE connection );
     NB_EXTERN size_t nb_blob_chunck_size( NB_HANDLE connection );
+    NB_EXTERN NB_ERROR_TYPE nb_start_transaction(NB_HANDLE connection);
+    NB_EXTERN NB_ERROR_TYPE nb_stop_transaction(NB_HANDLE connection);
 }
 

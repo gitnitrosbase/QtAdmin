@@ -21,23 +21,23 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 
     filling_tree();
     menu_ = new QMenu(this);
-    refreshAction_ = new QAction(trUtf8("Refresh"), this);
-    stopAction_ = new QAction(trUtf8("Stop"), this);
-    startAction_ = new QAction(trUtf8("Start"), this);
-    backupAction_ = new QAction(trUtf8("Backup"), this);
-    restoreAction_ = new QAction(trUtf8("Restore"), this);
-    deleteAction_ = new QAction(trUtf8("Delete"), this);
-    databaseInfoAction_ = new QAction(trUtf8("Database info"), this);
-    createTableAction_ = new QAction(trUtf8("Create"), this);
-    createEdgeAction_ = new QAction(trUtf8("Create"), this);
-    createIndexAction_ = new QAction(trUtf8("Create"), this);
-    selectAction_ = new QAction(trUtf8("Select * top 1000"), this);
-    deleteTableAction_ = new QAction(trUtf8("Delete table"), this);
-    deleteIndexAction_ = new QAction(trUtf8("Delete Index"), this);
-    deleteEdgeAction_ = new QAction(trUtf8("Delete Edge"), this);
-    selectEdgeAction_ = new QAction(trUtf8("Select * top 1000"), this);
-    modifyTableAction_ = new QAction(trUtf8("Modify Struct"), this);
-    createDBQueryAction_ = new QAction(trUtf8("Create Table"), this);
+    refreshAction_ = new QAction("Refresh", this);
+    stopAction_ = new QAction("Stop", this);
+    startAction_ = new QAction("Start", this);
+    backupAction_ = new QAction("Backup", this);
+    restoreAction_ = new QAction("Restore", this);
+    deleteAction_ = new QAction("Delete", this);
+    databaseInfoAction_ = new QAction("Database info", this);
+    createTableAction_ = new QAction("Create", this);
+    createEdgeAction_ = new QAction("Create", this);
+    createIndexAction_ = new QAction("Create", this);
+    selectAction_ = new QAction("Select * top 1000", this);
+    deleteTableAction_ = new QAction("Delete table", this);
+    deleteIndexAction_ = new QAction("Delete Index", this);
+    deleteEdgeAction_ = new QAction("Delete Edge", this);
+    selectEdgeAction_ = new QAction("Select * top 1000", this);
+    modifyTableAction_ = new QAction("Modify Struct", this);
+    createDBQueryAction_ = new QAction("Create Table", this);
 
     connect(refreshAction_, &QAction::triggered, this, &MainWindow::filling_tree_slot);
     connect(stopAction_, &QAction::triggered, this, &MainWindow::on_actionStop_triggered);
@@ -104,16 +104,16 @@ void MainWindow::showContextMenu(const QPoint point)
 
         if (ui->treeWidget->currentItem()->parent() != nullptr)
         {
-            for (int i = 0; i<ui->treeWidget->currentItem()->parent()->text(0); i+=1)
+            for (int i = 0; i<ui->treeWidget->currentItem()->parent()->text(0).length(); i+=1)
             {
-                if (ui->treeWidget->currentItem()->parent()->text(0)[i] != " ") parentItem += ui->treeWidget->currentItem()->parent()->text(0)[i];
+                if (ui->treeWidget->currentItem()->parent()->text(0).at(i) != ' ') parentItem += ui->treeWidget->currentItem()->parent()->text(0)[i];
                 else break;
             }
         }
 
         for (int i = 0; i<ui->treeWidget->currentItem()->text(0).count(); i+=1)
         {
-            if (ui->treeWidget->currentItem()->text(0)[i] != " ") currentItem += ui->treeWidget->currentItem()->text(0)[i];
+            if (ui->treeWidget->currentItem()->text(0).at(i) != ' ') currentItem += ui->treeWidget->currentItem()->text(0)[i];
             else break;
         }
 
@@ -294,7 +294,7 @@ void MainWindow::on_actionCreateDBQueryTrig()
                 push_button_plus_clicked();
                 ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
                 TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-                currentTab->textEdit_->setText(finalQuery);
+                currentTab->ui->textEdit_->setText(finalQuery);
             }
             reply->deleteLater();
         });
@@ -307,11 +307,11 @@ void MainWindow::on_actionSelectEdgeTrig()
 
     for(int i = ui->treeWidget->currentItem()->child(0)->text(0).count()-1; i >=0; i-=1)
     {
-        if(ui->treeWidget->currentItem()->child(0)->text(0).at(i) != " ") fromId += ui->treeWidget->currentItem()->child(0)->text(0).at(i); else break;
+        if(ui->treeWidget->currentItem()->child(0)->text(0).at(i) != ' ') fromId += ui->treeWidget->currentItem()->child(0)->text(0).at(i); else break;
     }
     for(int i = ui->treeWidget->currentItem()->child(1)->text(0).count()-1; i >=0; i-=1)
     {
-        if(ui->treeWidget->currentItem()->child(1)->text(0).at(i) != " ") toId += ui->treeWidget->currentItem()->child(1)->text(0).at(i); else break;
+        if(ui->treeWidget->currentItem()->child(1)->text(0).at(i) != ' ') toId += ui->treeWidget->currentItem()->child(1)->text(0).at(i); else break;
     }
 
     std::reverse(fromId.begin(), fromId.end());
@@ -344,7 +344,7 @@ void MainWindow::on_actionSelectEdgeTrig()
     push_button_plus_clicked();
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
     TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-    currentTab->textEdit_->setText(tmp);
+    currentTab->ui->textEdit_->setText(tmp);
     push_button_run_clicked();
 }
 
@@ -406,7 +406,7 @@ void MainWindow::on_tableSelectActionTrig()
         push_button_plus_clicked();
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-        currentTab->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0) + ";"));
+        currentTab->ui->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0) + ";"));
     }
     push_button_run_clicked();
 }
@@ -457,7 +457,7 @@ void MainWindow::on_actionDeleteDatabaseTrig()
 {
     QString name = "";
     QString tmp = dbList_.find(currentDatabase_)->first;
-    for (auto item : tmp) if (item != " ") name += item; else break;
+    for (auto item : tmp) if (item != ' ') name += item; else break;
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
@@ -494,7 +494,7 @@ void MainWindow::setAddress()
     file.open(QIODevice::ReadOnly);
     if (file.isOpen())
     {
-        QJsonDocument jsonDoc = QJsonDocument::fromBinaryData(file.readAll());
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(file.readAll());
         QJsonObject jsonObject = jsonDoc.object();
         QString address = "http://";
         address+=jsonDoc["ip"].toString();
@@ -802,7 +802,7 @@ void MainWindow::on_actionStart_triggered()
 {
     QString name = "";
     QString tmp = dbList_.find(currentDatabase_)->first;
-    for (auto item : tmp) if (item != " ") name += item; else break;
+    for (auto item : tmp) if (item != ' ') name += item; else break;
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
@@ -838,7 +838,7 @@ void MainWindow::on_actionBackup_triggered()
     QString dbName;
     for (int i = 0; i<currentDatabase_.count();i+=1)
     {
-        if (currentDatabase_.at(i) != " ") dbName+=currentDatabase_.at(i);
+        if (currentDatabase_.at(i) != ' ') dbName+=currentDatabase_.at(i);
         else break;
     }
 
@@ -856,7 +856,7 @@ void MainWindow::on_actionRestore_triggered()
 {
     QString name = "";
     QString tmp = dbList_.find(currentDatabase_)->first;
-    for (auto item : tmp) if (item != " ") name += item; else break;
+    for (auto item : tmp) if (item != ' ') name += item; else break;
 
     restoreWindow_->show();
     restoreWindow_->Name_ = name;

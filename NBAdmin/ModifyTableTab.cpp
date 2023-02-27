@@ -5,7 +5,7 @@ ModifyTableTab::ModifyTableTab(QWidget *parent)
 {
     ui->setupUi(this);
     this->setObjectName("ModifyTableTab");
-    ui->tableWidget->setColumnCount(headerTable.count());
+    ui->tableWidget->setColumnCount(headerTable.length());
     ui->tableWidget->setHorizontalHeaderLabels(headerTable);
 }
 

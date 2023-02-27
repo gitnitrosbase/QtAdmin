@@ -2,6 +2,8 @@
 
 #include <QAbstractTableModel>
 #include <QString>
+#include "nb-samples.h"
+
 
 class ResponceView : public QAbstractTableModel
 {
@@ -9,19 +11,25 @@ class ResponceView : public QAbstractTableModel
 public:
     ResponceView(QObject *parent = nullptr);
 
-    void setSize(int column);
+    void setQueryInfo(int connectIndex, int queryIndex);
 
-    int rowCount(const QModelIndex &parent = QModelIndex());
+    int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
-    int columnCount(const QModelIndex &parent = QModelIndex());
+//    QVariant headerData (int section, Qt::Orientation orientation, int role) const;
 
-    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole);
+    int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
-    void addRow(std::vector<QString> &array);
+    QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+
+    QString from_nbvalue(NBValue &v);
+
+    QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     ~ResponceView();
 
 public:
-    std::vector<std::vector<QString> >* data_;
-    int columnCount_ = 0;
+    std::vector<std::string> horizontalHeader_;
+    int rowCount_ = 0;
+    int connectIndex_ = 0;
+    int queryIndex_ = 0;
 };

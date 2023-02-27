@@ -8,11 +8,17 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt5 COMPONENTS Widgets Network REQUIRED)
-find_package(Qt5 COMPONENTS Widgets Network REQUIRED)
+find_package(QT NAMES  Qt6 Qt5 COMPONENTS Widgets Network REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network REQUIRED)
+
+if (DEFINED DEBUG)
+    find_library(NBLIB nbclient-dbg)
+else()
+    find_library(NBLIB nbclient)
+endif()
 
 set(PROJECT_HEADERS
     TabWindow.hpp
@@ -37,7 +43,7 @@ set(PROJECT_SOURCES
     ConnectWindow.cpp
     OpenWindow.cpp
     BackupWindow.cpp
-#    ResponceView.cpp
+    ResponceView.cpp
     SyntexHightLight.cpp
     RestoreWindow.cpp
     CreateTableTab.cpp
@@ -64,7 +70,6 @@ set(UI_FILES
 set(NITROSBASE
     nitrosbase.h
     nb-samples.h
-    nbclient.lib
     )
 
 set(RES_FILES
@@ -77,11 +82,4 @@ set(LOGGERLIB
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt5::Widgets Qt5::Network ${PROJECT_SOURCE_DIR}/dep/nbclient.dll)
-
-#install(FILES $<TARGET_FILE:Qt5::Widgets> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-#install(FILES $<TARGET_FILE:Qt5::Core> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-#install(FILES $<TARGET_FILE:Qt5::Gui> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-#install(FILES $<TARGET_FILE:Qt5::Network> DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-#install(FILES ${PROJECT_SOURCE_DIR}/dep/nbclient.dll DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
-#install(FILES ${PROJECT_SOURCE_DIR}/dep/styles DESTINATION $<TARGET_FILE_DIR:${PROJECT_NAME}>)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network ${NBLIB})
