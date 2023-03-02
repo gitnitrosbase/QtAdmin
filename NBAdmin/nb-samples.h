@@ -15,8 +15,6 @@
 #pragma comment( lib, "nbclient.lib" )
 #endif
 
-#pragma comment( lib, "nbclient.lib" )
-
 struct MyException : public std::exception
 {
     std::string s;
