@@ -271,17 +271,29 @@ QPushButton:hover {
       <property name="styleSheet">
        <string notr="true">QSplitter::handle
 {
-
-	border-right: 1px solid rgb(202, 202, 202);
-	border-left: 1px solid rgb(202, 202, 202);	
+	/*border-right: 1px solid rgb(202, 202, 202);
+	border-left: 1px solid rgb(202, 202, 202);*/	
+	background-color: #eee;
 }
 QScrollBar:vertical {
 	width: 6px;
     background: #fff;
 }
 QScrollBar::handle:vertical {
+	min-height: 20px;
     background: #ececec;
-}</string>
+	border-radius: 1px;
+}
+
+QScrollBar:horizontal  {
+	height: 6px;
+    background: #fff;
+}
+QScrollBar::handle:horizontal  {
+	min-width: 20px;
+	background: #ececec;
+	border-radius: 1px;
+} </string>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -301,6 +313,7 @@ QScrollBar::handle:vertical {
        </property>
        <property name="font">
         <font>
+         <family>Segoe UI</family>
          <pointsize>12</pointsize>
         </font>
        </property>
@@ -434,7 +447,7 @@ QTabBar::tab:selected {
      <x>0</x>
      <y>0</y>
      <width>878</width>
-     <height>27</height>
+     <height>28</height>
     </rect>
    </property>
    <property name="sizePolicy">

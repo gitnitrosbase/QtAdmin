@@ -17,8 +17,23 @@
    <string notr="true">QTextEdit {	border: 0;}QComboBox {	font: 10pt \&quot;Segoe UI\&quot;;    color: #555;	border: 1px solid #ced4da;}QComboBox::drop-down {    border: 0px;}QComboBox::down-arrow {	image: url(:/images/arrow.svg);	width: 10px;	height: 10px;}QComboBox::on {	border: 4px solid #c2dbfe;}QComboBox QListView {	font-size: 12px;	border: 1px solid rgba(0,0,0,10%);	padding: 5px;		background-color: #fff;	outline: 0px;}QComboBox QListView::item {	font: 10pt \&quot;Segoe UI\&quot;;	padding-left: 10px;	background-color: #fff;	}QComboBox QListView::item {		background-color: #1e90ff;}QComboBox QListView::item::selectd {	background-color: #1e90ff;}QTableView {	border: 0px;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
    <item>
     <widget class="QSplitter" name="splitter">
+     <property name="styleSheet">
+      <string notr="true">QSplitter::handle
+{
+	background-color: #eee;
+}
+QSplitter::item {
+	padding: 0px 9px 0px 9px;
+} </string>
+     </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
@@ -30,19 +45,27 @@ padding: 0;</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <property name="leftMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="topMargin">
-        <number>0</number>
+        <number>4</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
        </property>
        <item row="0" column="0">
         <widget class="QComboBox" name="comboBox_">
+         <property name="font">
+          <font>
+           <family>&quot;Segoe UI&quot;</family>
+           <pointsize>10</pointsize>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true">margin: 0;
 padding: 0;</string>
@@ -52,61 +75,17 @@ padding: 0;</string>
        <item row="1" column="0">
         <widget class="QTableView" name="tableWidget_">
          <property name="styleSheet">
-          <string notr="true">QScrollBar:horizontal {
-    border: 2px solid grey;
-    background: #32CC99;
-    height: 15px;
-    margin: 0px 20px 0 20px;
+          <string notr="true">QTableView {	
+	font: 12pt &quot;Segoe UI&quot;;	
+	/*border: 1px solid #ececec;*/
+	/*border-top: 1px solid #ececec;*/
 }
-QScrollBar::handle:horizontal {
-    background: white;
-    min-width: 20px;
-}
-QScrollBar::add-line:horizontal {
-    border: 2px solid grey;
-    background: #32CC99;
-    width: 20px;
-    subcontrol-position: right;
-    subcontrol-origin: margin;
+QHeaderView::section {
+	font: 12pt &quot;Segoe UI&quot;;
+	
 }
 
-QScrollBar::sub-line:horizontal {
-    border: 2px solid grey;
-    background: #32CC99;
-    width: 20px;
-    subcontrol-position: left;
-    subcontrol-origin: margin;
-}
-
-
-QScrollBar:vertical {
-	min-width: 20px;
-    border: 2px solid grey;
-    background: #32CC99;
-    height: 15px;
-    margin: 0px 20px 0 20px;
-}
-QScrollBar::handle:vertical {
-    background: white;
-    min-width: 20px;
-	min-height: 20px;
-}
-QScrollBar::add-line:vertical {
-    border: 2px solid grey;
-    background: #32CC99;
-    width: 20px;
-    subcontrol-position: right;
-    subcontrol-origin: margin;
-	min-height: 20px;
-}
-
-QScrollBar::sub-line:vertical {
-    border: 2px solid grey;
-    background: #32CC99;
-    width: 20px;
-    subcontrol-position: left;
-    subcontrol-origin: margin;
-}</string>
+	</string>
          </property>
         </widget>
        </item>
