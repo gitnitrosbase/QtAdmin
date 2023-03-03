@@ -514,6 +514,41 @@ inline void prepare_testdb( NB_HANDLE connection )
 
 //--------------------------------------------------
 
+inline std::string ExecSqlASYNC2( int idconnect, int port, const std::string &query )
+{
+    std::string output;
+    try
+    {
+        NB_HANDLE connection;
+        nbpool.check( idconnect );
+        const std::lock_guard<std::mutex> lock( nbpool.connects[idconnect].mtx );
+
+        auto result = nbpool.InitResult( idconnect, port );
+        result->ready = false;
+        std::thread( AsyncProcessQuery, result, query.c_str(), query.length() ).detach();
+        result->wait4thread();
+
+//        WaitAndPrintResult( result, 0 );
+
+        while ( true )
+        {
+            lockres lk( result );
+            if ( !result->ready && result->qcount == 0 )
+                continue;
+
+            queryresult* result_ = (queryresult *)result;
+            output =  std::string(result_->errstr);
+            break;
+        }
+    }
+    catch ( std::exception &e )
+    {
+        std::cout << "Error: " << e.what() << std::endl;
+    }
+    return output;
+}
+
+
 inline std::vector<std::string> PrintResultInfo2( queryresultbase *resultbase, int queryIndex )
 {
     std::vector<std::string> outputHeader;

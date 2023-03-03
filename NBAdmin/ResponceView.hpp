@@ -4,18 +4,17 @@
 #include <QString>
 #include "nb-samples.h"
 
-
 class ResponceView : public QAbstractTableModel
 {
     Q_OBJECT
 public:
     ResponceView(QObject *parent = nullptr);
 
+    void setError(std::string &errStr);
+
     void setQueryInfo(int connectIndex, int queryIndex);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
-
-//    QVariant headerData (int section, Qt::Orientation orientation, int role) const;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -32,4 +31,6 @@ public:
     int rowCount_ = 0;
     int connectIndex_ = 0;
     int queryIndex_ = 0;
+    bool errFlag_ = false;
+    std::string errStr_;
 };

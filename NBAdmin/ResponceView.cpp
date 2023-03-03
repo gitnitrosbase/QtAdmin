@@ -21,7 +21,13 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
+    if (errFlag_ || horizontalHeader_.size() <= section) return QVariant("error");
+
+    if (orientation == Qt::Vertical && role == Qt::DisplayRole)
+    {
+        return QString::number(section+1);
+    }
+    else if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
     {
         return QString::fromStdString(horizontalHeader_.at(section));
     }
@@ -29,14 +35,20 @@ QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int 
 }
 int ResponceView::rowCount(const QModelIndex &parent) const
 {
+    if (errFlag_) return 1;
+
     return rowCount_;
 }
 int ResponceView::columnCount(const QModelIndex &parent) const
 {
+    if (errFlag_) return 1;
+
     return horizontalHeader_.size();
 }
 QVariant ResponceView::data(const QModelIndex &index, int role) const
 {
+    if (errFlag_ && role == Qt::DisplayRole) return (QString::fromStdString(errStr_));
+
     if(role != Qt::DisplayRole) return QVariant();
 
     QString var;
@@ -45,7 +57,6 @@ QVariant ResponceView::data(const QModelIndex &index, int role) const
     {
         NBValue v = GetItemFromTable(nbpool.connects[connectIndex_].result, queryIndex_, index.column(), index.row());
 
-        //--------------
         std::string output = "";
 
         if (v.null == true) return QString("null");
@@ -69,16 +80,18 @@ QVariant ResponceView::data(const QModelIndex &index, int role) const
         //--------------
 
         return QString::fromStdString(output);
-        //var.setValue("TEXT");
     }
     return var;
 }
-
 ResponceView::~ResponceView()
 {
 
 }
-
+void ResponceView::setError(std::string& errStr)
+{
+    errFlag_ = true;
+    errStr_ = errStr;
+}
 QString ResponceView::from_nbvalue(NBValue &v)
 {
     std::string output = "";

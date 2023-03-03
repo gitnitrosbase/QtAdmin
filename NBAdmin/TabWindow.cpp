@@ -47,8 +47,6 @@ void TabWindow::setCurrentIndex(int index)
 }
 void TabWindow::push_button_run_clicked()
 {
-
-
     flag_ = false;
 
     int start = clock();
@@ -94,9 +92,15 @@ void TabWindow::push_button_run_clicked()
         for (int i = 0; i < input_queries_.length(); i+=1)
         {
             ResponceView* model = new ResponceView();
-            ExecSqlASYNC( i, dbPort_, input_queries_.at(i).toStdString());
+            std::string err = ExecSqlASYNC2( i, dbPort_, input_queries_.at(i).toStdString());
+
+            std::cout<<"\n============\n"<<err<<"\n============\n"<<std::endl;
+
+            if (err != "") model->setError(err);
+
             std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) );
             GetSqlResulsASYNC(i, dbPort_, 0);
+
             model->setQueryInfo(i, 0);
             models_.push_back(model);
             reqTypesList_.push_back(QString::fromStdString(GetQueryType(i,0)));
