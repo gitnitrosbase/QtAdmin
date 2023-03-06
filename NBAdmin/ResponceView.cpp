@@ -18,16 +18,17 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
     {
         this->setHeaderData(i, Qt::Horizontal, QString::fromStdString(horizontalHeader_.at(i)));
     }
+
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (errFlag_ || horizontalHeader_.size() <= section) return QVariant("error");
+    if (errFlag_) return QVariant("");
 
     if (orientation == Qt::Vertical && role == Qt::DisplayRole)
     {
-        return QString::number(section+1);
+        return QString("%1").arg(section + 1);
     }
-    else if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
+    if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
     {
         return QString::fromStdString(horizontalHeader_.at(section));
     }

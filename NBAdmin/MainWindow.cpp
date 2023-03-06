@@ -283,7 +283,7 @@ void MainWindow::on_actionCreateDBQueryTrig()
                                 query += QString("FOREIGN KEY(%1) REFERENCES %2").arg(ui->treeWidget->currentItem()->text(0)).arg(fields.toObject().find("linktable")->toString());
                             }
                             if (fields.toObject().find("seed")->toInt() != 0 && fields.toObject().find("increment")->toInt() != 0) query += QString("IDENTITY (%1,%2)").arg(fields.toObject().find("seed")->toInt()).arg(fields.toObject().find("increment")->toInt());
-                            if(fields.toObject().find("nullable")->toInt() == 0) query += "NOT NULL";
+                            if(fields.toObject().find("nullable")->toInt() == 0 && fields.toObject().find("subtype")->toInt() != 1) query += "NOT NULL";
                             query += ",";
                             finalQuery+=query;
                         }

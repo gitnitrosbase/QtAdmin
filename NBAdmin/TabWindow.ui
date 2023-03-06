@@ -81,10 +81,8 @@ padding: 0;</string>
 	/*border-top: 1px solid #ececec;*/
 }
 QHeaderView::section {
-	font: 12pt &quot;Segoe UI&quot;;
-	
+	font: 12pt &quot;Segoe UI&quot;;	
 }
-
 	</string>
          </property>
         </widget>
