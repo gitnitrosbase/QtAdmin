@@ -198,21 +198,47 @@ void MainWindow::push_button_run_clicked()
         currentTab->dbPort_ = dbList_[currentDatabase_];
         currentTab->push_button_run_clicked();
     }
+    else
+    {
+        QMessageBox::warning(this, "Warning", "Select database first");
+    }
 }
 void MainWindow::push_button_plus_clicked()
 {
+    if (ui->tabWidget->count() > MAXTABCOUNT) return;
+
     TabWindow* tmp = new TabWindow(this);
-    ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Query " + QString::number(ui->tabWidget->count()+1)));
+    int tabNumber;
+
+    std::set<int> tabList;
+    for (int i = 0; i < ui->tabWidget->count(); i+=1)
+    {
+        QWidget* tmp_widget = ui->tabWidget->widget(i);
+        if (dynamic_cast<TabWindow*>(tmp_widget) != nullptr)
+        {
+            TabWindow* tmp = dynamic_cast<TabWindow*>(ui->tabWidget->widget(i));
+            tabList.insert(tmp->tabNumber_);
+            std::cout<<tmp->tabNumber_<<std::endl;
+        }
+    }
+
+    for (int i = 1; i <= MAXTABCOUNT; i+=1)
+    {
+        if (auto search = tabList.find(i); search == tabList.end())
+        {
+            tabNumber = i;
+            break;
+        }
+    }
+
+    ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Query " + QString::number(tabNumber)));
+    tmp->tabNumber_ = tabNumber;
     connect(tmp, &TabWindow::refresh_tree, this, &MainWindow::on_actionRefresh_triggered);
 }
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {
     if (ui->tabWidget->count() > 1)
     {
-//        if (ui->tabWidget->widget(index)->objectName() == "TabWindow")
-//        {
-//            dynamic_cast<TabWindow*>(ui->tabWidget->widget(index))->~TabWindow();
-//        }
         ui->tabWidget->removeTab(index);
     }
 }

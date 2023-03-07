@@ -114,7 +114,7 @@ extern "C"
 
 #define MAXCONNECT 64
 
-extern struct queryresultbase;
+struct queryresultbase;
 struct ConnectDescriptor
 {
     NB_HANDLE connect;
@@ -514,9 +514,9 @@ inline void prepare_testdb( NB_HANDLE connection )
 
 //--------------------------------------------------
 
-inline std::string ExecSqlASYNC2( int idconnect, int port, const std::string &query )
+inline int ExecSqlASYNC2( int idconnect, int port, const std::string &query )
 {
-    std::string output;
+    int queryCount = 0;
     try
     {
         NB_HANDLE connection;
@@ -528,7 +528,7 @@ inline std::string ExecSqlASYNC2( int idconnect, int port, const std::string &qu
         std::thread( AsyncProcessQuery, result, query.c_str(), query.length() ).detach();
         result->wait4thread();
 
-//        WaitAndPrintResult( result, 0 );
+        //WaitAndPrintResult( result, 0 );
 
         while ( true )
         {
@@ -537,7 +537,7 @@ inline std::string ExecSqlASYNC2( int idconnect, int port, const std::string &qu
                 continue;
 
             queryresult* result_ = (queryresult *)result;
-            output =  std::string(result_->errstr);
+            queryCount = result_->queries.size();
             break;
         }
     }
@@ -545,9 +545,25 @@ inline std::string ExecSqlASYNC2( int idconnect, int port, const std::string &qu
     {
         std::cout << "Error: " << e.what() << std::endl;
     }
-    return output;
+    return queryCount;
 }
 
+inline int GetCountAnswer(int idconnect)
+{
+    queryresultbase* result = nbpool.connects[idconnect].result;
+    int count = 0;
+    while ( true )
+    {
+        lockres lk( result );
+        if ( !result->ready && result->qcount == 0 )
+            continue;
+
+        queryresult* result_ = (queryresult *)result;
+        count = result_->queries.size();
+        break;
+    }
+    return count;
+}
 
 inline std::vector<std::string> PrintResultInfo2( queryresultbase *resultbase, int queryIndex )
 {
@@ -651,7 +667,7 @@ inline std::string GetQueryType(int connectIndex, int queryIndex )
 
     switch (res.type)
     {
-    case 0: output = "NONE"; break;
+    case 0: output = "ERROR"; break;
     case 1: output = "SELECT"; break;
     case 2: output = "INSERT"; break;
     case 3: output = "UPDATE"; break;
@@ -659,5 +675,21 @@ inline std::string GetQueryType(int connectIndex, int queryIndex )
     case 5: output = "TRANSACTION"; break;
     default: output = "ANOTHER"; break;
     };
+    return output;
+}
+
+
+inline std::string GetError(int connectIndex, int queryIndex)
+{
+    std::string output = "";
+    queryresult *result = (queryresult *)nbpool.connects[connectIndex].result;
+    int count = result->queries.size();
+
+    queryres res = result->queries.at(queryIndex);
+
+    int err = ( queryIndex < count - 1 ) ? 0 : result->err;
+
+    if ( err ) output = result->errstr;
+
     return output;
 }

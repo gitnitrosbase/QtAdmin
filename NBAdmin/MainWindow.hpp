@@ -46,7 +46,7 @@
 
 #include "ui_MainWindow.h"
 
-#include <windows.h>
+//#include <windows.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -188,4 +188,6 @@ private:
     QAction * createDBQueryAction_ = nullptr;
 
     QList<QTreeWidgetItem*> tables_;
+
+    const int MAXTABCOUNT = 64;
 };

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(NBAdmin)
+project(NBAdmin-fork)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 

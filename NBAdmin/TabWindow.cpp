@@ -57,25 +57,6 @@ void TabWindow::push_button_run_clicked()
 
     reqTypesList_.clear();
 
-    std::string tmp;
-    if (ui->textEdit_->textCursor().selectedText().length() == 0) tmp = ui->textEdit_->toPlainText().toStdString();
-    else tmp = ui->textEdit_->textCursor().selectedText().toStdString();
-    if (tmp.back() != ';') tmp.push_back(';');
-    std::string::size_type beg = 0;
-    for (auto end = 0; (end = tmp.find(';', end)) != std::string::npos; ++end)
-    {
-        std::string str = tmp.substr(beg, end - beg);
-        input_queries_.push_back(QString::fromStdString(str));
-        beg = end + 1;
-    }
-
-    for (auto &item : input_queries_)
-    {
-        while (item.at(0) == '\n' ||  item.at(0) == '\t' || item.at(0) == ' ')
-        {
-            item.remove(0,1);
-        }
-    }
 
     // remove all models in answers
 
@@ -89,22 +70,24 @@ void TabWindow::push_button_run_clicked()
 
     std::thread th1([=]()
     {
-        for (int i = 0; i < input_queries_.length(); i+=1)
+        int queryCount = ExecSqlASYNC2(tabNumber_ , dbPort_, ui->textEdit_->toPlainText().toStdString());
+
+        for (int i = 0; i < GetCountAnswer(tabNumber_); i+=1)
         {
+            std::cout<<"check"<<std::endl;
             ResponceView* model = new ResponceView();
-            std::string err = ExecSqlASYNC2( i, dbPort_, input_queries_.at(i).toStdString());
 
-            std::cout<<"\n============\n"<<err<<"\n============\n"<<std::endl;
-
+            std::string err = GetError(tabNumber_, i);
             if (err != "") model->setError(err);
 
             std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) );
-            GetSqlResulsASYNC(i, dbPort_, 0);
+            GetSqlResulsASYNC(tabNumber_, dbPort_, i);
 
-            model->setQueryInfo(i, 0);
+            model->setQueryInfo(tabNumber_, i);
             models_.push_back(model);
-            reqTypesList_.push_back(QString::fromStdString(GetQueryType(i,0)));
+            reqTypesList_.push_back(QString("Result %1: ").arg(i+1) + QString::fromStdString(GetQueryType(tabNumber_,i)));
         }
+
     });
     th1.join();
     flag_ = true;

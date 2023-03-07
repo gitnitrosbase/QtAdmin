@@ -69,6 +69,8 @@ public:
     QList<QString> reqTypes_ = {"NONE", "SELECT", "INSERT", "UPDATE", "DELETE", "TRANSACTION", "ANOTHER"};
     Ui::TabWindow* ui;
     bool flag_ = true;
+    int tabNumber_;
+
 public:
     int dbPort_;
     QString queryFromFile_ = "";

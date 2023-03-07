@@ -18,7 +18,6 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
     {
         this->setHeaderData(i, Qt::Horizontal, QString::fromStdString(horizontalHeader_.at(i)));
     }
-
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
 {
