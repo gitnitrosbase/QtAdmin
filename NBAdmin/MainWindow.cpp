@@ -200,7 +200,11 @@ void MainWindow::push_button_run_clicked()
     }
     else
     {
-        QMessageBox::warning(this, "Warning", "Select database first");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Select database first"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
     }
 }
 void MainWindow::push_button_plus_clicked()
@@ -509,7 +513,12 @@ void MainWindow::on_actionDeleteDatabaseTrig()
         }
         reply->deleteLater();
     });
-    QMessageBox::information(this, "", "The database has been deleted");
+    MessageWindow* message = new MessageWindow(this);
+    message->setWindowTitle("Info");
+    message->setText(QString("The database has been deleted"));
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->show();
+
     filling_tree();
     ui->label_2->setText("");
 }
@@ -933,7 +942,14 @@ void MainWindow::on_actionDatabase_Info_triggered()
             reply->deleteLater();
         });
     }
-    else QMessageBox::warning(this, "Warning", "Select database");
+    else
+    {
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Select database"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
+    }
 }
 
 
@@ -969,7 +985,11 @@ void MainWindow::on_actionOpen_triggered()
     }
     else
     {
-        QMessageBox::warning(this, "Warning", "Could not open the file");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Could not open the file"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
     }
     file.close();
 }
@@ -988,7 +1008,11 @@ void MainWindow::on_actionSave_triggered()
     }
     else
     {
-        QMessageBox::warning(this, "Warning", "Could not open the file");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Could not open the file"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
     }
     file.close();
 }
@@ -1002,7 +1026,11 @@ void MainWindow::on_actionInfo_triggered()
 
 void MainWindow::on_actionContacts_triggered()
 {
-    QMessageBox::information(this,"Contacts", "Email: support@nitrosbase.com");
+    MessageWindow* message = new MessageWindow(this);
+    message->setWindowTitle("Contacts");
+    message->setText(QString("Email: support@nitrosbase.com"));
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->show();
 }
 
 

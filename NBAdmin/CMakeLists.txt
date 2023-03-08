@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(NBAdmin-fork)
+project(NBAdmin)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -23,13 +23,14 @@ set(PROJECT_HEADERS
     OpenWindow.hpp
     BackupWindow.hpp
     ResponceView.hpp
-    syntexHightLight.hpp
+    SyntexHightLight.hpp
     RestoreWindow.hpp
     CreateTableTab.hpp
     CreateEdgeTab.hpp
     CreateIndexTab.hpp
     ModifyTableTab.hpp
     InfoWindow.hpp
+    MessageWindow.hpp
     )
 
 set(PROJECT_SOURCES
@@ -46,6 +47,7 @@ set(PROJECT_SOURCES
     CreateEdgeTab.cpp
     CreateIndexTab.cpp
     ModifyTableTab.cpp
+    MessageWindow.cpp
 )
 
 set(UI_FILES
@@ -61,6 +63,7 @@ set(UI_FILES
     ModifyTableTab.ui
     ConnectWindow.ui
     TabWindow.ui
+    MessageWindow.ui
     )
 
 set(NITROSBASE

@@ -1,4 +1,5 @@
 #include "RestoreWindow.hpp"
+#include "MessageWindow.hpp"
 
 RestoreWindow::RestoreWindow(QWidget* parent) : QWidget(parent), ui(new Ui::RestoreWindow)
 {
@@ -45,7 +46,12 @@ void RestoreWindow::on_Restore_clicked()
         reply->deleteLater();
     });
     this->close();
-    QMessageBox::information(this, "", "The database has been restored");
+
+    MessageWindow* message = new MessageWindow(this);
+    message->setWindowTitle("Warning");
+    message->setText(QString("The database has been restored"));
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->show();
     emit refreshTree();
 }
 

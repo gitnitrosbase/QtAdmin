@@ -86,6 +86,10 @@ void TabWindow::push_button_run_clicked()
             model->setQueryInfo(tabNumber_, i);
             models_.push_back(model);
             reqTypesList_.push_back(QString("Result %1: ").arg(i+1) + QString::fromStdString(GetQueryType(tabNumber_,i)));
+            if ( GetQueryType(tabNumber_,i) == "ANOTHER")
+            {
+                refresh_tree();
+            }
         }
 
     });

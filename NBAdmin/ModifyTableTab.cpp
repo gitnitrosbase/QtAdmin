@@ -1,4 +1,5 @@
 #include "ModifyTableTab.hpp"
+#include "MessageWindow.hpp"
 
 ModifyTableTab::ModifyTableTab(QWidget *parent)
     : QWidget{parent}, ui(new Ui::ModifyTableTab)
@@ -137,7 +138,11 @@ void ModifyTableTab::on_saveButton_clicked()
 
         if (ui->lineEdit->text() == "")
         {
-            QMessageBox::warning(this, "Warning", "Please enter table name");
+            MessageWindow* message = new MessageWindow(this);
+            message->setWindowTitle("Warning");
+            message->setText(QString("Please enter table name"));
+            message->setAttribute(Qt::WA_DeleteOnClose);
+            message->show();
             return;
         }
 
@@ -156,7 +161,11 @@ void ModifyTableTab::on_saveButton_clicked()
 
     if (identityFlag > 1)
     {
-        QMessageBox::warning(this, "Warning", "Only one identity column is allowed per table");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Only one identity column is allowed per table"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
 
@@ -175,7 +184,11 @@ void ModifyTableTab::on_saveButton_clicked()
     ui->tableWidget->setRowCount(0);
     printFromdb();
 
-    QMessageBox::information(this, "", "The table has been changed");
+    MessageWindow* message = new MessageWindow(this);
+    message->setWindowTitle("Warning");
+    message->setText(QString("The table has been changed"));
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->show();
     emit refreshTree();
 }
 
@@ -313,7 +326,11 @@ bool ModifyTableTab::check_query(NB_HANDLE connection)
     if (nb_errno(connection) == NB_OK) return true;
     else
     {
-        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString(nb_err_text_utf8( connection )));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
         return false;
     }

@@ -15,6 +15,8 @@
 #include <QJsonArray>
 #include <QFileDialog>
 
+#include "MessageWindow.hpp"
+
 #include <iostream>
 
 #include "ui_BackupWindow.h"

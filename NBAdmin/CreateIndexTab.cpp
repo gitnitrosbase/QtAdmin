@@ -1,4 +1,5 @@
-    #include "CreateIndexTab.hpp"
+#include "CreateIndexTab.hpp"
+#include "MessageWindow.hpp"
 
 CreateIndexTab::CreateIndexTab(QWidget* parent) : QWidget(parent), ui(new Ui::CreateIndexTab)
 {
@@ -64,12 +65,20 @@ void CreateIndexTab::on_pushButton_2_clicked()
 
     if (name == "")
     {
-        QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter correct index name!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     else if (name.at(0).isNumber())
     {
-        QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter correct index name!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     else
@@ -79,7 +88,11 @@ void CreateIndexTab::on_pushButton_2_clicked()
         {
             if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
             {
-                QMessageBox::warning(this, "Warning", "Please, enter correct index name!");
+                MessageWindow* message = new MessageWindow(this);
+                message->setWindowTitle("Warning");
+                message->setText(QString("Please, enter correct index name!"));
+                message->setAttribute(Qt::WA_DeleteOnClose);
+                message->show();
                 return;
             }
         }
@@ -104,7 +117,11 @@ void CreateIndexTab::on_pushButton_2_clicked()
         return;
     }
     nb_disconnect(connection);
-    QMessageBox::information(this, "", " The index has been created");
+    MessageWindow* message = new MessageWindow(this);
+    message->setWindowTitle("Warning");
+    message->setText(QString("The index has been created"));
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->show();
     emit refreshTree();
 }
 
@@ -175,7 +192,11 @@ bool CreateIndexTab::check_query(NB_HANDLE connection)
     if (nb_errno(connection) == NB_OK) return true;
     else
     {
-        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString(nb_err_text_utf8( connection )));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
         return false;
     }

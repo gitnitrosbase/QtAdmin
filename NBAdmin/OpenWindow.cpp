@@ -1,4 +1,5 @@
 #include "OpenWindow.hpp"
+#include "MessageWindow.hpp"
 
 OpenWindow::OpenWindow(QWidget* parent) : QWidget(parent), ui(new Ui::OpenWindow)
 {
@@ -33,7 +34,11 @@ void OpenWindow::OpenDatabase()
     QString dbname = ui->InputName->text();
     if (dbname == "")
     {
-        QMessageBox::warning(this, "Warning", "Please, enter correct database name!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter correct database name!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     else
@@ -43,7 +48,11 @@ void OpenWindow::OpenDatabase()
         {
             if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
             {
-                QMessageBox::warning(this, "Warning", "Please, enter correct database name!");
+                MessageWindow* message = new MessageWindow(this);
+                message->setWindowTitle("Warning");
+                message->setText(QString("Please, enter correct database name!"));
+                message->setAttribute(Qt::WA_DeleteOnClose);
+                message->show();
                 return;
             }
         }
@@ -52,7 +61,11 @@ void OpenWindow::OpenDatabase()
     int dbport = ui->InputPort->text().toInt();
     if (dbport <= 0)
     {
-        QMessageBox::warning(this, "Warning", "Please, enter current database port!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter correct database name!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     obj["port"] = dbport;
@@ -70,7 +83,11 @@ void OpenWindow::OpenDatabase()
     });
     this->close();
 
-    QMessageBox::information(this, "", "The database has been opened");
+    MessageWindow* message = new MessageWindow(this);
+    message->setWindowTitle("Warning");
+    message->setText(QString("The database has been opened"));
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->show();
 
     emit refreshTree();
     clear_fields();

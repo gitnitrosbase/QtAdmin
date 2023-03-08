@@ -1,5 +1,7 @@
 #include "ConnectWindow.hpp"
 
+#include "MessageWindow.hpp"
+
 ConnectWindow::ConnectWindow(QWidget* parent) : QDialog(parent), ui(new Ui::ConnectWindow)
 {
     ui->setupUi(this);
@@ -31,7 +33,11 @@ void ConnectWindow::on_Create_clicked()
     QString dbname = ui->lineEdit->text().toStdString().c_str();
     if (dbname == "")
     {
-        QMessageBox::warning(this, "Warning", "Please, enter correct database name!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter correct database name!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     else
@@ -41,7 +47,11 @@ void ConnectWindow::on_Create_clicked()
         {
             if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
             {
-                QMessageBox::warning(this, "Warning", "Please, enter correct database name!");
+                MessageWindow* message = new MessageWindow(this);
+                message->setWindowTitle("Warning");
+                message->setText(QString("Please, enter correct database name!"));
+                message->setAttribute(Qt::WA_DeleteOnClose);
+                message->show();
                 return;
             }
         }
@@ -50,7 +60,11 @@ void ConnectWindow::on_Create_clicked()
     int dbport = ui->lineEdit_2->text().toInt();
     if (dbport <= 0)
     {
-        QMessageBox::warning(this, "Warning", "Please, enter current database port!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter current database port!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     obj["dbname"] = dbname;
@@ -68,8 +82,11 @@ void ConnectWindow::on_Create_clicked()
     });
 
     this->close();
-
-    QMessageBox::information(this, "", "The database has been created");
+    MessageWindow* message = new MessageWindow(this);
+    message->setWindowTitle("Warning");
+    message->setText(QString("The database has been created"));
+    message->setAttribute(Qt::WA_DeleteOnClose);
+    message->show();
 
     emit refreshTree();
     clear_fields();

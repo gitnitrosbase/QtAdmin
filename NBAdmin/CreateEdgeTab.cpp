@@ -1,4 +1,5 @@
 #include "CreateEdgeTab.hpp"
+#include "MessageWindow.hpp"
 
 CreateEdgeTab::CreateEdgeTab(QWidget* parent) : QWidget(parent), ui(new Ui::CreateEdgeTab)
 {
@@ -32,12 +33,20 @@ void CreateEdgeTab::on_Create_clicked()
 
     if (name == "")
     {
-        QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter correct edge name!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     else if (name.at(0).isNumber())
     {
-        QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter correct edge name!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         return;
     }
     else
@@ -47,7 +56,11 @@ void CreateEdgeTab::on_Create_clicked()
         {
             if (nullIterAlp == alp_.find(symbol.toLower().toLatin1()))
             {
-                QMessageBox::warning(this, "Warning", "Please, enter correct edge name!");
+                MessageWindow* message = new MessageWindow(this);
+                message->setWindowTitle("Warning");
+                message->setText(QString("Please, enter correct edge name!"));
+                message->setAttribute(Qt::WA_DeleteOnClose);
+                message->show();
                 return;
             }
         }
@@ -83,7 +96,11 @@ bool CreateEdgeTab::check_query(NB_HANDLE connection)
     if (nb_errno(connection) == NB_OK) return true;
     else
     {
-        QMessageBox::warning(this, "WARNING", nb_err_text_utf8( connection ));
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString(nb_err_text_utf8( connection )));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
         std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
         return false;
     }

@@ -43,6 +43,7 @@
 #include "CreateIndexTab.hpp"
 #include "ModifyTableTab.hpp"
 #include "InfoWindow.hpp"
+#include "MessageWindow.hpp"
 
 #include "ui_MainWindow.h"
 

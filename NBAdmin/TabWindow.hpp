@@ -23,7 +23,7 @@
 #include <QJsonObject>
 #include <QFile>
 
-#include "syntexHightlight.hpp"
+#include "SyntexHightlight.hpp"
 #include "ResponceView.hpp"
 
 #include "ui_TabWindow.h"

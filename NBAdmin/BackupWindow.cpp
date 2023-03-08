@@ -31,7 +31,11 @@ void BackupWindow::backupDatabase()
             reply->deleteLater();
         });
         this->close();
-        QMessageBox::information(this, "", "The database has been backuped");
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("The database has been backuped"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
     }
 }
 
