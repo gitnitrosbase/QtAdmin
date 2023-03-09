@@ -32,6 +32,10 @@
 #include <algorithm>
 #include <map>
 #include <typeinfo>
+#include <QFile>
+#include <filesystem>
+
+#define PATH "config.conf"
 
 #include "TabWindow.hpp"
 #include "ConnectWindow.hpp"
@@ -58,7 +62,7 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public:
     explicit MainWindow(QWidget* parent = nullptr);
-    ~MainWindow() = default;
+    ~MainWindow();
 
 private slots:
 
@@ -187,7 +191,7 @@ private:
     QAction * deleteIndexAction_ = nullptr;
     QAction * selectEdgeAction_ = nullptr;
     QAction * createDBQueryAction_ = nullptr;
-
+    QList<int> splitterSize_;
     QList<QTreeWidgetItem*> tables_;
 
     const int MAXTABCOUNT = 64;

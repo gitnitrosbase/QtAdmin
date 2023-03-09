@@ -57,7 +57,6 @@ void TabWindow::push_button_run_clicked()
 
     reqTypesList_.clear();
 
-
     // remove all models in answers
 
     for (auto item : models_)
@@ -72,6 +71,10 @@ void TabWindow::push_button_run_clicked()
     {
         int queryCount = ExecSqlASYNC2(tabNumber_ , dbPort_, ui->textEdit_->toPlainText().toStdString());
 
+        std::vector<std::string> queryesVector = getParsedQuery(ui->textEdit_->toPlainText().toStdString());
+
+        for (auto item : queryesVector) item = item.substr(0, item.size() > 60 ? 60 : item.size());
+
         for (int i = 0; i < GetCountAnswer(tabNumber_); i+=1)
         {
             std::cout<<"check"<<std::endl;
@@ -85,7 +88,7 @@ void TabWindow::push_button_run_clicked()
 
             model->setQueryInfo(tabNumber_, i);
             models_.push_back(model);
-            reqTypesList_.push_back(QString("Result %1: ").arg(i+1) + QString::fromStdString(GetQueryType(tabNumber_,i)));
+            reqTypesList_.push_back(QString("Result %1: ").arg(i+1) + QString::fromStdString(GetQueryType(tabNumber_,i)) + " -> " + QString::fromStdString(queryesVector.at(i)));
             if ( GetQueryType(tabNumber_,i) == "ANOTHER")
             {
                 refresh_tree();
@@ -138,45 +141,39 @@ QString TabWindow::from_nbvalue(NBValue v)
     return QString::fromStdString(output);
 }
 
-QString TabWindow::exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query)
+std::vector<std::string> TabWindow::getParsedQuery(std::string str)
 {
-    QStringList headers = {};
-    QList<QStandardItem*> tmp;
-    nb_execute_sql(connection , query.toStdU16String().c_str(), size_t(query.size()));
+    std::vector<std::string> output;
 
-    if (check_query(connection) == false)
+
+//    for (int i = 0; i < str.lenght(); i +=1 )
+//    {
+//        if ( str.at(i) == '\n' || str.at(i) == '\n' || ( i != str.lenght()-1 && str.at(i) == ' ' && str.at(i+1) == ' '))
+//        {
+//            std::remove();
+//        }
+//    }
+
+
+    std::remove(str.begin(), str.end(), '\n');
+    std::remove(str.begin(), str.end(), '\t');
+
+//    int j = 0;
+//    for (int i = 0; i < str.lenght(); i += 1)
+//    {
+//        if (str.at(i) == ';')
+//    }
+
+
+    if (str.back() != ';') str.push_back(';');
+
+    std::string::size_type beg = 0;
+    for (auto end = 0; (end = str.find(';', end)) != std::string::npos; end += 1)
     {
-        tmp.push_back(new QStandardItem(QString::number(nb_errno( connection )) + ": " + QString(nb_err_text_utf8( connection ))));
-        model->appendRow(tmp);
-        return reqTypes_.at(0);
+        std::string tmp = str.substr(beg, end - beg);
+        output.push_back(tmp);
+        beg = end + 1;
     }
 
-    int field_count = nb_field_count(connection);
-    for (int i = 0;i< field_count; i+=1)
-    {
-        NBValue name;
-        nb_field_name(connection, i, &name);
-        tmp.push_back(new QStandardItem(from_nbvalue(name)));
-        headers += from_nbvalue(name);
-    }
-
-    model->setColumnCount(field_count);
-    model->setHorizontalHeaderLabels(headers);
-
-    int row_count = 0;
-    while (nb_fetch_row(connection) == NB_OK)
-    {
-        tmp = {};
-        NBValue value;
-        row_count+=1;
-        for (int column_i = 0; column_i<field_count; column_i+=1)
-        {
-            nb_field_value_utf8(connection, column_i, &value);
-            tmp.push_back(new QStandardItem(from_nbvalue(value)));
-        }
-        model->appendRow(tmp);
-    }
-    int reqType, tmp2;
-    nb_get_change_info(connection, &reqType, &tmp2);
-    return reqTypes_.at(reqType);
+    return output;
 }

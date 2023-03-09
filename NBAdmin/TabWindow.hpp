@@ -53,6 +53,8 @@ public slots:
     void push_button_run_clicked();
 
 private:
+    std::vector<std::string> getParsedQuery(std::string str);
+
     bool check_query(NB_HANDLE connection);
 
     QString from_nbvalue(NBValue value);

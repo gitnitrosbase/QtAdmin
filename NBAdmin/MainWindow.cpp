@@ -3,6 +3,29 @@
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QFile configFile("config.conf");
+
+    if ( !configFile.exists("config.conf") && configFile.open(QIODevice::WriteOnly))
+    {
+        configFile.write("{\"SplitterSizeL\" : 1,\"SplitterSizeR\" : 4,\"WindowSizeW\" : 800,\"WindowSizeH\" : 600}");
+        configFile.flush();
+        configFile.close();
+    }
+
+    if (configFile.open(QIODevice::ReadOnly))
+    {
+        QJsonDocument configDoc = QJsonDocument::fromJson(configFile.readAll());
+        QJsonObject configObj = configDoc.object();
+        splitterSize_ = {configObj.find("SplitterSizeL").value().toInt(), configObj.find("SplitterSizeR").value().toInt()};
+
+        QSize size = QSize(configObj.find("WindowSizeW").value().toInt(), configObj.find("WindowSizeH").value().toInt());
+
+        resize(size);
+
+        configFile.close();
+    }
+
     push_button_plus_clicked();
     connect(ui->Add, SIGNAL(clicked()), this, SLOT(push_button_plus_clicked()));
     connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
@@ -63,6 +86,24 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(openWindow_, &OpenWindow::refreshTree, this, &MainWindow::filling_tree_slot);
     connect(restoreWindow_, &RestoreWindow::refreshTree, this, &MainWindow::filling_tree_slot);
 }
+MainWindow::~MainWindow()
+{
+    QFile configFile("config.conf");
+    if (configFile.open(QIODevice::WriteOnly))
+    {
+        QJsonObject configObj;
+        configObj["WindowSizeH"] = this->height();
+        configObj["WindowSizeW"] = this->width();
+        configObj["SplitterSizeL"] = ui->splitter->sizes().at(0);
+        configObj["SplitterSizeR"] = ui->splitter->sizes().at(1);
+        configFile.write(QJsonDocument(configObj).toJson());
+        configFile.flush();
+        configFile.close();
+    }
+
+    delete ui;
+}
+
 
 void MainWindow::filling_tree_slot()
 {
@@ -575,6 +616,7 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
+
     tables_.clear();
     delete ui->treeWidget;
 
@@ -584,6 +626,8 @@ void MainWindow::filling_tree()
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
     connect(ui->treeWidget, &QTreeWidget::currentItemChanged, this, &MainWindow::on_treeWidget_currentItemChanged);
+
+    ui->splitter->setSizes(splitterSize_);
 
     ui->treeWidget->setStyleSheet(
                     "QHeaderView::section {"

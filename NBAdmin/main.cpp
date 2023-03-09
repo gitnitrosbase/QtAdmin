@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
     MainWindow window;
     mainLogger.save(Logger::LogType::INFO_TYPE, "create window");
     window.show();
-    window.setMinimumSize(800, 500);
     mainLogger.save(Logger::LogType::WARNING_TYPE, "set size");
     window.setWindowTitle("NBAdmin");
     window.setWindowIcon(QIcon(":/images/favicon.ico"));

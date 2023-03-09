@@ -1,0 +1,7 @@
+==============================================
+Version 3
+---------
+ - Added saving of parameters of the main window. 
+ - Added the first 60 characters of the query to the "ComboBox". 
+ - The ratio of the width of the database tree to the query window is set.
+==============================================
