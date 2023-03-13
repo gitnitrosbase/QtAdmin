@@ -5,6 +5,7 @@ ConnectPool3 nbpool;
 
 TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
 {
+    bar_ = new QStatusBar(this);
     ui->setupUi(this);
 
     QFont font;
@@ -12,7 +13,19 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     ui->textEdit_->setFont(font);
     syntaxHighLight_ = new SyntaxHighlighter(ui->textEdit_->document());
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
+    ui->statusContainer->addWidget(bar_);
+    bar_->setStyleSheet(
+                    "font: 12pt Segoe UI;"
+                    "color: #555;"
+                    "QStatusBar::item { border: none; };"
+                );
+//    bar_->showMessage(tr("status bar"));
+    bar_->addPermanentWidget(ui->label_left,1);
+    bar_->addPermanentWidget(ui->label_right,1);
+    ui->label_left->setText("left");
+    ui->label_right->setText("right");
 }
+
 
 TabWindow::~TabWindow()
 {
@@ -106,6 +119,7 @@ void TabWindow::push_button_run_clicked()
     int t = (end - start);
     std::cout<<"\n\ntime -- "<<t<< " ms\n\n"<<std::endl;
 }
+
 
 bool TabWindow::check_query(NB_HANDLE connection)
 {
