@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "nitrosbase.h"
 #include <iostream>
 #include <mutex>
@@ -581,8 +580,8 @@ inline std::vector<std::string> PrintResultInfo2( queryresultbase *resultbase, i
     if ( err )
         std::cout << "msg " << result->errstr << std::endl;
 
-    if ( res.type != SQL_QUERY_SELECT )
-        std::cout << "rowsaffected " << res.count << std::endl;
+    if ( res.type != SQL_QUERY_SELECT ) outputHeader.push_back(" ");
+
     else
         std::cout << "rowscount " << res.records.size() << std::endl;
 
@@ -641,7 +640,6 @@ inline NBValue GetItemFromTable(queryresultbase *resultbase, int resnum, size_t 
         fielddescr &fd = res.fields[columnIndex];
         char *recpr = nb_getrecordptr( result->recordsstream, recoffset );
         nb_field_value_ext( result->connection, &v, recpr, fd );
-
     }
     catch ( std::exception &e )
     {
@@ -693,3 +691,30 @@ inline std::string GetError(int connectIndex, int queryIndex)
 
     return output;
 }
+
+inline std::string GetRowsAffectedFlag(queryresultbase *resultbase, int resnum)
+{
+    std::string output = "";
+
+    queryresult *result = (queryresult *)resultbase;
+
+    queryres res = result->queries.at(resnum);
+
+    if ( res.type != SQL_QUERY_SELECT ) output = std::string("Raws affected: " + std::to_string(res.count));
+
+    return output;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

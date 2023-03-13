@@ -88,7 +88,7 @@ void TabWindow::push_button_run_clicked()
 
             model->setQueryInfo(tabNumber_, i);
             models_.push_back(model);
-            reqTypesList_.push_back(QString("Result %1: ").arg(i+1) + QString::fromStdString(GetQueryType(tabNumber_,i)) + " -> " + QString::fromStdString(queryesVector.at(i)));
+            reqTypesList_.push_back(QString("Result %1: ").arg(i+1) + QString::fromStdString(GetQueryType(tabNumber_,i)) + " => " + QString::fromStdString(queryesVector.at(i)));
             if ( GetQueryType(tabNumber_,i) == "ANOTHER")
             {
                 refresh_tree();
@@ -145,24 +145,8 @@ std::vector<std::string> TabWindow::getParsedQuery(std::string str)
 {
     std::vector<std::string> output;
 
-
-//    for (int i = 0; i < str.lenght(); i +=1 )
-//    {
-//        if ( str.at(i) == '\n' || str.at(i) == '\n' || ( i != str.lenght()-1 && str.at(i) == ' ' && str.at(i+1) == ' '))
-//        {
-//            std::remove();
-//        }
-//    }
-
-
     std::remove(str.begin(), str.end(), '\n');
     std::remove(str.begin(), str.end(), '\t');
-
-//    int j = 0;
-//    for (int i = 0; i < str.lenght(); i += 1)
-//    {
-//        if (str.at(i) == ';')
-//    }
 
 
     if (str.back() != ';') str.push_back(';');

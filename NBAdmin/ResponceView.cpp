@@ -48,6 +48,7 @@ int ResponceView::columnCount(const QModelIndex &parent) const
 QVariant ResponceView::data(const QModelIndex &index, int role) const
 {
     if (errFlag_ && role == Qt::DisplayRole) return (QString::fromStdString(errStr_));
+    if (GetRowsAffectedFlag(nbpool.connects[connectIndex_].result, queryIndex_) != "" && role == Qt::DisplayRole) return QString::fromStdString(GetRowsAffectedFlag(nbpool.connects[connectIndex_].result, queryIndex_));
 
     if(role != Qt::DisplayRole) return QVariant();
 
