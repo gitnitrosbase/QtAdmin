@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>80</width>
-    <height>138</height>
+    <width>102</width>
+    <height>157</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,11 +20,19 @@
    <string>Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QDialog {
-	border: 4px solid #eee; 
-	border-radius: 16px;	
+   <string notr="true">/*
+#MessageWindow  {
+	border: 4px solid red; 
+	/*border-radius: 16px;	
 	background-color: rgb(255, 255, 255);
-}</string>
+}
+*/</string>
+  </property>
+  <property name="sizeGripEnabled">
+   <bool>false</bool>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -45,15 +53,24 @@
    <item>
     <widget class="QLabel" name="text">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>57</height>
+      </size>
+     </property>
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
       </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
       <string/>
@@ -80,25 +97,34 @@
        <height>0</height>
       </size>
      </property>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="font">
       <font>
-       <pointsize>10</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
      <property name="styleSheet">
       <string notr="true">
-border-top: 1px solid red;
-
-
 QPushButton {
-	border: 0px;
+	border-top: 1px solid #eee;	
 	background-color: rgb(255, 255, 255);
+	width:100%;
+	height: 100%;
 }
+
+	
+
+
 
 </string>
      </property>
      <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+      <enum>Qt::Vertical</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>

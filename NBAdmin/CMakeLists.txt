@@ -77,10 +77,10 @@ set(LOGGERLIB
     LoggerFile.hpp
     )
 
-if(MSVC)
-      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "/MP")
-      MESSAGE(STATUS "Added parallel build arguments to CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
-endif()
+#if(MSVC)
+#      SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" "/MP")
+#      MESSAGE(STATUS "Added parallel build arguments to CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
+#endif()
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB})
 

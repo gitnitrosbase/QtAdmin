@@ -601,6 +601,86 @@ QString MainWindow::nullCheck(int index)
     else return "???";
 }
 
+int MainWindow::precisionCheck(QJsonObject obj, int type)
+{
+    int presicion;
+    int scale;
+    int typeName;
+    switch (type) {
+    case 10:
+        presicion = obj.find("precision")->toInt();
+        scale = obj.find("precision")->toInt();
+        if (presicion > 0 && scale == 1) return 2;
+    default:
+        presicion = 0;
+        return presicion;
+        break;
+    }
+
+
+
+    return presicion;
+}
+
+QString MainWindow::precisionCheck2(QJsonObject obj, int type)
+{
+    int precision = obj.find("precision")->toInt();
+    int scale = obj.find("scale")->toInt();
+    switch (type) {
+    case 1:
+        if(precision >0 && scale == 0)
+        break;
+    case 3:
+        if(precision == -1) return "bigint";
+        break;
+    case 4:
+        if(precision == -1) return "double";
+        break;
+    case 5:
+        if(precision > 0) return "datetime";
+        break;
+    case 7:
+        if(precision == -1) return "date";
+        break;
+    case 9:
+        if(precision > 0 && scale == 1)
+        {
+        return "binary(" + QString::number(precision) + ")";
+        }
+        if(precision > 0 && scale == 0)
+        {
+        return "varbinary(" + QString::number(precision) + ")";
+        }
+        if(precision == -1)
+        {
+        return "varbinary(MAX)";
+        }
+        break;
+    case 10:
+        if(precision >0 && scale == 0)
+        {
+            return "nvarchar(" + QString::number(precision) + ")";
+        }
+        if(precision >0 && scale == 1)
+        {
+            return "nchar(" + QString::number(precision) + ")";
+        }
+        if(precision == -1)
+        {
+          return "nvarchar (MAX)" ;
+        }
+        break;
+        case 11:
+        if(precision == -1) return "rowversion";
+        break;
+        case 12:
+        return "decimal(" + QString::number(precision) + "," + QString::number(scale) + ")";
+        break;
+    default:
+        break;
+    }
+}
+
 QString MainWindow::linkCheck(QString input)
 {
     if (input != "") return QString(" -> " + input);
@@ -753,10 +833,10 @@ void MainWindow::filling_tree()
                                 for (auto item_field : fields_array)
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
-
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                               + "  ( "
-                                                              + fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second
+                                                              + precisionCheck2(item_field.toObject(),item_field.toObject().find("type")->toInt())
+//                                                              + fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second
                                                               + " "
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
                                                               + ") "

@@ -9,6 +9,8 @@
 #include <QComboBox>
 #include <QMessageBox>
 #include <QSplitter>
+#include <QStatusBar>
+#include <QStatusBar>
 #include <QClipboard>
 #include <QMimeData>
 
@@ -33,6 +35,7 @@
 #include "WinUser.h"
 
 #include "ui_TabWindow.h"
+#include <iostream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class TabWindow; }
@@ -80,6 +83,7 @@ public:
     Ui::TabWindow* ui;
     bool flag_ = true;
     int tabNumber_;
+    QStatusBar* bar_;
 
 
 public:

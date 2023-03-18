@@ -141,6 +141,10 @@ private:
 
     QString nullCheck(int index);
 
+    int precisionCheck(QJsonObject obj, int type);
+
+    QString precisionCheck2(QJsonObject obj, int type);
+
     QString linkCheck(QString input);
 
     QString runCheck(bool input);
@@ -171,6 +175,10 @@ private:
         {10, "nvarchar"},
         {11, "rowversion"},
         {12, "decimal"}
+    };
+    std::map<int, QString> fieldsTypesAdd_ = {
+        {1, "char"},
+        {2, "nchar"}
     };
 
     QMenu * menu_ = nullptr;
