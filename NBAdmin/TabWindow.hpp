@@ -9,6 +9,8 @@
 #include <QComboBox>
 #include <QMessageBox>
 #include <QSplitter>
+#include <QClipboard>
+#include <QMimeData>
 
 #include <QTableView>
 #include <QStandardItemModel>
@@ -17,6 +19,7 @@
 #include <string>
 #include <thread>
 #include <ctime>
+#include <fstream>
 
 #include "nb-samples.h"
 #include <QJsonDocument>
@@ -25,6 +28,9 @@
 
 #include "SyntexHightlight.hpp"
 #include "ResponceView.hpp"
+
+#include "Windows.h"
+#include "WinUser.h"
 
 #include "ui_TabWindow.h"
 
@@ -61,6 +67,8 @@ private:
 
     QString exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query);
 
+    void keyPressEvent(QKeyEvent *event) override;
+
 public:
     QList<QString> input_queries_;
     QList<ResponceView*> models_;
@@ -72,6 +80,7 @@ public:
     Ui::TabWindow* ui;
     bool flag_ = true;
     int tabNumber_;
+
 
 public:
     int dbPort_;

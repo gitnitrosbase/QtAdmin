@@ -1,5 +1,7 @@
 #include "TabWindow.hpp"
 
+#include <QStringEncoder>
+
 ConnectPool3 nbpool;
 
 
@@ -23,6 +25,48 @@ TabWindow::~TabWindow()
         delete item;
     }
     models_.clear();
+}
+
+void TabWindow::keyPressEvent(QKeyEvent *event)
+{
+
+    if (event->key() == 67)
+    {
+        std::string buffer_;
+
+        QItemSelectionModel * selection = ui->tableWidget_->selectionModel();
+        QModelIndexList indexes = selection->selectedIndexes();
+
+        QModelIndex previous = indexes.first();
+        foreach(const QModelIndex &current, indexes)
+        {
+            QVariant data = ui->tableWidget_->model()->data(current);
+            std::string text = data.toString().toStdString();
+            if (current.column() == 0)
+            {
+                buffer_.push_back('\n');
+            }
+            else
+            {
+                buffer_.push_back('\t');
+            }
+
+            buffer_ += text;
+            previous = current;
+        }
+        buffer_.erase(buffer_.begin(), buffer_.begin()+1);
+
+        std::ofstream out;
+
+        buffer_.erase(std::remove(buffer_.begin(), buffer_.end(), '\0'), buffer_.end());
+
+        out.open("outputBuffer.csv");
+        if (out.is_open())
+        {
+            out << buffer_ << std::endl;
+        }
+        QApplication::clipboard()->setText(QString::fromStdString(buffer_));
+    }
 }
 
 QString TabWindow::textFromTextEdit()
