@@ -62,17 +62,23 @@ public:
     QString address_ = "http://127.0.0.1:8008/api3";
     int port_ = 0;
     std::vector<QString> fieldsTypes_ = {
-        "varchar",
-        "int",
         "bigint",
-        "double",
-        "datetime",
-        "bit",
+        "binary(50)",
+        "char(10)",
         "date",
-        "varbinary",
-        "nvarchar",
+        "datetime",
+        "datetime2(7)",
+        "decimal(18,0)",
+        "double",
+        "int",
+        "nchar(10)",
+        "nvarchar(50)",
+        "nvarchar(MAX)",
         "rowversion",
-        "decimal"
+        "varbinary(50)",
+        "varbinary(MAX)",
+        "varchar(50)",
+        "varchar(MAX)",
     };
     std::set<char> alp_ = {'a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','1','2','3','4','5','6','7','8','9','0','_','-'};
 private slots:
