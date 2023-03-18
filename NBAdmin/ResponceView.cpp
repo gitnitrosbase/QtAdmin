@@ -48,6 +48,7 @@ int ResponceView::columnCount(const QModelIndex &parent) const
 QVariant ResponceView::data(const QModelIndex &index, int role) const
 {
     if (errFlag_ && role == Qt::DisplayRole) return (QString::fromStdString(errStr_));
+    if (GetRowsAffectedFlag(nbpool.connects[connectIndex_].result, queryIndex_) != "" && role == Qt::DisplayRole) return QString::fromStdString(GetRowsAffectedFlag(nbpool.connects[connectIndex_].result, queryIndex_));
 
     if(role != Qt::DisplayRole) return QVariant();
 
@@ -57,29 +58,27 @@ QVariant ResponceView::data(const QModelIndex &index, int role) const
     {
         NBValue v = GetItemFromTable(nbpool.connects[connectIndex_].result, queryIndex_, index.column(), index.row());
 
-        std::string output = "";
+        QString output = "";
 
         if (v.null == true) return QString("null");
 
         switch ( v.type )
         {
-            case NB_DATA_INT: output = std::to_string(v.intv); break;
-            case NB_DATA_DATETIME: for (int i = 0; i< v.len; i+=1) output += v.str[i]; break;
-            case NB_DATA_STRING: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-            case NB_DATA_U16STRING: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-            case NB_DATA_DECIMAL: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-            case NB_DATA_INT64: output = std::to_string(v.int64v); break;
-            case NB_DATA_DOUBLE: output = std::to_string(v.dbl); break;
-            case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
-            case NB_DATA_BINARY: output += *(&v.str); break;
-            case NB_DATA_DATE: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-            case NB_DATA_NONE : output = "none"; break;
-            case NB_DATA_ROWVERSION: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-            case NB_DATA_URI: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
+        case NB_DATA_INT: output = QString::number(v.intv); break;
+        case NB_DATA_DATETIME: for (int i = 0; i< v.len; i+=1) output += QString(v.str[i]) ; break;
+        case NB_DATA_STRING: for (int i = 0; i< v.len; i+=1) output+= QString(v.str[i]); break;
+        case NB_DATA_U16STRING: for (int i = 0; i< v.len; i+=1) output+= QString(v.str[i]); break;
+        case NB_DATA_DECIMAL: for (int i = 0; i< v.len; i+=1) output+= QString(v.str[i]); break;
+        case NB_DATA_INT64: output = QString::number(v.int64v); break;
+        case NB_DATA_DOUBLE: output = QString::number(v.dbl); break;
+        case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
+        case NB_DATA_BINARY: output += *(&v.str); break;
+        case NB_DATA_DATE: for (int i = 0; i< v.len; i+=1) output+= QString(v.str[i]); break;
+        case NB_DATA_NONE : output = "none"; break;
+        case NB_DATA_ROWVERSION: for (int i = 0; i< v.len; i+=1) output+= QString(v.str[i]); break;
+        case NB_DATA_URI: for (int i = 0; i< v.len; i+=1) output+= QString(v.str[i]); break;
         }
-        //--------------
-
-        return QString::fromStdString(output);
+        return output;
     }
     return var;
 }
