@@ -596,9 +596,9 @@ QString MainWindow::paintText(QString str, int color)
 
 QString MainWindow::nullCheck(int index)
 {
-    if (index == 0) return ", NOT NULL";
-    else if (index == 1) return "";
-    else return "???";
+    if (index == 0) return QString(", NOT NULL");
+    else if (index == 1) return QString("");
+    else return QString("???");
 }
 
 int MainWindow::precisionCheck(QJsonObject obj, int type)
@@ -622,59 +622,59 @@ int MainWindow::precisionCheck(QJsonObject obj, int type)
     return presicion;
 }
 
-QString MainWindow::precisionCheck2(QJsonObject obj, int type)
+QString MainWindow::precisionCheck(QJsonObject obj)
 {
     int precision = obj.find("precision")->toInt();
     int scale = obj.find("scale")->toInt();
-    switch (type) {
+    switch (obj.find("type")->toInt()) {
     case 1:
         if(precision >0 && scale == 0)
         break;
     case 3:
-        if(precision == -1) return "bigint";
+        if(precision == -1) return QString("bigint");
         break;
     case 4:
-        if(precision == -1) return "double";
+        if(precision == -1) return QString("double");
         break;
     case 5:
-        if(precision > 0) return "datetime";
+        if(precision > 0) return QString("datetime");
         break;
     case 7:
-        if(precision == -1) return "date";
+        if(precision == -1) return QString("date");
         break;
     case 9:
         if(precision > 0 && scale == 1)
         {
-        return "binary(" + QString::number(precision) + ")";
+        return QString("binary(" + QString::number(precision) + ")");
         }
         if(precision > 0 && scale == 0)
         {
-        return "varbinary(" + QString::number(precision) + ")";
+        return QString("varbinary(" + QString::number(precision) + ")");
         }
         if(precision == -1)
         {
-        return "varbinary(MAX)";
+        return QString("varbinary(MAX)");
         }
         break;
     case 10:
         if(precision >0 && scale == 0)
         {
-            return "nvarchar(" + QString::number(precision) + ")";
+            return QString("nvarchar(" + QString::number(precision) + ")");
         }
         if(precision >0 && scale == 1)
         {
-            return "nchar(" + QString::number(precision) + ")";
+            return QString("nchar(" + QString::number(precision) + ")");
         }
         if(precision == -1)
         {
-          return "nvarchar (MAX)" ;
+          return QString("nvarchar (MAX)");
         }
         break;
         case 11:
-        if(precision == -1) return "rowversion";
+        if(precision == -1) return QString("rowversion");
         break;
         case 12:
-        return "decimal(" + QString::number(precision) + "," + QString::number(scale) + ")";
+        return QString("decimal(" + QString::number(precision) + "," + QString::number(scale) + ")");
         break;
     default:
         break;
@@ -834,12 +834,11 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + "  ( "
-                                                              + precisionCheck2(item_field.toObject(),item_field.toObject().find("type")->toInt())
-//                                                              + fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second
+                                                              + QString("  ( ")
+                                                              + precisionCheck(item_field.toObject())
                                                               + " "
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                              + ") "
+                                                              + QString(") ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     columnItem->addChild(field);

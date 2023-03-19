@@ -121,9 +121,15 @@ void CreateTableTab::checkToAddRow(QString text)
 
 void CreateTableTab::rmRow()
 {
-    if (ui->tableWidget->rowCount() > 1) ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+    if (ui->tableWidget->rowCount() > 1)
+    {
+        if (backLineEdit_ == ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))
+        {
+            backLineEdit_ = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow()-1, 0));
+        }
+        ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+    }
 }
-
 void CreateTableTab::on_pushButton_2_clicked()
 {
     QString name = ui->lineEdit->text();
@@ -182,52 +188,6 @@ void CreateTableTab::on_pushButton_2_clicked()
 
         QString subQueryStr = columnName;
         subQueryStr+=" ";
-//        QRegularExpression rx("^(varchar|int|bigint|double|datetime|datetime2|bit|date|varbinary|nvarchar|rowversion|decimal)\\(\\d+\\)$", QRegularExpression::CaseInsensitiveOption);
-//        QRegularExpression rx("^(bigint|binary|char|date|datetime|datetime2|decimal|double|int|nchar|nvarchar|rowversion|varbinary|varchar)", QRegularExpression::CaseInsensitiveOption);
-//        QRegularExpressionMatch match = rx.match(typeName);
-//        bool hasMatch = match.hasMatch();
-//        QString typeMatched = nullptr;
-
-//        if(hasMatch) {
-//            QRegularExpression re("^(binary\\((?:[1-9]|[1-4][0-9]|50)\\))|"
-//                                  "(char\\(([1-9]|10)\\))|"
-//                                  "(datetime2\\([1-7*/]\\)|",
-//                                  "(decimal\\([1-18],\\d\\))|"
-//                                  "(nchar\\([1-10]\\))|"
-//                                  "(nvarchar\\([1-50]\\))|"
-//                                  "(nvarchar\\(MAX\\))|"
-//                                  "(varbinary\\([1-50]\\))|"
-//                                  "varbinary\\(MAX\\))|"
-//                                  "varchar\\(50\\)|"
-//                                  "varchar\\(MAX\\)$",
-//                                QRegularExpression::CaseInsensitiveOption);
-//            ^(binary\((?:[1-9]|[1-4][0-9]|50)\))|
-//            (char\(([1-9]|10)\)$)|
-//            (datetime2\([1-7]\))$|
-//            (^decimal\((?:[1-9]|[1][1-8],\d)\)$)|
-//            (^nchar\(([1-9]|10)\)$)|
-//            (^nvarchar\(([1-9]|[1-4][0-9]|50)\)$)|
-//            ^nvarchar\(MAX\)$|
-//            (^varbinary\((?:[1-9]|[1-4][0-9]|50)\)$)
-//            QRegularExpressionMatch matchDatetime = re.match(typeName);
-//            bool dateMatch = matchDatetime.hasMatch();
-//            if(!dateMatch) {
-//                MessageWindow* message = new MessageWindow(this);
-//                message->setWindowTitle("Warning");
-//                message->setText(QString("Invalid type name!"));
-//                message->setAttribute(Qt::WA_DeleteOnClose);
-//                message->show();
-//                return;
-//            }
-//        } else {
-//              MessageWindow* message = new MessageWindow(this);
-//              message->setWindowTitle("Warning");
-//              message->setText(QString("Invalid type name"));
-//              message->setAttribute(Qt::WA_DeleteOnClose);
-//              message->show();
-//              return;
-//          }
-
         subQueryStr+=typeName;
         subQueryStr+=" ";
 
@@ -330,16 +290,16 @@ void CreateTableTab::blockOtherIdentity(QCheckBox* item, int state)
   }
 
 bool CreateTableTab::check_query(NB_HANDLE connection)
-                                  {
-                                      if (nb_errno(connection) == NB_OK) return true;
-                                      else
-                                      {
-                                          MessageWindow* message = new MessageWindow(this);
-                                          message->setWindowTitle("Warning");
-                                          message->setText(QString(nb_err_text_utf8( connection )));
-                                          message->setAttribute(Qt::WA_DeleteOnClose);
-                                          message->show();
-                                          std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
-                                          return false;
-                                      }
-                                  }
+{
+    if (nb_errno(connection) == NB_OK) return true;
+    else
+    {
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString(nb_err_text_utf8( connection )));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
+        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
+        return false;
+    }
+}

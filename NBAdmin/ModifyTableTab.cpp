@@ -284,13 +284,15 @@ void ModifyTableTab::addRow()
 
 void ModifyTableTab::rmRow()
 {
-    if (ui->tableWidget->rowCount() > 1) ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+    if (ui->tableWidget->rowCount() > 1)
+    {
+        if (backLineEdit_ == ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))
+        {
+            backLineEdit_ = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow()-1, 0));
+        }
+        ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+    }
 }
-
-//void ModifyTableTab::on_addRowButton_clicked()
-//{
-//    addRow();
-//}
 
 void ModifyTableTab::checkIdentity(int index)
 {
