@@ -182,52 +182,43 @@ void CreateTableTab::on_pushButton_2_clicked()
 
         QString subQueryStr = columnName;
         subQueryStr+=" ";
-//        QRegularExpression rx("^(varchar|int|bigint|double|datetime|datetime2|bit|date|varbinary|nvarchar|rowversion|decimal)\\(\\d+\\)$", QRegularExpression::CaseInsensitiveOption);
-//        QRegularExpression rx("^(bigint|binary|char|date|datetime|datetime2|decimal|double|int|nchar|nvarchar|rowversion|varbinary|varchar)", QRegularExpression::CaseInsensitiveOption);
-//        QRegularExpressionMatch match = rx.match(typeName);
-//        bool hasMatch = match.hasMatch();
-//        QString typeMatched = nullptr;
+        QRegularExpression rx(
+                              "^varchar$|"
+                              "^int$|"
+                              "^bigint$|"
+                              "^double$|"
+                              "^datetime$|"
+                              "^datetime2$|"
+                              "^bit$|"
+                              "^date$|"
+                              "^varbinary$|"
+                              "^nvarchar$|"
+                              "^rowversion$|"
+                              "^decimal$|"
+                              "^binary\\((?:[1-9]|[1-4][0-9]|50)\\)$|"
+                              "^char\\(([1-9]|10)\\)$|"
+                              "^datetime2\\(([1-7]\\))$|"
+                              "^decimal\\((?:[1-9]|[1][1-8])\\,[0-9]\\)$"
+                              "^nchar\\(([1-9]|10)\\)$|"
+                              "^nvarchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^nvarchar\\(MAX\\)$|"
+                              "^varbinary\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^varbinary\\(MAX\\)$|"
+                              "^varchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^varchar\\(MAX\\)$"
+                              , QRegularExpression::CaseInsensitiveOption);
 
-//        if(hasMatch) {
-//            QRegularExpression re("^(binary\\((?:[1-9]|[1-4][0-9]|50)\\))|"
-//                                  "(char\\(([1-9]|10)\\))|"
-//                                  "(datetime2\\([1-7*/]\\)|",
-//                                  "(decimal\\([1-18],\\d\\))|"
-//                                  "(nchar\\([1-10]\\))|"
-//                                  "(nvarchar\\([1-50]\\))|"
-//                                  "(nvarchar\\(MAX\\))|"
-//                                  "(varbinary\\([1-50]\\))|"
-//                                  "varbinary\\(MAX\\))|"
-//                                  "varchar\\(50\\)|"
-//                                  "varchar\\(MAX\\)$",
-//                                QRegularExpression::CaseInsensitiveOption);
-//            ^(binary\((?:[1-9]|[1-4][0-9]|50)\))|
-//            (char\(([1-9]|10)\)$)|
-//            (datetime2\([1-7]\))$|
-//            (^decimal\((?:[1-9]|[1][1-8],\d)\)$)|
-//            (^nchar\(([1-9]|10)\)$)|
-//            (^nvarchar\(([1-9]|[1-4][0-9]|50)\)$)|
-//            ^nvarchar\(MAX\)$|
-//            (^varbinary\((?:[1-9]|[1-4][0-9]|50)\)$)
-//            QRegularExpressionMatch matchDatetime = re.match(typeName);
-//            bool dateMatch = matchDatetime.hasMatch();
-//            if(!dateMatch) {
-//                MessageWindow* message = new MessageWindow(this);
-//                message->setWindowTitle("Warning");
-//                message->setText(QString("Invalid type name!"));
-//                message->setAttribute(Qt::WA_DeleteOnClose);
-//                message->show();
-//                return;
-//            }
-//        } else {
-//              MessageWindow* message = new MessageWindow(this);
-//              message->setWindowTitle("Warning");
-//              message->setText(QString("Invalid type name"));
-//              message->setAttribute(Qt::WA_DeleteOnClose);
-//              message->show();
-//              return;
-//          }
-
+        QRegularExpressionMatch match = rx.match(typeName);
+        bool hasMatch = match.hasMatch();
+        if(!hasMatch)
+        {
+            MessageWindow* message = new MessageWindow(this);
+            message->setWindowTitle("Warning");
+            message->setText(QString("Invalid type name!"));
+            message->setAttribute(Qt::WA_DeleteOnClose);
+            message->show();
+            return;
+        }
         subQueryStr+=typeName;
         subQueryStr+=" ";
 

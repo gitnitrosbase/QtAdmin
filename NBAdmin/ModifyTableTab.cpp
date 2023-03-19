@@ -23,6 +23,75 @@ void ModifyTableTab::checkToAddRow(QString text)
     }
 }
 
+QString ModifyTableTab::precisionCheck(QJsonObject obj) {
+    int precision = obj.find("precision")->toInt();
+    int scale = obj.find("scale")->toInt();
+    switch (obj.find("type")->toInt())
+    {
+        case 1:
+           return QString("");
+           break;
+        case 2:
+            return "int";
+            break;
+        case 3:
+            if(precision == -1) return QString("bigint");
+            break;
+        case 4:
+            if(precision == -1) return QString("double");
+            break;
+        case 5:
+            if(precision > 0) return QString("datetime");
+            break;
+        case 6:
+            return QString("");
+            break;
+        case 7:
+            if(precision == -1) return QString("date");
+            break;
+        case 8:
+            return QString("");
+            break;
+        case 9:
+            if(precision > 0 && scale == 1)
+            {
+                return QString("binary(" + QString::number(precision) + ")");
+            }
+            if(precision > 0 && scale == 0)
+            {
+                return QString("varbinary(" + QString::number(precision) + ")");
+            }
+            if(precision == -1)
+            {
+                return QString("varbinary(MAX)");
+            }
+            break;
+        case 10:
+            if(precision >0 && scale == 0)
+            {
+                return QString("nvarchar(" + QString::number(precision) + ")");
+            }
+            if(precision >0 && scale == 1)
+            {
+               return QString("nchar(" + QString::number(precision) + ")");
+            }
+            if(precision == -1)
+            {
+                return QString("nvarchar(MAX)");
+            }
+            break;
+        case 11:
+            if(precision == -1) return QString("rowversion");
+            break;
+        case 12:
+            return QString("decimal(" + QString::number(precision) + "," + QString::number(scale) + ")");
+            break;
+        default:
+           break;
+    }
+    return QString("");
+}
+
 void ModifyTableTab::printFromdb()
 {
     ui->lineEdit->setText(currentTable_);
@@ -65,7 +134,7 @@ void ModifyTableTab::printFromdb()
                         FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
                         nameLineEdit->setText(fields.toObject().find("name")->toString());
-                        typesComboBox->addItem(fieldsTypes_.at(fields.toObject().find("type")->toInt()));
+                        typesComboBox->addItem(precisionCheck(fields.toObject()));
                         if(fields.toObject().find("subtype")->toInt() == 1)
                         {
                             PKCheckBox->setCheckState(Qt::CheckState::Checked);
@@ -146,6 +215,44 @@ void ModifyTableTab::on_saveButton_clicked()
             return;
         }
 
+        QRegularExpression rx(
+                              "^varchar$|"
+                              "^int$|"
+                              "^bigint$|"
+                              "^double$|"
+                              "^datetime$|"
+                              "^datetime2$|"
+                              "^bit$|"
+                              "^date$|"
+                              "^varbinary$|"
+                              "^nvarchar$|"
+                              "^rowversion$|"
+                              "^decimal$|"
+                              "^binary\\((?:[1-9]|[1-4][0-9]|50)\\)$|"
+                              "^char\\(([1-9]|10)\\)$|"
+                              "^datetime2\\(([1-7]\\))$|"
+                              "^decimal\\((?:[1-9]|[1][1-8])\\,[0-9]\\)$"
+                              "^nchar\\(([1-9]|10)\\)$|"
+                              "^nvarchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^nvarchar\\(MAX\\)$|"
+                              "^varbinary\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^varbinary\\(MAX\\)$|"
+                              "^varchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^varchar\\(MAX\\)$"
+                              , QRegularExpression::CaseInsensitiveOption);
+
+        QRegularExpressionMatch match = rx.match(typeName);
+        bool hasMatch = match.hasMatch();
+        if(!hasMatch)
+        {
+            MessageWindow* message = new MessageWindow(this);
+            message->setWindowTitle("Warning");
+            message->setText(QString("Invalid type name!"));
+            message->setAttribute(Qt::WA_DeleteOnClose);
+            message->show();
+            return;
+        }
+
         if (checkPK) subQueryStr+= "PRIMARY KEY ";
         if (checkIdentity && (typeName == "int" || typeName == "bigint"))
         {
@@ -204,7 +311,7 @@ void ModifyTableTab::addRow()
     QPushButton* rmPushButton = new QPushButton("");
 
     backLineEdit_ = nameLineEdit;
-
+    typesComboBox->setEditable(true);
     typesComboBox->setStyleSheet("background-color: #ffffff");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
