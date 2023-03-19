@@ -10,6 +10,9 @@
 #include <QMessageBox>
 #include <QSplitter>
 #include <QStatusBar>
+#include <QStatusBar>
+#include <QClipboard>
+#include <QMimeData>
 
 #include <QTableView>
 #include <QStandardItemModel>
@@ -18,6 +21,7 @@
 #include <string>
 #include <thread>
 #include <ctime>
+#include <fstream>
 
 #include "nb-samples.h"
 #include <QJsonDocument>
@@ -26,6 +30,9 @@
 
 #include "SyntexHightlight.hpp"
 #include "ResponceView.hpp"
+
+#include "Windows.h"
+#include "WinUser.h"
 
 #include "ui_TabWindow.h"
 #include <iostream>
@@ -63,6 +70,8 @@ private:
 
     QString exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query);
 
+    void keyPressEvent(QKeyEvent *event) override;
+
 public:
     QList<QString> input_queries_;
     QList<ResponceView*> models_;
@@ -75,6 +84,7 @@ public:
     bool flag_ = true;
     int tabNumber_;
     QStatusBar* bar_;
+
 
 public:
     int dbPort_;
