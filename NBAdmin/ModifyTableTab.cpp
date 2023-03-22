@@ -216,6 +216,9 @@ void ModifyTableTab::on_saveButton_clicked()
         }
 
         QRegularExpression rx(
+                              "^char$|"
+                              "^nchar$|"
+                              "^binary$"
                               "^varchar$|"
                               "^int$|"
                               "^bigint$|"

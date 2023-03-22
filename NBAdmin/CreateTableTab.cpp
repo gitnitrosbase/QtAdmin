@@ -183,6 +183,9 @@ void CreateTableTab::on_pushButton_2_clicked()
         QString subQueryStr = columnName;
         subQueryStr+=" ";
         QRegularExpression rx(
+                              "^char$|"
+                              "^nchar$|"
+                              "^binary$"
                               "^varchar$|"
                               "^int$|"
                               "^bigint$|"
