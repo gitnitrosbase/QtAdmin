@@ -36,7 +36,7 @@ void CreateTableTab::addRow()
     QPushButton* rmPushButton = new QPushButton();
 
     typesComboBox->setEditable(true);
-    typesComboBox->setStyleSheet("background-color: #ffffff");
+    typesComboBox->setStyleSheet("background-color: #fff;");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
     for (auto item : fieldsTypes_)
@@ -179,7 +179,7 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkFK == true) nameFK = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 4))->currentText();
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
-
+        QString defaultValue = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 7))->text();
         QString subQueryStr = columnName;
         subQueryStr+=" ";
         QRegularExpression rx(
@@ -256,7 +256,9 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
         if (ui->tableWidget->rowCount()-1 != i) subQueryStr+=" , ";
+        if (defaultValue != "") subQueryStr+= QString("DEFAULT ") + defaultValue;
         queryStr += subQueryStr;
+//        queryStr += ui->lineEdit
     }
 
     queryStr += ");";
