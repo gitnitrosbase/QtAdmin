@@ -179,35 +179,33 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkFK == true) nameFK = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 4))->currentText();
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
-        QString defaultValue = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 7))->text();
         QString subQueryStr = columnName;
         subQueryStr+=" ";
         QRegularExpression rx(
-                              "^char$|"
-                              "^nchar$|"
-                              "^binary$"
-                              "^varchar$|"
                               "^int$|"
                               "^bigint$|"
                               "^double$|"
-                              "^datetime$|"
-                              "^datetime2$|"
+                              "^datetime$|"                              
                               "^bit$|"
-                              "^date$|"
-                              "^varbinary$|"
-                              "^nvarchar$|"
-                              "^rowversion$|"
-                              "^decimal$|"
-                              "^binary\\((?:[1-9]|[1-4][0-9]|50)\\)$|"
-                              "^char\\(([1-9]|10)\\)$|"
+                              "^date$|"                                                       
+                              "^rowversion$|"                              
+                              "^binary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+//                              "^binary\\((\\d+)\\)$|"
+//                              "^char\\(([1-9]|10)\\)$|"
+                              "^char\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
                               "^datetime2\\(([1-7]\\))$|"
-                              "^decimal\\((?:[1-9]|[1][1-8])\\,[0-9]\\)$"
-                              "^nchar\\(([1-9]|10)\\)$|"
-                              "^nvarchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+//                              "^decimal\\((?:[1-9]|[1-][0-9]|[3][0-8]),[0-9]\\)$"
+                              "^decimal\\((?:[1-9]|[1-2][0-9]|3[0-8],[0-9])\\)$|"
+//                              "^nchar\\(([1-9]|10)\\)$|"
+                              "^nchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+//                              "^nvarchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^nvarchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
                               "^nvarchar\\(MAX\\)$|"
-                              "^varbinary\\(([1-9]|[1-4][0-9]|50)\\)$|"
+//                              "^varbinary\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^varbinary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
                               "^varbinary\\(MAX\\)$|"
-                              "^varchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+//                              "^varchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                              "^varchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
                               "^varchar\\(MAX\\)$"
                               , QRegularExpression::CaseInsensitiveOption);
 
@@ -256,7 +254,6 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
         if (ui->tableWidget->rowCount()-1 != i) subQueryStr+=" , ";
-        if (defaultValue != "") subQueryStr+= QString("DEFAULT ") + defaultValue;
         queryStr += subQueryStr;
 //        queryStr += ui->lineEdit
     }
