@@ -141,7 +141,7 @@ private:
 
     QString nullCheck(int index);
 
-    inline QString precisionCheck(QJsonObject obj);
+    QString precisionCheck(QJsonObject obj);
 
     QString linkCheck(QString input);
 
@@ -174,9 +174,23 @@ private:
         {11, "rowversion"},
         {12, "decimal"}
     };
-    std::map<int, QString> fieldsTypesAdd_ = {
-        {1, "char"},
-        {2, "nchar"}
+    std::map<int, QString> fieldsTypesNew_ = {
+        {1, ""},
+        {2, ""},
+        {3, "bigint"},
+        {4, "double"},
+        {5, "datetime"},
+        {6, ""},
+        {7, "date"},
+        {8, ""},
+        {9, "binary"},
+        {10, "varbinary"},
+        {11, "varbinary(MAX)"},
+        {12, "nvarchar"},
+        {13, "nchar"},
+        {14, "nvarchar(MAX)"},
+        {15, "rowversion"},
+        {16, "decimal"}
     };
 
     QMenu * menu_ = nullptr;

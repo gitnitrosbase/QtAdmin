@@ -377,11 +377,12 @@ QComboBox QListView::item {
 }
 
 QComboBox QListView::item {	
-	background-color: #1e90ff;
+	color: #555;
 }
 
-QComboBox QListView::item::selectd {
+QComboBox QListView::item:selected {
 	background-color: #1e90ff;
+	color: #fff
 }
 
 #tableWidget {

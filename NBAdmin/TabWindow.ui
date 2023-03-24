@@ -14,7 +14,31 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">QTextEdit {	border: 0;}QComboBox {	font: 10pt \&quot;Segoe UI\&quot;;    color: #555;	border: 1px solid #ced4da;}QComboBox::drop-down {    border: 0px;}QComboBox::down-arrow {	image: url(:/images/arrow.svg);	width: 10px;	height: 10px;}QComboBox::on {	border: 4px solid #c2dbfe;}QComboBox QListView {	font-size: 12px;	border: 1px solid rgba(0,0,0,10%);	padding: 5px;		background-color: #fff;	outline: 0px;}QComboBox QListView::item {	font: 10pt \&quot;Segoe UI\&quot;;	padding-left: 10px;	background-color: #fff;	}QComboBox QListView::item {		background-color: #1e90ff;}QComboBox QListView::item::selectd {	background-color: #1e90ff;}QTableView {	border: 0px;}</string>
+   <string notr="true">QTextEdit {	border: 0;}
+QComboBox {	
+	font: 10pt &quot;Segoe UI&quot;;    
+	color: #555;
+	border: 1px solid #ced4da;}
+QComboBox::drop-down { 
+	border: 0px;}
+QComboBox::down-arrow {
+	image: url(:/images/arrow.svg);	width: 10px;	height: 10px;}
+QComboBox::on {
+	border: 4px solid #c2dbfe;}
+QComboBox QListView {
+	font-size: 12px;	border: 1px solid rgba(0,0,0,10%);	
+	padding: 5px;		
+	background-color: #fff;	
+	outline: 0px;}
+QComboBox QListView::item {	
+	font: 10pt &quot;Segoe UI&quot;;	
+	padding-left: 10px;	
+	background-color: #fff;}
+QComboBox QListView::item {		
+	background-color: #1e90ff;}
+QComboBox QListView::item::selectd {	
+	background-color: #1e90ff;}
+QTableView {	border: 0px;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="leftMargin">
@@ -37,7 +61,11 @@ QSplitter::item {
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QTextEdit" name="textEdit_"/>
+     <widget class="QTextEdit" name="textEdit_">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+     </widget>
      <widget class="QWidget" name="widget" native="true">
       <property name="styleSheet">
        <string notr="true">margin: 0;
@@ -75,7 +103,7 @@ QHeaderView::section {
         <widget class="QComboBox" name="comboBox_">
          <property name="font">
           <font>
-           <family>&quot;Segoe UI&quot;</family>
+           <family>Segoe UI</family>
            <pointsize>10</pointsize>
            <italic>false</italic>
            <bold>false</bold>

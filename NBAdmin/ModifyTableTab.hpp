@@ -39,6 +39,7 @@ class ModifyTableTab : public QWidget
 public:
     explicit ModifyTableTab(QWidget *parent = nullptr);
     ~ModifyTableTab();
+    QString precisionCheck(QJsonObject obj);
 
 public slots:
     void addRow();
@@ -65,20 +66,27 @@ private slots:
     void blockOtherIdentity(QCheckBox* item, int state);
     bool check_query(NB_HANDLE connection);
 
-private:
+
+private:  
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};
     std::vector<QString> fieldsTypes_ = {
-        "varchar",
-        "int",
         "bigint",
-        "double",
-        "datetime",
-        "bit",
+        "binary(50)",
+        "char(10)",
         "date",
-        "varbinary",
-        "nvarchar",
+        "datetime",
+        "datetime2(7)",
+        "decimal(18,0)",
+        "double",
+        "int",
+        "nchar(10)",
+        "nvarchar(50)",
+        "nvarchar(MAX)",
         "rowversion",
-        "decimal"
+        "varbinary(50)",
+        "varbinary(MAX)",
+        "varchar(50)",
+        "varchar(MAX)",
     };
     Ui::ModifyTableTab* ui;
     QLineEdit* backLineEdit_ = nullptr;

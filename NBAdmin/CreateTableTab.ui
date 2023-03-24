@@ -277,11 +277,11 @@ QComboBox {
 	font: 10pt &quot;Segoe UI&quot;;
     color: #555;
 	border: 0px solid #ced4da;
-	/*padding: 0 10px 0 10px;*/
+	/*padding: 0 10px 0 10px;*/	
 }
 
 QComboBox::drop-down 
-{
+{	
     border: 0px;
 }
 
@@ -307,15 +307,16 @@ QComboBox QListView::item {
 	font: 10pt &quot;Segoe UI&quot;;
 	padding-left: 10px;
 	background-color: #fff;
-	
+ 	color: #555;
 }
 
 QComboBox QListView::item {	
-	background-color: #1e90ff;
+	/*background-color: #1e90ff;*/
 }
 
-QComboBox QListView::item::selectd {
+QComboBox QListView::item::selected {
 	background-color: #1e90ff;
+	color: #fff;
 }
 
 #tableWidget {

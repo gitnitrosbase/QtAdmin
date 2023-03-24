@@ -54,7 +54,7 @@ signals:
     void refreshTree();
 
 private:
-    QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};
+    QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Default value", ""};
     Ui::CreateTableTab* ui;
     QLineEdit* backLineEdit_ = nullptr;
 public:

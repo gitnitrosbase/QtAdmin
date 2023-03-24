@@ -601,7 +601,7 @@ QString MainWindow::nullCheck(int index)
     else return QString("???");
 }
 
-inline QString MainWindow::precisionCheck(QJsonObject obj)
+QString MainWindow::precisionCheck(QJsonObject obj)
 {
     int precision = obj.find("precision")->toInt();
     int scale = obj.find("scale")->toInt();
@@ -814,7 +814,11 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
+                                    
+                                                              + "  ( "
+
                                                               + QString("  ( ")
+
                                                               + precisionCheck(item_field.toObject())
                                                               + " "
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
@@ -875,7 +879,7 @@ void MainWindow::filling_tree()
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                               + "  ( "
-                                                              + (fieldsTypes_.find(item_field.toObject().find("type")->toInt())->second)
+                                                              + precisionCheck(item_field.toObject())
                                                               +" "
                                                               + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
                                                               + " )  "
