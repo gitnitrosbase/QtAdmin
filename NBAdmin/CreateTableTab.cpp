@@ -121,9 +121,15 @@ void CreateTableTab::checkToAddRow(QString text)
 
 void CreateTableTab::rmRow()
 {
-    if (ui->tableWidget->rowCount() > 1) ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+    if (ui->tableWidget->rowCount() > 1)
+    {
+        if (backLineEdit_ == ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 0))
+        {
+            backLineEdit_ = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow()-1, 0));
+        }
+        ui->tableWidget->removeRow(ui->tableWidget->currentRow());
+    }
 }
-
 void CreateTableTab::on_pushButton_2_clicked()
 {
     QString name = ui->lineEdit->text();
@@ -181,6 +187,7 @@ void CreateTableTab::on_pushButton_2_clicked()
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
         QString subQueryStr = columnName;
         subQueryStr+=" ";
+
         QRegularExpression rx(
                               "^int$|"
                               "^bigint$|"
@@ -220,6 +227,7 @@ void CreateTableTab::on_pushButton_2_clicked()
             message->show();
             return;
         }
+
         subQueryStr+=typeName;
         subQueryStr+=" ";
 
@@ -323,16 +331,16 @@ void CreateTableTab::blockOtherIdentity(QCheckBox* item, int state)
   }
 
 bool CreateTableTab::check_query(NB_HANDLE connection)
-                                  {
-                                      if (nb_errno(connection) == NB_OK) return true;
-                                      else
-                                      {
-                                          MessageWindow* message = new MessageWindow(this);
-                                          message->setWindowTitle("Warning");
-                                          message->setText(QString(nb_err_text_utf8( connection )));
-                                          message->setAttribute(Qt::WA_DeleteOnClose);
-                                          message->show();
-                                          std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
-                                          return false;
-                                      }
-                                  }
+{
+    if (nb_errno(connection) == NB_OK) return true;
+    else
+    {
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString(nb_err_text_utf8( connection )));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
+        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
+        return false;
+    }
+}
