@@ -601,28 +601,7 @@ QString MainWindow::nullCheck(int index)
     else return QString("???");
 }
 
-int MainWindow::precisionCheck(QJsonObject obj, int type)
-{
-    int presicion;
-    int scale;
-    int typeName;
-    switch (type) {
-    case 10:
-        presicion = obj.find("precision")->toInt();
-        scale = obj.find("precision")->toInt();
-        if (presicion > 0 && scale == 1) return 2;
-    default:
-        presicion = 0;
-        return presicion;
-        break;
-    }
-
-
-
-    return presicion;
-}
-
-QString MainWindow::precisionCheck(QJsonObject obj)
+inline QString MainWindow::precisionCheck(QJsonObject obj)
 {
     int precision = obj.find("precision")->toInt();
     int scale = obj.find("scale")->toInt();
@@ -679,6 +658,7 @@ QString MainWindow::precisionCheck(QJsonObject obj)
     default:
         break;
     }
+    return QString("old type");
 }
 
 QString MainWindow::linkCheck(QString input)
