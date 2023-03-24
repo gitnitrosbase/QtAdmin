@@ -814,13 +814,9 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                    
-                                                              + "  ( "
-
                                                               + QString("  ( ")
-
                                                               + precisionCheck(item_field.toObject())
-                                                              + " "
+                                                              + QString(" ")
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
                                                               + QString(") ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
@@ -878,11 +874,11 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + "  ( "
+                                                              + QString("  ( ")
                                                               + precisionCheck(item_field.toObject())
-                                                              +" "
+                                                              + QString(" ")
                                                               + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
-                                                              + " )  "
+                                                              + QString(" )  ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     table_name->addChild(field);
