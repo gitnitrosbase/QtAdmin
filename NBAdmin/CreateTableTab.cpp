@@ -171,35 +171,6 @@ void CreateTableTab::on_pushButton_2_clicked()
         }
     }
 
-//    bool currentDefaultFlag = true;
-//    QRegularExpression regexDecimal("[0-9]{1,20},[0-9]{1,20}");
-//    QRegularExpression regexDate("");
-//    for (int i = 0; i < ui->tableWidget->rowCount(); i += 1)
-//    {
-//        QString defaultValue = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 7))->text();
-//        QString itemType = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText();
-
-//        QRegularExpressionMatch regexDecimalMatch = regexDecimal.match(defaultValue);
-
-//        if (itemType == "bigint" || itemType == "int")
-//        {
-//            for (auto ch : defaultValue) if (!ch.isDigit()) currentDefaultFlag = false;
-//        }
-//        else if (itemType == "decimal(18,0)" && !regexDecimalMatch.hasMatch()) currentDefaultFlag = false;
-
-//    }
-
-//    if (!currentDefaultFlag)
-//    {
-//        MessageWindow* message = new MessageWindow();
-//        message->show();
-//        message->deleteLater();
-//    }
-
-
-
-
-
     QString queryStr = "CREATE TABLE ";
     queryStr += ui->lineEdit->text();
     queryStr += "( ";

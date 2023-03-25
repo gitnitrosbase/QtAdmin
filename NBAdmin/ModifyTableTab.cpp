@@ -205,46 +205,67 @@ void ModifyTableTab::on_saveButton_clicked()
         subQueryStr+=typeName;
         subQueryStr+=" ";
 
-        if (ui->lineEdit->text() == "")
-        {
-            MessageWindow* message = new MessageWindow(this);
-            message->setWindowTitle("Warning");
-            message->setText(QString("Please enter table name"));
-            message->setAttribute(Qt::WA_DeleteOnClose);
-            message->show();
-            return;
-        }
-
         QRegularExpression rx(
-                            "^int$|"
-                            "^bigint$|"
-                            "^double$|"
-                            "^datetime$|"
-                            "^bit$|"
-                            "^date$|"
-                            "^rowversion$|"
-                            "^binary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^int$|"
+                                      "^bigint$|"
+                                      "^double$|"
+                                      "^datetime$|"
+                                      "^bit$|"
+                                      "^date$|"
+                                      "^rowversion$|"
+                                      "^binary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
         //                              "^binary\\((\\d+)\\)$|"
         //                              "^char\\(([1-9]|10)\\)$|"
-                            "^char\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                            "^datetime2\\(([1-7]\\))$|"
+                                      "^char\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^datetime2\\(([1-7]\\))$|"
         //                              "^decimal\\((?:[1-9]|[1-][0-9]|[3][0-8]),[0-9]\\)$"
-                            "^decimal\\((?:[1-9]|[1-2][0-9]|3[0-8],[0-9])\\)$|"
+                                      "^decimal\\((([1-9])|([1-9][0-9])),(([0-9])|([1-9][0-9]))\\)$|"
         //                              "^nchar\\(([1-9]|10)\\)$|"
-                            "^nchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^nchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
         //                              "^nvarchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
-                            "^nvarchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                            "^nvarchar\\(MAX\\)$|"
+                                      "^nvarchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^nvarchar\\(MAX\\)$|"
         //                              "^varbinary\\(([1-9]|[1-4][0-9]|50)\\)$|"
-                            "^varbinary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                            "^varbinary\\(MAX\\)$|"
+                                      "^varbinary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^varbinary\\(MAX\\)$|"
         //                              "^varchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
-                            "^varchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                            "^varchar\\(MAX\\)$"
-                              , QRegularExpression::CaseInsensitiveOption);
+                                      "^varchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^varchar\\(MAX\\)$"
+                                      , QRegularExpression::CaseInsensitiveOption);
 
         QRegularExpressionMatch match = rx.match(typeName);
         bool hasMatch = match.hasMatch();
+
+
+        QRegularExpression decimalRegex("^decimal\\((([0-9])|([1-9][0-9])),(([0-9])|([1-9][0-9]))\\)");
+        QRegularExpressionMatch matchDecimalRegex = decimalRegex.match(typeName);
+        if (matchDecimalRegex.hasMatch())
+        {
+            std::string tmp1 = typeName.toStdString();
+            std::vector<int> numbers;
+            std::string numStr = "";
+            for (char c : tmp1)
+            {
+                if (isdigit(c))
+                {
+                    numStr += c;
+                }
+                else if (!numStr.empty())
+                {
+                    numbers.push_back(stoi(numStr));
+                    numStr = "";
+                }
+            }
+            if (!numStr.empty())
+            {
+                numbers.push_back(stoi(numStr));
+            }
+            if (0 > numbers.at(1) || numbers.at(1) > numbers.at(0))
+            {
+                hasMatch = false;
+            }
+        }
+
         if(!hasMatch)
         {
             MessageWindow* message = new MessageWindow(this);
