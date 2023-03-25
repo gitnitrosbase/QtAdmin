@@ -5,8 +5,8 @@ CreateTableTab::CreateTableTab(QWidget* parent) : QWidget(parent), ui(new Ui::Cr
 {
     ui->setupUi(this);
     this->setObjectName("CreateTableTab");
-    ui->tableWidget->setColumnCount(headerTable.count());
-    ui->tableWidget->setHorizontalHeaderLabels(headerTable);
+    ui->tableWidget->setColumnCount(headerTable_.count());
+    ui->tableWidget->setHorizontalHeaderLabels(headerTable_);
 
 }
 CreateTableTab::~CreateTableTab()
@@ -33,10 +33,11 @@ void CreateTableTab::addRow()
     QCheckBox* FKCheckBox = new QCheckBox();
     QCheckBox* identityCheckBox = new QCheckBox();
     QCheckBox* notnullCheckBox = new QCheckBox();
+    QLineEdit* defaultValue = new QLineEdit();
     QPushButton* rmPushButton = new QPushButton();
 
     typesComboBox->setEditable(true);
-    typesComboBox->setStyleSheet("background-color: #fff;");
+    typesComboBox->setStyleSheet("background-color: #ffffff");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
     for (auto item : fieldsTypes_)
@@ -79,8 +80,9 @@ void CreateTableTab::addRow()
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 2, PKCheckBox);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 3, FKCheckBox);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 4, FKTableComboBox);
-    ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 5, identityCheckBox);
+    ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 5, identityCheckBox);    
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 6, notnullCheckBox);
+    ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 7, defaultValue);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 8, rmPushButton);
 
     ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
@@ -169,6 +171,35 @@ void CreateTableTab::on_pushButton_2_clicked()
         }
     }
 
+//    bool currentDefaultFlag = true;
+//    QRegularExpression regexDecimal("[0-9]{1,20},[0-9]{1,20}");
+//    QRegularExpression regexDate("");
+//    for (int i = 0; i < ui->tableWidget->rowCount(); i += 1)
+//    {
+//        QString defaultValue = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 7))->text();
+//        QString itemType = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText();
+
+//        QRegularExpressionMatch regexDecimalMatch = regexDecimal.match(defaultValue);
+
+//        if (itemType == "bigint" || itemType == "int")
+//        {
+//            for (auto ch : defaultValue) if (!ch.isDigit()) currentDefaultFlag = false;
+//        }
+//        else if (itemType == "decimal(18,0)" && !regexDecimalMatch.hasMatch()) currentDefaultFlag = false;
+
+//    }
+
+//    if (!currentDefaultFlag)
+//    {
+//        MessageWindow* message = new MessageWindow();
+//        message->show();
+//        message->deleteLater();
+//    }
+
+
+
+
+
     QString queryStr = "CREATE TABLE ";
     queryStr += ui->lineEdit->text();
     queryStr += "( ";
@@ -178,6 +209,9 @@ void CreateTableTab::on_pushButton_2_clicked()
     for (int i = 0; i < ui->tableWidget->rowCount(); i+=1)
     {
         QString columnName = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
+
+        if (i == ui->tableWidget->rowCount()-1 && columnName == "") break;
+
         QString typeName = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText();
         bool checkPK = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 2))->isChecked();
         bool checkFK = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 3))->isChecked() && dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 3))->isEnabled();
@@ -185,39 +219,71 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkFK == true) nameFK = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 4))->currentText();
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
+
         QString subQueryStr = columnName;
         subQueryStr+=" ";
 
         QRegularExpression rx(
-                              "^int$|"
-                              "^bigint$|"
-                              "^double$|"
-                              "^datetime$|"                              
-                              "^bit$|"
-                              "^date$|"                                                       
-                              "^rowversion$|"                              
-                              "^binary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-//                              "^binary\\((\\d+)\\)$|"
-//                              "^char\\(([1-9]|10)\\)$|"
-                              "^char\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                              "^datetime2\\(([1-7]\\))$|"
-//                              "^decimal\\((?:[1-9]|[1-][0-9]|[3][0-8]),[0-9]\\)$"
-                              "^decimal\\((?:[1-9]|[1-2][0-9]|3[0-8],[0-9])\\)$|"
-//                              "^nchar\\(([1-9]|10)\\)$|"
-                              "^nchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-//                              "^nvarchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
-                              "^nvarchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                              "^nvarchar\\(MAX\\)$|"
-//                              "^varbinary\\(([1-9]|[1-4][0-9]|50)\\)$|"
-                              "^varbinary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                              "^varbinary\\(MAX\\)$|"
-//                              "^varchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
-                              "^varchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
-                              "^varchar\\(MAX\\)$"
-                              , QRegularExpression::CaseInsensitiveOption);
+                                      "^int$|"
+                                      "^bigint$|"
+                                      "^double$|"
+                                      "^datetime$|"
+                                      "^bit$|"
+                                      "^date$|"
+                                      "^rowversion$|"
+                                      "^binary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+        //                              "^binary\\((\\d+)\\)$|"
+        //                              "^char\\(([1-9]|10)\\)$|"
+                                      "^char\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^datetime2\\(([1-7]\\))$|"
+        //                              "^decimal\\((?:[1-9]|[1-][0-9]|[3][0-8]),[0-9]\\)$"
+                                      "^decimal\\((([1-9])|([1-9][0-9])),(([1-9])|([0-9][0-9]))\\)$|"
+        //                              "^nchar\\(([1-9]|10)\\)$|"
+                                      "^nchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+        //                              "^nvarchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                                      "^nvarchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^nvarchar\\(MAX\\)$|"
+        //                              "^varbinary\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                                      "^varbinary\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^varbinary\\(MAX\\)$|"
+        //                              "^varchar\\(([1-9]|[1-4][0-9]|50)\\)$|"
+                                      "^varchar\\((?:[1-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
+                                      "^varchar\\(MAX\\)$"
+                                      , QRegularExpression::CaseInsensitiveOption);
 
         QRegularExpressionMatch match = rx.match(typeName);
         bool hasMatch = match.hasMatch();
+
+
+        QRegularExpression decimalRegex("^decimal\\((([0-9])|([1-9][0-9])),(([0-9])|([1-9][0-9]))\\)");
+        QRegularExpressionMatch matchDecimalRegex = decimalRegex.match(typeName);
+        if (matchDecimalRegex.hasMatch())
+        {
+            std::string tmp1 = typeName.toStdString();
+            std::vector<int> numbers;
+            std::string numStr = "";
+            for (char c : tmp1)
+            {
+                if (isdigit(c))
+                {
+                    numStr += c;
+                }
+                else if (!numStr.empty())
+                {
+                    numbers.push_back(stoi(numStr));
+                    numStr = "";
+                }
+            }
+            if (!numStr.empty())
+            {
+                numbers.push_back(stoi(numStr));
+            }
+            if (0 > numbers.at(1) || numbers.at(1) > numbers.at(0))
+            {
+                hasMatch = false;
+            }
+        }
+
         if(!hasMatch)
         {
             MessageWindow* message = new MessageWindow(this);
@@ -263,7 +329,6 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkNullable) subQueryStr += "NOT NULL ";
         if (ui->tableWidget->rowCount()-1 != i) subQueryStr+=" , ";
         queryStr += subQueryStr;
-//        queryStr += ui->lineEdit
     }
 
     queryStr += ");";
@@ -279,7 +344,7 @@ void CreateTableTab::on_pushButton_2_clicked()
       }
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
-    nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
+    nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.size());
     if (!check_query(connection))
       {
           nb_disconnect(connection);

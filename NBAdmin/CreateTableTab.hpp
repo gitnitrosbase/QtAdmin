@@ -14,7 +14,8 @@
 #include <QFile>
 #include <QCheckBox>
 #include <QStyle>
-
+#include <QRegularExpression>
+#include <QRegularExpressionMatch>
 #include <QNetworkAccessManager>
 #include <QNetworkRequest>
 #include <QNetworkReply>
@@ -26,6 +27,8 @@
 
 #include "ui_CreateTableTab.h"
 #include "nb-samples.h"
+
+#include "MessageWindow.hpp"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class CreateTableTab; }
@@ -54,7 +57,7 @@ signals:
     void refreshTree();
 
 private:
-    QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Default value", ""};
+    QStringList headerTable_ = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Default", ""};
     Ui::CreateTableTab* ui;
     QLineEdit* backLineEdit_ = nullptr;
 public:
