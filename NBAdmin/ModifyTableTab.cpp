@@ -129,6 +129,7 @@ void ModifyTableTab::printFromdb()
                         QCheckBox* FKCheckBox = new QCheckBox();
                         QCheckBox* identityCheckBox = new QCheckBox();
                         QCheckBox* notnullCheckBox = new QCheckBox();
+                        QLineEdit* defaultValue = new QLineEdit();
 
                         typesComboBox->setStyleSheet("background-color: #ffffff");
                         FKTableComboBox->setStyleSheet("background-color: #ffffff");
@@ -151,6 +152,7 @@ void ModifyTableTab::printFromdb()
                             identityFlag_ = true;
                         }
                         if(fields.toObject().find("nullable")->toInt() == 0) notnullCheckBox->setCheckState(Qt::CheckState::Checked);
+                        defaultValue->setText(fields.toObject().find("defaultvalue")->toString());
 
                         ui->tableWidget->insertRow(ui->tableWidget->rowCount());
                         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, nameLineEdit);
@@ -160,6 +162,8 @@ void ModifyTableTab::printFromdb()
                         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 4, FKTableComboBox);
                         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 5, identityCheckBox);
                         ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 6, notnullCheckBox);
+                        ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 7, defaultValue);
+
 
                         ui->tableWidget->setVerticalHeaderItem(ui->tableWidget->rowCount()-1, new QTableWidgetItem());
 
@@ -197,6 +201,7 @@ void ModifyTableTab::on_saveButton_clicked()
         if (checkFK == true) nameFK = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 4))->currentText();
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
+        QString defaultValue = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 7))->text();
         //QString comment = ui->tableWidget->itemAt(i, 7)->text();
 
         QString subQueryStr = QString("ALTER TABLE %1 ADD %2").arg(currentTable_).arg(columnName);
@@ -284,6 +289,9 @@ void ModifyTableTab::on_saveButton_clicked()
         }
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
+
+
+        if (defaultValue != "") subQueryStr += QString(" DEFAULT '%1'").arg(defaultValue);
 
         queryStr += subQueryStr;
         queryStr += ";";

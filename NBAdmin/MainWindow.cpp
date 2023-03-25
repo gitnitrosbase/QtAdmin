@@ -354,7 +354,8 @@ void MainWindow::on_actionCreateDBQueryTrig()
                                 query += QString("FOREIGN KEY(%1) REFERENCES %2").arg(ui->treeWidget->currentItem()->text(0)).arg(fields.toObject().find("linktable")->toString());
                             }
                             if (fields.toObject().find("seed")->toInt() != 0 && fields.toObject().find("increment")->toInt() != 0) query += QString("IDENTITY (%1,%2)").arg(fields.toObject().find("seed")->toInt()).arg(fields.toObject().find("increment")->toInt());
-                            if(fields.toObject().find("nullable")->toInt() == 0 && fields.toObject().find("subtype")->toInt() != 1) query += "NOT NULL";
+                            if (fields.toObject().find("nullable")->toInt() == 0 && fields.toObject().find("subtype")->toInt() != 1) query += "NOT NULL";
+                            if (!fields.toObject().find("defaultvalue")->isNull()) query += QString(" DEFAULT '%1'").arg(fields.toObject().find("defaultvalue")->toString());
                             query += ",";
                             finalQuery+=query;
                         }
@@ -609,6 +610,8 @@ QString MainWindow::precisionCheck(QJsonObject obj)
     case 1:
         if(precision >0 && scale == 0)
         break;
+    case 2:
+        return QString("int"); break;
     case 3:
         if(precision == -1) return QString("bigint");
         break;
