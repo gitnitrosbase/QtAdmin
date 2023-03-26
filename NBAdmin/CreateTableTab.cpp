@@ -190,6 +190,7 @@ void CreateTableTab::on_pushButton_2_clicked()
         if (checkFK == true) nameFK = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 4))->currentText();
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
+        QString defaultValue = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 7))->text();
 
         QString subQueryStr = columnName;
         subQueryStr+=" ";
@@ -214,8 +215,6 @@ void CreateTableTab::on_pushButton_2_clicked()
                             "^varchar\\((?:[1-9]|[1-9][0-9]|[1-9][0-9][0-9]|[1-9][0-9][0-9][0-9]|[1-2][0-9][0-9][0-9][0-9]|[3][0-2][0-6][0-9][0-9]|32700)\\)$|"
                             "^varchar\\(MAX\\)$"
                             ,QRegularExpression::CaseInsensitiveOption);
-
-        //                              "^binary\\((\\d+)\\)$|"
 
         QRegularExpressionMatch match = rx.match(typeName);
         bool hasMatch = match.hasMatch();
@@ -293,6 +292,9 @@ void CreateTableTab::on_pushButton_2_clicked()
           }
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
+
+        if (defaultValue != "") subQueryStr += QString(" DEFAULT '%1'").arg(defaultValue);
+
         if (ui->tableWidget->rowCount()-1 != i) subQueryStr+=" , ";
         queryStr += subQueryStr;
     }

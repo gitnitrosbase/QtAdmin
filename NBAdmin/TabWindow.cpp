@@ -16,11 +16,6 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     syntaxHighLight_ = new SyntaxHighlighter(ui->textEdit_->document());
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
     ui->statusContainer->addWidget(bar_);
-//    bar_->setStyleSheet(
-//                    "font: 12pt Segoe UI;"
-//                    "color: #555;"
-//                    "margin: 0px"
-//                );
     bar_->addPermanentWidget(ui->label_left,1);
     bar_->addPermanentWidget(ui->label_right,1);
     ui->label_left->setText("left");
