@@ -68,7 +68,7 @@ private slots:
 
 
 private:  
-    QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Comment", ""};
+    QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Default", ""};
     std::vector<QString> fieldsTypes_ = {
         "bigint",
         "binary(50)",

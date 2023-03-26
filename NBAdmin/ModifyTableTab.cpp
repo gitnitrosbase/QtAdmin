@@ -172,7 +172,7 @@ void ModifyTableTab::printFromdb()
                         FKCheckBox->setEnabled(false);
                         identityCheckBox->setEnabled(false);
                         notnullCheckBox->setEnabled(false);
-                        //ui->tableWidget->resizeColumnsToContents();
+                        defaultValue->setReadOnly(true);
                     }
                     break;
                 }
@@ -180,6 +180,8 @@ void ModifyTableTab::printFromdb()
             fieldCount_ = ui->tableWidget->rowCount();
             std::cout<<"row count = "<<ui->tableWidget->rowCount()<<std::endl;
             std::cout<<"fieldCount_ = "<<fieldCount_<<std::endl;
+
+            ui->tableWidget->setHorizontalHeaderLabels(headerTable);
 
             addRow();
         }
@@ -202,7 +204,6 @@ void ModifyTableTab::on_saveButton_clicked()
         bool checkIdentity = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->isChecked();
         bool checkNullable = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 6))->isChecked();
         QString defaultValue = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 7))->text();
-        //QString comment = ui->tableWidget->itemAt(i, 7)->text();
 
         QString subQueryStr = QString("ALTER TABLE %1 ADD %2").arg(currentTable_).arg(columnName);
 
@@ -333,6 +334,7 @@ void ModifyTableTab::addRow()
     QCheckBox* identityCheckBox = new QCheckBox();
     QCheckBox* notnullCheckBox = new QCheckBox();
     QPushButton* rmPushButton = new QPushButton("");
+    QLineEdit* defaultValue = new QLineEdit();
 
     backLineEdit_ = nameLineEdit;
     typesComboBox->setEditable(true);
@@ -380,6 +382,7 @@ void ModifyTableTab::addRow()
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 4, FKTableComboBox);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 5, identityCheckBox);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 6, notnullCheckBox);
+    ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 7, defaultValue);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 8, rmPushButton);
 
     QObject::connect(nameLineEdit, SIGNAL(textChanged(QString)), this, SLOT(checkToAddRow(QString)));
