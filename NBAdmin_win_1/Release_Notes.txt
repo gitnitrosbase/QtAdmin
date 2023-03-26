@@ -5,3 +5,9 @@ Version 3
  - Added the first 60 characters of the query to the "ComboBox". 
  - The ratio of the width of the database tree to the query window is set.
 ==============================================
+Version 4
+---------
+ - Add new types
+ - Add default values 
+ - Fix minor bugs
+==============================================

@@ -1,7 +1,5 @@
 #include "TabWindow.hpp"
 
-#include <QStringEncoder>
-
 ConnectPool3 nbpool;
 
 
