@@ -29,7 +29,6 @@ set(PROJECT_HEADERS
     ModifyTableTab.hpp
     InfoWindow.hpp
     MessageWindow.hpp
-    chooseport.h
     )
 
 set(PROJECT_SOURCES
@@ -47,7 +46,6 @@ set(PROJECT_SOURCES
     CreateIndexTab.cpp
     ModifyTableTab.cpp
     MessageWindow.cpp
-    chooseport.cpp
 )
 
 set(UI_FILES
@@ -64,7 +62,6 @@ set(UI_FILES
     ConnectWindow.ui
     TabWindow.ui
     MessageWindow.ui
-    chooseport.ui
     )
 
 set(NITROSBASE
