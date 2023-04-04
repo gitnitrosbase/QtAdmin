@@ -608,7 +608,9 @@ QString MainWindow::precisionCheck(QJsonObject obj)
     int scale = obj.find("scale")->toInt();
     switch (obj.find("type")->toInt()) {
     case 1:
-        if(precision >0 && scale == 0)
+        if(precision >0 && scale == 0) return QString("varchar(" + QString::number(precision) + ")");
+        if(precision >0 && scale == 1) return QString("char(" + QString::number(precision) + ")");
+        if(precision == -1) return QString("varchar (MAX)");
         break;
     case 2:
         return QString("int"); break;
