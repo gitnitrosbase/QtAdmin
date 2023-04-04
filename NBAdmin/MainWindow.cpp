@@ -623,6 +623,9 @@ QString MainWindow::precisionCheck(QJsonObject obj)
     case 5:
         if(precision > 0) return QString("datetime");
         break;
+    case 6:
+        return QString("bit");
+        break;
     case 7:
         if(precision == -1) return QString("date");
         break;
@@ -654,10 +657,10 @@ QString MainWindow::precisionCheck(QJsonObject obj)
           return QString("nvarchar (MAX)");
         }
         break;
-        case 11:
+    case 11:
         if(precision == -1) return QString("rowversion");
         break;
-        case 12:
+    case 12:
         return QString("decimal(" + QString::number(precision) + "," + QString::number(scale) + ")");
         break;
     default:
@@ -819,11 +822,11 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString("  ( ")
+                                                              + QString(" ")
                                                               + precisionCheck(item_field.toObject())
                                                               + QString(" ")
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                              + QString(") ")
+                                                              + QString(" ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     columnItem->addChild(field);
