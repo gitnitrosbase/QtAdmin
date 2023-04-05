@@ -114,13 +114,24 @@ void TabWindow::push_button_run_clicked()
     }
     models_.clear();
 
+    // get text from TextEdit
+
+    QString executeText;
+    if (ui->textEdit_->textCursor().selectedText() == "") executeText = ui->textEdit_->toPlainText();
+    else
+    {
+        for (int i = ui->textEdit_->textCursor().selectionStart(); i < ui->textEdit_->textCursor().selectionEnd(); i += 1 ) executeText += ui->textEdit_->toPlainText().at(i);
+    }
+
+    std::cout<<executeText.toStdString()<<std::endl;
+
     // fill models
 
     std::thread th1([=]()
     {
-        int queryCount = ExecSqlASYNC2(tabNumber_ , dbPort_, ui->textEdit_->toPlainText().toStdString());
+        int queryCount = ExecSqlASYNC2(tabNumber_ , dbPort_, executeText.toStdString());
 
-        std::vector<std::string> queryesVector = getParsedQuery(ui->textEdit_->toPlainText().toStdString());
+        std::vector<std::string> queryesVector = getParsedQuery(executeText.toStdString());
 
         for (auto item : queryesVector) item = item.substr(0, item.size() > 60 ? 60 : item.size());
 

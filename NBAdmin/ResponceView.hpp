@@ -3,6 +3,7 @@
 #include <QAbstractTableModel>
 #include <QString>
 #include "nb-samples.h"
+#include <iostream>
 
 class ResponceView : public QAbstractTableModel
 {
