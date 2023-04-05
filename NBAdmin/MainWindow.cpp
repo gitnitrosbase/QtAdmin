@@ -608,7 +608,9 @@ QString MainWindow::precisionCheck(QJsonObject obj)
     int scale = obj.find("scale")->toInt();
     switch (obj.find("type")->toInt()) {
     case 1:
-        if(precision >0 && scale == 0)
+        if(precision >0 && scale == 0) return QString("varchar(" + QString::number(precision) + ")");
+        if(precision >0 && scale == 1) return QString("char(" + QString::number(precision) + ")");
+        if(precision == -1) return QString("varchar (MAX)");
         break;
     case 2:
         return QString("int"); break;
@@ -620,6 +622,9 @@ QString MainWindow::precisionCheck(QJsonObject obj)
         break;
     case 5:
         if(precision > 0) return QString("datetime");
+        break;
+    case 6:
+        return QString("bit");
         break;
     case 7:
         if(precision == -1) return QString("date");
@@ -652,10 +657,10 @@ QString MainWindow::precisionCheck(QJsonObject obj)
           return QString("nvarchar (MAX)");
         }
         break;
-        case 11:
+    case 11:
         if(precision == -1) return QString("rowversion");
         break;
-        case 12:
+    case 12:
         return QString("decimal(" + QString::number(precision) + "," + QString::number(scale) + ")");
         break;
     default:
@@ -817,11 +822,11 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString("  ( ")
+                                                              + QString(" ")
                                                               + precisionCheck(item_field.toObject())
                                                               + QString(" ")
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                              + QString(") ")
+                                                              + QString(" ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     columnItem->addChild(field);
