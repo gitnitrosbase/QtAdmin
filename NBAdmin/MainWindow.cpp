@@ -602,7 +602,7 @@ QString MainWindow::nullCheck(int index)
     else return QString("???");
 }
 
-QString MainWindow::precisionCheck(QJsonObject obj)
+QString MainWindow::getType(QJsonObject obj)
 {
     int precision = obj.find("precision")->toInt();
     int scale = obj.find("scale")->toInt();
@@ -627,7 +627,8 @@ QString MainWindow::precisionCheck(QJsonObject obj)
         return QString("bit");
         break;
     case 7:
-        if(precision == -1) return QString("date");
+        if(precision == -1) return QString("datetime2(MAX)");
+        else return QString("datetime2(%1)").arg(precision);
         break;
     case 9:
         if(precision > 0 && scale == 1)
@@ -656,6 +657,7 @@ QString MainWindow::precisionCheck(QJsonObject obj)
         {
           return QString("nvarchar (MAX)");
         }
+        if (precision == 0 && scale == 0) return QString("nvarchar");
         break;
     case 11:
         if(precision == -1) return QString("rowversion");
@@ -666,7 +668,7 @@ QString MainWindow::precisionCheck(QJsonObject obj)
     default:
         break;
     }
-    return QString("old type");
+    return QString(" ");
 }
 
 QString MainWindow::linkCheck(QString input)
@@ -822,11 +824,11 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString(" ")
-                                                              + precisionCheck(item_field.toObject())
+                                                              + QString(" (")
+                                                              + getType(item_field.toObject())
                                                               + QString(" ")
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                              + QString(" ")
+                                                              + QString(") ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     columnItem->addChild(field);
@@ -882,11 +884,11 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString("  ( ")
-                                                              + precisionCheck(item_field.toObject())
+                                                              + QString(" (")
+                                                              + getType(item_field.toObject())
                                                               + QString(" ")
                                                               + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
-                                                              + QString(" )  ")
+                                                              + QString(") ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     table_name->addChild(field);

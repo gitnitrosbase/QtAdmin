@@ -13,6 +13,7 @@
 #include <QStatusBar>
 #include <QClipboard>
 #include <QMimeData>
+#include <QLocale>
 
 #include <QTableView>
 #include <QStandardItemModel>

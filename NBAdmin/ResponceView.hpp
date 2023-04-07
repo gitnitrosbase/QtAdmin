@@ -21,8 +21,6 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
 
-    QString from_nbvalue(NBValue &v);
-
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     ~ResponceView();

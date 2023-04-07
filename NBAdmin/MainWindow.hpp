@@ -141,7 +141,7 @@ private:
 
     QString nullCheck(int index);
 
-    QString precisionCheck(QJsonObject obj);
+    QString getType(QJsonObject obj);
 
     QString linkCheck(QString input);
 

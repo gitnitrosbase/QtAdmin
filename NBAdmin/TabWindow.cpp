@@ -18,6 +18,7 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     bar_->addPermanentWidget(ui->label_right,1);
     ui->label_left->setText("left");
     ui->label_right->setText("right");
+    ui->tableWidget_->setLocale(QLocale::Russian);
 }
 
 
