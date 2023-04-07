@@ -1,7 +1,12 @@
-Version 5
+Version 6
 ---------
  - Fixed type inference error
  - Fixed the output of Russian characters
+==============================================
+Version 5
+---------
+ - Fix old types
+ - Fix minor bugs
 ==============================================
 Version 4
 ---------
