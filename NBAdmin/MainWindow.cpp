@@ -673,7 +673,7 @@ QString MainWindow::getType(QJsonObject obj)
 
 QString MainWindow::linkCheck(QString input)
 {
-    if (input != "") return QString(" -> " + input);
+    if (input != "") return QString("-> " + input);
     return input;
 }
 
@@ -826,7 +826,6 @@ void MainWindow::filling_tree()
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                               + QString(" (")
                                                               + getType(item_field.toObject())
-                                                              + QString(" ")
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
                                                               + QString(") ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
@@ -886,7 +885,6 @@ void MainWindow::filling_tree()
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
                                                               + QString(" (")
                                                               + getType(item_field.toObject())
-                                                              + QString(" ")
                                                               + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
                                                               + QString(") ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
