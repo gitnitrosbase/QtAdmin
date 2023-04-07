@@ -1,0 +1,17 @@
+Version 5
+---------
+ - Fixed type inference error
+ - Fixed the output of Russian characters
+==============================================
+Version 4
+---------
+ - Add new types
+ - Add default values 
+ - Fix minor bugs
+==============================================
+Version 3
+---------
+ - Added saving of parameters of the main window. 
+ - Added the first 60 characters of the query to the "ComboBox". 
+ - The ratio of the width of the database tree to the query window is set.
+==============================================

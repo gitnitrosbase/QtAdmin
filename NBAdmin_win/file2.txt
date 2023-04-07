@@ -1,0 +1,277 @@
+{
+    "data": [
+        {
+            "fields": [
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "id",
+                    "nullable": 0,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 1,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "name",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "lastname",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "age",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 3
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "city",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "income",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 2
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "dbl",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 4
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "dtime",
+                    "nullable": 1,
+                    "precision": 3,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 5
+                }
+            ],
+            "tablename": "person",
+            "type": 2
+        },
+        {
+            "fields": [
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "id",
+                    "nullable": 0,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 1,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "model",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "year",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 2
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "color",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "",
+                    "name": "number",
+                    "nullable": 1,
+                    "precision": -1,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 0,
+                    "type": 10
+                }
+            ],
+            "tablename": "car",
+            "type": 2
+        },
+        {
+            "fields": [
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "person",
+                    "name": "fromid",
+                    "nullable": 0,
+                    "precision": 0,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 2,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "person",
+                    "name": "toid",
+                    "nullable": 0,
+                    "precision": 0,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 2,
+                    "type": 10
+                }
+            ],
+            "tablename": "friends",
+            "type": 3
+        },
+        {
+            "fields": [
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "car",
+                    "name": "fromid",
+                    "nullable": 0,
+                    "precision": 0,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 2,
+                    "type": 10
+                },
+                {
+                    "defaultvalue": null,
+                    "increment": 0,
+                    "linktable": "person",
+                    "name": "toid",
+                    "nullable": 0,
+                    "precision": 0,
+                    "scale": 0,
+                    "seed": 0,
+                    "subtype": 2,
+                    "type": 10
+                }
+            ],
+            "tablename": "owner",
+            "type": 3
+        }
+    ],
+    "err": 0,
+    "indexes": [
+        {
+            "fields": [
+                "friends"
+            ],
+            "name": "friends_friends_autolink",
+            "table": "friends",
+            "uniq": 0
+        },
+        {
+            "fields": [
+                "owner"
+            ],
+            "name": "owner_owner_autolink",
+            "table": "owner",
+            "uniq": 0
+        },
+        {
+            "fields": [
+                "age"
+            ],
+            "name": "p_age",
+            "table": "person",
+            "uniq": 0
+        },
+        {
+            "fields": [
+                "city"
+            ],
+            "name": "p_city",
+            "table": "person",
+            "uniq": 0
+        },
+        {
+            "fields": [
+                "model"
+            ],
+            "name": "c_model",
+            "table": "car",
+            "uniq": 0
+        }
+    ],
+    "msg": "",
+    "version": "2.6.069"
+}
