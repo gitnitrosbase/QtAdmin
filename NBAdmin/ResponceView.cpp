@@ -60,23 +60,28 @@ QVariant ResponceView::data(const QModelIndex &index, int role) const
 
         QString output = "";
 
-        if (v.null == true) return QString("null");
+        if ( v.null == true ) return QString("null");
 
         switch ( v.type )
         {
-        case NB_DATA_INT: output = QString::number(v.intv); break;
-        case NB_DATA_DATETIME: for (int i = 0; i< v.len; i+=1) output += QString(v.str[i]) ; break;
-        case NB_DATA_STRING: output= QString::fromUtf8(v.str, v.len); break;
-        case NB_DATA_U16STRING:  output= QString::fromUtf16((char16_t*)v.str, v.len/2); break;
-        case NB_DATA_DECIMAL: output = QString(v.str); break;
-        case NB_DATA_INT64: output = QString::number(v.int64v); break;
-        case NB_DATA_DOUBLE: output = QString::number(v.dbl); break;
+        case NB_DATA_INT: output = QString::number( v.intv ); break;
+        case NB_DATA_DATETIME: output = QString( v.str ) ; break;
+        case NB_DATA_STRING: output= QString::fromUtf8( v.str, v.len ); break;
+        case NB_DATA_U16STRING:  output= QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
+        case NB_DATA_DECIMAL: output = QString( v.str ); break;
+        case NB_DATA_INT64: output = QString::number( v.int64v ); break;
+        case NB_DATA_DOUBLE: output = QString::number( v.dbl ); break;
         case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
-        case NB_DATA_BINARY: output = *(&v.str); break;
-        case NB_DATA_DATE: output = QString(v.str); break;
+        case NB_DATA_BINARY:
+        {
+            QByteArray utf8Data = QString::fromUtf8(v.str, v.len).toUtf8();
+            for (int i = 0; i < utf8Data.size() && i < 2048; i += 1 ) output += QString::number( (quint8)utf8Data.at(i), 16 );
+            break;
+        }
+        case NB_DATA_DATE: output = QString( v.str ); break;
         case NB_DATA_NONE : output = "none"; break;
-        case NB_DATA_ROWVERSION: output= QString(v.str); break;
-        case NB_DATA_URI: output = QString(v.str); break;
+        case NB_DATA_ROWVERSION: output= QString( v.str ); break;
+        case NB_DATA_URI: output = QString( v.str ); break;
         }
         return output;
     }

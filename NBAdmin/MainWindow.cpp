@@ -610,7 +610,7 @@ QString MainWindow::getType(QJsonObject obj)
     case 1:
         if(precision >0 && scale == 0) return QString("varchar(" + QString::number(precision) + ")");
         if(precision >0 && scale == 1) return QString("char(" + QString::number(precision) + ")");
-        if(precision == -1) return QString("varchar (MAX)");
+        if(precision == -1) return QString("varchar(MAX)");
         break;
     case 2:
         return QString("int"); break;
@@ -655,7 +655,7 @@ QString MainWindow::getType(QJsonObject obj)
         }
         if(precision == -1)
         {
-          return QString("nvarchar (MAX)");
+          return QString("nvarchar(MAX)");
         }
         if (precision == 0 && scale == 0) return QString("nvarchar");
         break;
