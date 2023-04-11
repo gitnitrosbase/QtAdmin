@@ -286,6 +286,11 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     {
         ui->tabWidget->removeTab(index);
     }
+    else if ( ui->tabWidget->count() == 1 )
+    {
+        ui->tabWidget->removeTab(index);
+        ui->tabWidget->addTab(new TabWindow(), QString("Query 1"));
+    }
 }
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWidgetItem* to)
 {
@@ -673,7 +678,7 @@ QString MainWindow::getType(QJsonObject obj)
 
 QString MainWindow::linkCheck(QString input)
 {
-    if (input != "") return QString("-> " + input);
+    if (input != "") return QString("->" + input);
     return input;
 }
 
@@ -686,6 +691,8 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
+//    QThread::sleep(5);
+
 
     tables_.clear();
     delete ui->treeWidget;
@@ -700,6 +707,22 @@ void MainWindow::filling_tree()
     ui->splitter->setSizes(splitterSize_);
 
     ui->treeWidget->setStyleSheet(
+
+                "QTreeWidget {"
+                    "border:0px solid rgb(204, 204, 204);"
+                    "padding-left: 5px;}"
+                "QHeaderView::section {"
+                    "color: #555;"
+                    "background-color: rgb(255, 255, 255);"
+                    "border: 0px;"
+                    "height: 0px;}"
+                "QTreeView::branch {"
+                   "height: 0px;}"
+                "QScrollBar:vertical {"
+                    "border: 2px solid grey;"
+                    "background: #32CC99;"
+                    "height: 15px;"
+                    "margin: 0px 20px 0 20px;}"
                     "QHeaderView::section {"
                         "color: black;"
                         "padding: 2px;"
@@ -753,8 +776,6 @@ void MainWindow::filling_tree()
                                            + QString::number(item_db.toObject().find("port").value().toInt())
                                            ));
                 ui->treeWidget->addTopLevelItem(dbName);
-
-                //dbName->setIcon(0, QIcon(":/images/true.png"));
 
                 dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()), item_db.toObject().find("port").value().toInt()));
                 QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
@@ -824,10 +845,10 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString(" (")
+                                                              + QString(" [")
                                                               + getType(item_field.toObject())
                                                               + nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                              + QString(") ")
+                                                              + QString("] ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     columnItem->addChild(field);
@@ -1069,18 +1090,10 @@ void MainWindow::on_actionNew_query_triggered()
     push_button_plus_clicked();
 }
 
-
-void MainWindow::on_actionClose_query_triggered()
-{
-    ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
-}
-
-
 void MainWindow::on_actionRun_query_triggered()
 {
     push_button_run_clicked();
 }
-
 
 void MainWindow::on_actionOpen_triggered()
 {

@@ -32,9 +32,6 @@
 #include "SyntexHightlight.hpp"
 #include "ResponceView.hpp"
 
-#include "Windows.h"
-#include "WinUser.h"
-
 #include "ui_TabWindow.h"
 #include <iostream>
 

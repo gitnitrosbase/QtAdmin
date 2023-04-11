@@ -22,6 +22,7 @@
 #include <QJsonArray>
 #include <QList>
 #include <QTimer>
+#include <QThread>
 
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
@@ -50,8 +51,6 @@
 #include "MessageWindow.hpp"
 
 #include "ui_MainWindow.h"
-
-//#include <windows.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -120,8 +119,6 @@ private slots:
 
     void on_actionNew_query_triggered();
 
-    void on_actionClose_query_triggered();
-
     void on_actionRun_query_triggered();
 
     void on_actionOpen_triggered();
@@ -161,20 +158,8 @@ private:
     BackupWindow* backupWindow_ = nullptr;
     RestoreWindow* restoreWindow_ = nullptr;
     QMenu* rightClickMenu_ = nullptr;
+
     std::map<int, QString> fieldsTypes_ = {
-        {1, "varchar"},
-        {2, "int"},
-        {3, "bigint"},
-        {4, "double"},
-        {5, "datetime"},
-        {6, "bit"},
-        {7, "date"},
-        {9, "varbinary"},
-        {10, "nvarchar"},
-        {11, "rowversion"},
-        {12, "decimal"}
-    };
-    std::map<int, QString> fieldsTypesNew_ = {
         {1, ""},
         {2, ""},
         {3, "bigint"},
