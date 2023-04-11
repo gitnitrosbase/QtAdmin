@@ -20,11 +20,14 @@
    <string>MainWindow</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">QWidget#MainWindow
+{
+	background-color: #ffffff;
+}</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <string notr="true"/>
    </property>
    <layout class="QGridLayout" name="gridLayout">
     <property name="leftMargin">
@@ -394,7 +397,7 @@ QTabWidget::tab-bar {
 
 QTabBar::tab {
     border: 0px;
-	background: #fff;
+	backgound-color: transparent;
     color: #9fa0a0;
 	padding: 8px 5px;  
 }
