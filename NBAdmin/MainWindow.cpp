@@ -808,14 +808,6 @@ void MainWindow::filling_tree()
                         filename.write(copy_reply_table.toJson());
                         filename.close();
 
-//                        if (Responce.find("err")->toInt() > 0)
-//                        {
-//                            dbName->setIcon(0, QIcon(":/images/false.png"));
-//                            return;
-//                        }
-//                        else dbName->setIcon(0, QIcon(":/images/true.png"));
-
-
                         QTreeWidgetItem* dbTables = new QTreeWidgetItem();
                         dbName->addChild(dbTables);
 
