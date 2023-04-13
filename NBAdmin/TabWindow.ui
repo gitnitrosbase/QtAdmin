@@ -56,6 +56,34 @@ QTableView {	border: 0px;}</string>
 }
 QSplitter::item {
 	padding: 0px 9px 0px 9px;
+} 
+
+QSplitter::handle
+{
+	/*border-right: 1px solid rgb(202, 202, 202);
+	border-left: 1px solid rgb(202, 202, 202);*/	
+	background-color: #eee;
+}
+QScrollBar:vertical {
+	width: 12px;
+    background: #fff;
+}
+QScrollBar::handle:vertical {
+	min-height: 20px;
+    /*background: #ececec;*/
+	background: #777;
+	border-radius: 4px;
+}
+
+QScrollBar:horizontal  {
+	height: 12px;
+    background: #fff;
+}
+QScrollBar::handle:horizontal  {
+	min-width: 20px;
+	/*background: #ececec;*/
+	background: #777;
+	border-radius: 4px;
 } </string>
      </property>
      <property name="orientation">
