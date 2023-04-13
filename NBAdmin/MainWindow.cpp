@@ -536,6 +536,9 @@ void MainWindow::on_actionDeleteDatabaseTrig()
     QString tmp = dbList_.find(currentDatabase_)->first;
     for (auto item : tmp) if (item != ' ') name += item; else break;
 
+    QTreeWidgetItem* findItem = ui->treeWidget->findItems(tmp + QString(" ") + QString::number(dbList_.find(tmp)->second), Qt::MatchContains).at(0);
+    if( findItem->child(0)->text(0) == "1" ) return;
+
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
     QNetworkRequest request(url);
@@ -785,13 +788,22 @@ void MainWindow::filling_tree()
                 QByteArray data = doc.toJson();
                 QNetworkReply *reply_table = mgr->post(request, data);
 
-                if (!item_db.toObject().find("run")->toBool())
+                QTreeWidgetItem* runableProperty = new QTreeWidgetItem;
+
+                if ( !item_db.toObject().find("run")->toBool())
                 {
                     dbName->setIcon(0, QIcon(":/images/false.png"));
+                    runableProperty->setText(0, "0");
                     continue;
                 }
-                else dbName->setIcon(0, QIcon(":/images/true.png"));
+                else
+                {
+                    dbName->setIcon(0, QIcon(":/images/true.png"));
+                    runableProperty->setText(0, "1");
+                }
 
+                dbName->addChild(runableProperty);
+                runableProperty->setHidden(true);
 
                 i+=1;
 
