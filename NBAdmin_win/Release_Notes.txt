@@ -1,3 +1,11 @@
+==============================================
+Version 7
+---------
+ - Fixed right-click menu style
+ - Fixed scroll bar style
+ - Add visualization hex information
+ - Minor fixes
+==============================================
 Version 6
 ---------
  - Fixed type inference error

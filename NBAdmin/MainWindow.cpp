@@ -536,8 +536,10 @@ void MainWindow::on_actionDeleteDatabaseTrig()
     QString tmp = dbList_.find(currentDatabase_)->first;
     for (auto item : tmp) if (item != ' ') name += item; else break;
 
-    QTreeWidgetItem* findItem = ui->treeWidget->findItems(tmp + QString(" ") + QString::number(dbList_.find(tmp)->second), Qt::MatchContains).at(0);
-    if( findItem->child(0)->text(0) == "1" ) return;
+    QTreeWidgetItem* findItem = nullptr;
+    findItem = ui->treeWidget->findItems(tmp + QString(" ") + QString::number(dbList_.find(tmp)->second), Qt::MatchContains).at(0);
+
+    if( findItem == nullptr && findItem->child(0)->text(0) == "1" ) return;
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
