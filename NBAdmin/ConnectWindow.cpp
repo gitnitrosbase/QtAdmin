@@ -78,6 +78,8 @@ void ConnectWindow::on_Create_clicked()
         if (reply->error() == QNetworkReply::NoError) std::cout<<"db create"<<std::endl;
         else std::cout<<"error!"<<std::endl;
 
+        emit refreshTree();
+
         reply->deleteLater();
     });
 
@@ -88,7 +90,6 @@ void ConnectWindow::on_Create_clicked()
     message->setAttribute(Qt::WA_DeleteOnClose);
     message->show();
 
-    emit refreshTree();
     clear_fields();
 }
 

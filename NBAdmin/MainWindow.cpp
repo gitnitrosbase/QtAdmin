@@ -557,6 +557,8 @@ void MainWindow::on_actionDeleteDatabaseTrig()
             file.open(QIODevice::ReadWrite);
             file.write(reply_doc.toJson());
             file.close();
+
+            filling_tree();
         }
         reply->deleteLater();
     });
@@ -565,8 +567,6 @@ void MainWindow::on_actionDeleteDatabaseTrig()
     message->setText(QString("The database has been deleted"));
     message->setAttribute(Qt::WA_DeleteOnClose);
     message->show();
-
-    filling_tree();
     ui->label_2->setText("");
 }
 
@@ -691,9 +691,6 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
-//    QThread::sleep(5);
-
-
     tables_.clear();
     delete ui->treeWidget;
 
@@ -707,7 +704,6 @@ void MainWindow::filling_tree()
     ui->splitter->setSizes(splitterSize_);
 
     ui->treeWidget->setStyleSheet(
-
                 "QTreeWidget {"
                     "border:0px solid rgb(204, 204, 204);"
                     "padding-left: 5px;}"
@@ -789,6 +785,14 @@ void MainWindow::filling_tree()
                 QByteArray data = doc.toJson();
                 QNetworkReply *reply_table = mgr->post(request, data);
 
+                if (!item_db.toObject().find("run")->toBool())
+                {
+                    dbName->setIcon(0, QIcon(":/images/false.png"));
+                    continue;
+                }
+                else dbName->setIcon(0, QIcon(":/images/true.png"));
+
+
                 i+=1;
 
                 connect(reply_table, &QNetworkReply::finished, [=]()
@@ -804,12 +808,12 @@ void MainWindow::filling_tree()
                         filename.write(copy_reply_table.toJson());
                         filename.close();
 
-                        if (Responce.find("err")->toInt() > 0)
-                        {
-                            dbName->setIcon(0, QIcon(":/images/false.png"));
-                            return;
-                        }
-                        else dbName->setIcon(0, QIcon(":/images/true.png"));
+//                        if (Responce.find("err")->toInt() > 0)
+//                        {
+//                            dbName->setIcon(0, QIcon(":/images/false.png"));
+//                            return;
+//                        }
+//                        else dbName->setIcon(0, QIcon(":/images/true.png"));
 
 
                         QTreeWidgetItem* dbTables = new QTreeWidgetItem();
