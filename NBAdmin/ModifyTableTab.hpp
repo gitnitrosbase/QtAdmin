@@ -44,7 +44,6 @@ public:
 public slots:
     void addRow();
     void rmRow();
-    //void checkToAddRow();
     void on_saveButton_clicked();
     void printFromdb();
     void checkToAddRow(QString text);

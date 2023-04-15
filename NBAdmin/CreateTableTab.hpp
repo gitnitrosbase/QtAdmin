@@ -50,6 +50,7 @@ public slots:
     void checkIdentity(int index);
     void blockOtherIdentity(QCheckBox* item, int state);
     bool check_query(NB_HANDLE connection);
+    QString getType(QJsonObject obj);
 private slots:
     void checkToAddRow(QString text);
 

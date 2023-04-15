@@ -56,11 +56,11 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     createIndexAction_ = new QAction("Create", this);
     selectAction_ = new QAction("Select * top 1000", this);
     deleteTableAction_ = new QAction("Delete table", this);
-    deleteIndexAction_ = new QAction("Delete Index", this);
-    deleteEdgeAction_ = new QAction("Delete Edge", this);
+    deleteIndexAction_ = new QAction("Delete index", this);
+    deleteEdgeAction_ = new QAction("Delete edge", this);
     selectEdgeAction_ = new QAction("Select * top 1000", this);
-    modifyTableAction_ = new QAction("Modify Struct", this);
-    createDBQueryAction_ = new QAction("Create Table", this);
+    modifyTableAction_ = new QAction("Modify struct", this);
+    createDBQueryAction_ = new QAction("Create table", this);
 
     connect(refreshAction_, &QAction::triggered, this, &MainWindow::filling_tree_slot);
     connect(stopAction_, &QAction::triggered, this, &MainWindow::on_actionStop_triggered);
@@ -277,6 +277,7 @@ void MainWindow::push_button_plus_clicked()
     }
 
     ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Query " + QString::number(tabNumber)));
+    ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     tmp->tabNumber_ = tabNumber;
     connect(tmp, &TabWindow::refresh_tree, this, &MainWindow::on_actionRefresh_triggered);
 }
@@ -914,10 +915,10 @@ void MainWindow::filling_tree()
                                 {
                                     QTreeWidgetItem* field = new QTreeWidgetItem();
                                     field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString(" (")
+                                                              + QString(" [")
                                                               + getType(item_field.toObject())
                                                               + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
-                                                              + QString(") ")
+                                                              + QString("] ")
                                                               + linkCheck(item_field.toObject().find("linktable")->toString())
                                                               ));
                                     table_name->addChild(field);

@@ -4,6 +4,7 @@
 <li>Visual Studio</li>
 <li>Qt6(msvc2019_64)</li>
 <li>Visual C++</li>
+<li>NitrosBase 2.6+</li>
 </ol>
 <h3>Иструкция по сборке:</h3>
 <ol>

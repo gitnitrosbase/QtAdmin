@@ -360,7 +360,7 @@ inline void ExecSqlASYNC( int idconnect, int port, const std::string &query )
 {
     try
     {
-        NB_HANDLE connection;
+        //NB_HANDLE connection;
         nbpool.check( idconnect );
         const std::lock_guard<std::mutex> lock( nbpool.connects[idconnect].mtx );
 
@@ -518,7 +518,7 @@ inline int ExecSqlASYNC2( int idconnect, int port, const std::string &query )
     int queryCount = 0;
     try
     {
-        NB_HANDLE connection;
+        //NB_HANDLE connection;
         nbpool.check( idconnect );
         const std::lock_guard<std::mutex> lock( nbpool.connects[idconnect].mtx );
 
@@ -700,7 +700,7 @@ inline std::string GetRowsAffectedFlag(queryresultbase *resultbase, int resnum)
 
     queryres res = result->queries.at(resnum);
 
-    if ( res.type != SQL_QUERY_SELECT ) output = std::string("Raws affected: " + std::to_string(res.count));
+    if ( res.type != SQL_QUERY_SELECT ) output = std::string("Rows affected: " + std::to_string(res.count));
 
     return output;
 }

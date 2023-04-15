@@ -413,6 +413,13 @@ void ModifyTableTab::addRow()
     });
     if (PKFlag_) PKCheckBox->setEnabled(false);
     if (identityFlag_) identityCheckBox->setEnabled(false);
+
+    ui->tableWidget->setColumnWidth(1, 140);
+
+    ui->tableWidget->resizeColumnToContents(2);
+    ui->tableWidget->resizeColumnToContents(3);
+    ui->tableWidget->resizeColumnToContents(5);
+    ui->tableWidget->resizeColumnToContents(6);
 }
 
 

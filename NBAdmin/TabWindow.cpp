@@ -98,13 +98,9 @@ void TabWindow::setCurrentIndex(int index)
 void TabWindow::push_button_run_clicked()
 {
     flag_ = false;
-
     int start = clock();
-
     input_queries_.clear();
-
     ui->comboBox_->clear();
-
     reqTypesList_.clear();
 
     // remove all models in answers
@@ -130,8 +126,6 @@ void TabWindow::push_button_run_clicked()
 
     std::thread th1([=]()
     {
-        int queryCount = ExecSqlASYNC2(tabNumber_ , dbPort_, executeText.toStdString());
-
         std::vector<std::string> queryesVector = getParsedQuery(executeText.toStdString());
 
         for (auto item : queryesVector) item = item.substr(0, item.size() > 60 ? 60 : item.size());
@@ -209,7 +203,6 @@ std::vector<std::string> TabWindow::getParsedQuery(std::string str)
 
     std::remove(str.begin(), str.end(), '\n');
     std::remove(str.begin(), str.end(), '\t');
-
 
     if (str.back() != ';') str.push_back(';');
 

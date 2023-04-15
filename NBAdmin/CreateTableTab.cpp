@@ -21,6 +21,75 @@ void CreateTableTab::SetCurrentDatabase(QString& name, int port)
     addRow();
 }
 
+QString CreateTableTab::getType(QJsonObject obj)
+{
+    int precision = obj.find("precision")->toInt();
+    int scale = obj.find("scale")->toInt();
+    switch (obj.find("type")->toInt()) {
+    case 1:
+        if(precision >0 && scale == 0) return QString("varchar(" + QString::number(precision) + ")");
+        if(precision >0 && scale == 1) return QString("char(" + QString::number(precision) + ")");
+        if(precision == -1) return QString("varchar(MAX)");
+        break;
+    case 2:
+        return QString("int"); break;
+    case 3:
+        if(precision == -1) return QString("bigint");
+        break;
+    case 4:
+        if(precision == -1) return QString("double");
+        break;
+    case 5:
+        if(precision > 0) return QString("datetime");
+        break;
+    case 6:
+        return QString("bit");
+        break;
+    case 7:
+        if(precision == -1) return QString("datetime2(MAX)");
+        else return QString("datetime2(%1)").arg(precision);
+        break;
+    case 9:
+        if(precision > 0 && scale == 1)
+        {
+        return QString("binary(" + QString::number(precision) + ")");
+        }
+        if(precision > 0 && scale == 0)
+        {
+        return QString("varbinary(" + QString::number(precision) + ")");
+        }
+        if(precision == -1)
+        {
+        return QString("varbinary(MAX)");
+        }
+        break;
+    case 10:
+        if(precision >0 && scale == 0)
+        {
+            return QString("nvarchar(" + QString::number(precision) + ")");
+        }
+        if(precision >0 && scale == 1)
+        {
+            return QString("nchar(" + QString::number(precision) + ")");
+        }
+        if(precision == -1)
+        {
+          return QString("nvarchar(MAX)");
+        }
+        if (precision == 0 && scale == 0) return QString("nvarchar");
+        break;
+    case 11:
+        if(precision == -1) return QString("rowversion");
+        break;
+    case 12:
+        return QString("decimal(" + QString::number(precision) + "," + QString::number(scale) + ")");
+        break;
+    default:
+        break;
+    }
+    return QString(" ");
+}
+
 void CreateTableTab::addRow()
 {
     QLineEdit* nameLineEdit = new QLineEdit();
@@ -45,34 +114,33 @@ void CreateTableTab::addRow()
         typesComboBox->addItem(item);
     }
 
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    const QUrl url(address_);
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    QJsonObject obj;
-    obj["cmd"] = 8;
-    obj["port"] = port_;
-    QJsonDocument doc(obj);
-    QByteArray data = doc.toJson();
-    QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
-    {
-        if(reply->error() == QNetworkReply::NoError)
-        {
-            QString strReply = reply->readAll();
-            QFile replyFile("./replyFile");
-            replyFile.open(QIODevice::WriteOnly);
-            replyFile.write(strReply.toUtf8());
+//    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+//    const QUrl url(address_);
+//    QNetworkRequest request(url);
+//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+//    QJsonObject obj;
+//    obj["cmd"] = 8;
+//    obj["port"] = port_;
+//    QJsonDocument doc(obj);
+//    QByteArray data = doc.toJson();
+//    QNetworkReply *reply = mgr->post(request, data);
+//    connect(reply, &QNetworkReply::finished, [=]()
+//    {
+//        if(reply->error() == QNetworkReply::NoError)
+//        {
+//            QString strReply = reply->readAll();
+//            QFile replyFile("./replyFile");
+//            replyFile.open(QIODevice::WriteOnly);
+//            replyFile.write(strReply.toUtf8());
 
-            QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
-            for (auto item : tables)
-            {
-                if (item.toObject().find("type")->toInt() == 2) FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
-            }
-            //FKTableComboBox->insertItem(0, "none");
-            FKTableComboBox->setCurrentIndex(0);
-        }
-    });
+//            QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
+//            for (auto item : tables)
+//            {
+//                if (item.toObject().find("type")->toInt() == 2) FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
+//            }
+//            FKTableComboBox->setCurrentIndex(0);
+//        }
+//    });
 
     ui->tableWidget->insertRow(ui->tableWidget->rowCount());
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, nameLineEdit);
@@ -111,6 +179,58 @@ void CreateTableTab::addRow()
         }
         else for (int i = 0; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 2))->setEnabled(true);
     });
+    connect(typesComboBox, QOverload<int>::of(&QComboBox::activated), [=](int index)
+    {
+        QComboBox* currentFKComboBox = (QComboBox*)ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 4);
+        currentFKComboBox->clear();
+
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 8;
+        obj["port"] = port_;
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+        connect(reply, &QNetworkReply::finished, [=]()
+        {
+            if(reply->error() == QNetworkReply::NoError)
+            {
+                QString strReply = reply->readAll();
+                QFile replyFile("./replyFile.txt");
+                replyFile.open(QIODevice::WriteOnly);
+                replyFile.write(strReply.toUtf8());
+                replyFile.close();
+
+                QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
+                for (auto item_table : tables)
+                {
+                    if (item_table.toObject().find("type")->toInt() == 2)
+                    {
+                        QJsonArray fields = item_table.toObject().find("fields")->toArray();
+                        for (auto item_field : fields)
+                        {
+                            if (getType(item_field.toObject()) == ((QComboBox*)ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 1))->currentText()
+                                    && item_field.toObject().find("subtype")->toInt() == 1)
+                            {
+                                currentFKComboBox->addItem(item_table.toObject().find("tablename")->toString());
+                            }
+                        }
+                    }
+                }
+                FKTableComboBox->setCurrentIndex(0);
+            }
+        });
+    });
+
+    ui->tableWidget->setColumnWidth(1, 140);
+
+    ui->tableWidget->resizeColumnToContents(2);
+    ui->tableWidget->resizeColumnToContents(3);
+    ui->tableWidget->resizeColumnToContents(5);
+    ui->tableWidget->resizeColumnToContents(6);
 }
 
 void CreateTableTab::checkToAddRow(QString text)
