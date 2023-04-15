@@ -106,11 +106,11 @@ void CreateIndexTab::on_pushButton_2_clicked()
         query+=columnIndex;
         query+=",";
     }
-    query.resize(query.count() - 1);
+    query.resize(query.size() - 1);
     query+=");";
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
-    nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
+    nb_execute_sql(connection, query.toStdU16String().c_str(), query.size());
     if (!check_query(connection))
     {
         nb_disconnect(connection);

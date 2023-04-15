@@ -255,7 +255,7 @@ inline void PrintResultInfo( queryresultbase *resultbase, int skip )
     std::cout << "---------------------------\n";
 
     queryresult *result = (queryresult *)resultbase;
-    int count = result->queries.size();
+    int count = (int)result->queries.size();
     for ( int i = skip; i < count; i++ )
     {
         queryres &res = result->queries[i];
@@ -274,7 +274,7 @@ inline void PrintResultInfo( queryresultbase *resultbase, int skip )
 
         std::cout << "fields" << std::endl;
 
-        int fcount = res.fields.size();
+        int fcount = (int)res.fields.size();
         for ( int j = 0; j < fcount; j++ )
         {
             auto &f = res.fields[j];
@@ -536,7 +536,7 @@ inline int ExecSqlASYNC2( int idconnect, int port, const std::string &query )
                 continue;
 
             queryresult* result_ = (queryresult *)result;
-            queryCount = result_->queries.size();
+            queryCount = (int)result_->queries.size();
             break;
         }
     }
@@ -558,7 +558,7 @@ inline int GetCountAnswer(int idconnect)
             continue;
 
         queryresult* result_ = (queryresult *)result;
-        count = result_->queries.size();
+        count = (int)result_->queries.size();
         break;
     }
     return count;
@@ -569,7 +569,7 @@ inline std::vector<std::string> PrintResultInfo2( queryresultbase *resultbase, i
     std::vector<std::string> outputHeader;
 
     queryresult *result = (queryresult *)resultbase;
-    int count = result->queries.size();
+    int count = (int)result->queries.size();
 
     std::cout<<queryIndex<<std::endl;
 
@@ -585,7 +585,7 @@ inline std::vector<std::string> PrintResultInfo2( queryresultbase *resultbase, i
     else
         std::cout << "rowscount " << res.records.size() << std::endl;
 
-    int fcount = res.fields.size();
+    int fcount = (int)res.fields.size();
     for ( int j = 0; j < fcount; j++ )
     {
         auto f = res.fields[j];
@@ -608,7 +608,7 @@ inline int GetRowCount(queryresultbase *resultbase, int queryIndex )
         if ( !result->ready && result->qcount == 0 )
             continue;
 
-        int count = result->queries.size();
+        int count = (int)result->queries.size();
 
         queryres &res = result->queries[queryIndex];
 
@@ -618,7 +618,7 @@ inline int GetRowCount(queryresultbase *resultbase, int queryIndex )
             std::cout << "msg " << result->errstr << std::endl;
 
         if ( res.type != SQL_QUERY_SELECT ) rowCount = res.count;
-        else rowCount = res.records.size();
+        else rowCount = (int)res.records.size();
 
 
         break;
@@ -654,7 +654,7 @@ inline std::string GetQueryType(int connectIndex, int queryIndex )
     std::string output;
 
     queryresult *result = (queryresult *)nbpool.connects[connectIndex].result;
-    int count = result->queries.size();
+    int count = (int)result->queries.size();
 
     queryres res = result->queries.at(queryIndex);
 
@@ -681,7 +681,7 @@ inline std::string GetError(int connectIndex, int queryIndex)
 {
     std::string output = "";
     queryresult *result = (queryresult *)nbpool.connects[connectIndex].result;
-    int count = result->queries.size();
+    int count = (int)result->queries.size();
 
     queryres res = result->queries.at(queryIndex);
 

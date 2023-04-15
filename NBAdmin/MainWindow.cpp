@@ -152,7 +152,7 @@ void MainWindow::showContextMenu(const QPoint point)
             }
         }
 
-        for (int i = 0; i<ui->treeWidget->currentItem()->text(0).count(); i+=1)
+        for (int i = 0; i<ui->treeWidget->currentItem()->text(0).size(); i+=1)
         {
             if (ui->treeWidget->currentItem()->text(0).at(i) != ' ') currentItem += ui->treeWidget->currentItem()->text(0)[i];
             else break;
@@ -383,11 +383,11 @@ void MainWindow::on_actionSelectEdgeTrig()
     QString fromId = "";
     QString toId = "";
 
-    for(int i = ui->treeWidget->currentItem()->child(0)->text(0).count()-1; i >=0; i-=1)
+    for(int i = ui->treeWidget->currentItem()->child(0)->text(0).size()-1; i >=0; i-=1)
     {
         if(ui->treeWidget->currentItem()->child(0)->text(0).at(i) != ' ') fromId += ui->treeWidget->currentItem()->child(0)->text(0).at(i); else break;
     }
-    for(int i = ui->treeWidget->currentItem()->child(1)->text(0).count()-1; i >=0; i-=1)
+    for(int i = ui->treeWidget->currentItem()->child(1)->text(0).size()-1; i >=0; i-=1)
     {
         if(ui->treeWidget->currentItem()->child(1)->text(0).at(i) != ' ') toId += ui->treeWidget->currentItem()->child(1)->text(0).at(i); else break;
     }
@@ -476,7 +476,6 @@ void MainWindow::on_modifyTableActionTrig()
         connect(tmp, &ModifyTableTab::refreshTree, this, &MainWindow::filling_tree_slot);
     }
 }
-
 void MainWindow::on_tableSelectActionTrig()
 {
     if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
@@ -488,7 +487,6 @@ void MainWindow::on_tableSelectActionTrig()
     }
     push_button_run_clicked();
 }
-
 void MainWindow::on_actionCreateEdgeTrig()
 {
     if (currentDatabase_ != "")
@@ -1028,7 +1026,7 @@ void MainWindow::on_actionStart_triggered()
 void MainWindow::on_actionBackup_triggered()
 {
     QString dbName;
-    for (int i = 0; i<currentDatabase_.count();i+=1)
+    for (int i = 0; i<currentDatabase_.size();i+=1)
     {
         if (currentDatabase_.at(i) != ' ') dbName+=currentDatabase_.at(i);
         else break;

@@ -71,7 +71,7 @@ void CreateEdgeTab::on_Create_clicked()
     std::cout<<query.toStdString()<<std::endl;
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
-    nb_execute_sql(connection, query.toStdU16String().c_str(), query.count());
+    nb_execute_sql(connection, query.toStdU16String().c_str(), query.size());
     if (!check_query(connection))
     {
         nb_disconnect(connection);

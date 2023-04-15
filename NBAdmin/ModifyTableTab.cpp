@@ -304,7 +304,7 @@ void ModifyTableTab::on_saveButton_clicked()
     std::cout<<queryStr.toStdString()<<std::endl;
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
-    nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.count());
+    nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.size());
     if (!check_query(connection))
     {
         nb_disconnect(connection);

@@ -140,16 +140,15 @@ void TabWindow::push_button_run_clicked()
     // get text from TextEdit
 
     QString executeText;
-    if (textEdit_->selectedText() == "") executeText = textEdit_->text();
-    else executeText = textEdit_->selectedText();
-
-    std::cout<<executeText.toStdString()<<std::endl;
+    std::cout<<textEdit_->selectedText().toStdString()<<std::endl;
+    if (textEdit_->hasSelectedText()) executeText = textEdit_->selectedText();
+    else executeText = textEdit_->text();
 
     // fill models
 
     std::thread th1([=]()
     {
-        ExecSqlASYNC2(tabNumber_ , dbPort_, textEdit_->text().toStdString());
+        ExecSqlASYNC2(tabNumber_ , dbPort_, executeText.toStdString());
 
         std::vector<std::string> queryesVector = getParsedQuery(executeText.toStdString());
 
@@ -225,13 +224,21 @@ std::vector<std::string> TabWindow::getParsedQuery(std::string str)
 {
     std::vector<std::string> output;
 
-    std::remove(str.begin(), str.end(), '\n');
-    std::remove(str.begin(), str.end(), '\t');
+    size_t pos = str.find('\n');
+    while (pos != std::string::npos) {
+        str.erase(pos, 1);
+        pos = str.find('\n');
+    }
+    pos = str.find('\t');
+    while (pos != std::string::npos) {
+        str.erase(pos, 1);
+        pos = str.find('\t');
+    }
 
     if (str.back() != ';') str.push_back(';');
 
     std::string::size_type beg = 0;
-    for (auto end = 0; (end = str.find(';', end)) != std::string::npos; end += 1)
+    for (size_t end = 0; (end = str.find(';', end)) != std::string::npos; end += 1)
     {
         std::string tmp = str.substr(beg, end - beg);
         output.push_back(tmp);
