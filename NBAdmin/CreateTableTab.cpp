@@ -114,34 +114,6 @@ void CreateTableTab::addRow()
         typesComboBox->addItem(item);
     }
 
-//    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-//    const QUrl url(address_);
-//    QNetworkRequest request(url);
-//    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-//    QJsonObject obj;
-//    obj["cmd"] = 8;
-//    obj["port"] = port_;
-//    QJsonDocument doc(obj);
-//    QByteArray data = doc.toJson();
-//    QNetworkReply *reply = mgr->post(request, data);
-//    connect(reply, &QNetworkReply::finished, [=]()
-//    {
-//        if(reply->error() == QNetworkReply::NoError)
-//        {
-//            QString strReply = reply->readAll();
-//            QFile replyFile("./replyFile");
-//            replyFile.open(QIODevice::WriteOnly);
-//            replyFile.write(strReply.toUtf8());
-
-//            QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
-//            for (auto item : tables)
-//            {
-//                if (item.toObject().find("type")->toInt() == 2) FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
-//            }
-//            FKTableComboBox->setCurrentIndex(0);
-//        }
-//    });
-
     ui->tableWidget->insertRow(ui->tableWidget->rowCount());
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, nameLineEdit);
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 1, typesComboBox);

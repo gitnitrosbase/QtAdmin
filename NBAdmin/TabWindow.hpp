@@ -29,6 +29,9 @@
 #include <QJsonObject>
 #include <QFile>
 
+#include "Qsci/qsciscintilla.h"
+#include "Qsci/qscilexersql.h"
+
 #include "SyntexHightlight.hpp"
 #include "ResponceView.hpp"
 
@@ -80,9 +83,10 @@ public:
     QList<QString> reqTypes_ = {"NONE", "SELECT", "INSERT", "UPDATE", "DELETE", "TRANSACTION", "ANOTHER"};
     Ui::TabWindow* ui;
     bool flag_ = true;
-    int tabNumber_;
+    int tabNumber_ = 1;
     QStatusBar* bar_;
-
+    QsciScintilla* textEdit_ = nullptr;
+    QsciLexerSQL* sqlLexer_ = nullptr;
 
 public:
     int dbPort_;

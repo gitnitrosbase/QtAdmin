@@ -8,10 +8,34 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     bar_ = new QStatusBar(this);
     ui->setupUi(this);
 
-    QFont font;
-    font.setPixelSize(16);
-    ui->textEdit_->setFont(font);
-    syntaxHighLight_ = new SyntaxHighlighter(ui->textEdit_->document());
+    textEdit_ = new QsciScintilla;
+    sqlLexer_ = new QsciLexerSQL;
+    textEdit_->setUtf8(true);
+    ui->verticalLayout_->insertWidget(0, textEdit_);
+    textEdit_->setLexer(sqlLexer_);
+    //! Текущая строка кода и ее подсветка
+    textEdit_->setCaretLineVisible(true);
+    textEdit_->setCaretLineBackgroundColor(QColor("gainsboro"));
+    //! Выравнивание
+    textEdit_->setAutoIndent(true);
+    textEdit_->setIndentationGuides(false);
+    textEdit_->setIndentationsUseTabs(true);
+    textEdit_->setIndentationWidth(4);
+    //! margin это полоска слева, на которой обычно распологаются breakpoints
+    textEdit_->setMarginsBackgroundColor(QColor("gainsboro"));
+    textEdit_->setMarginLineNumbers(1, true);
+    textEdit_->setMarginWidth(1, 50);
+    //! Авто-дополнение кода в зависимости от источника
+    textEdit_->setAutoCompletionSource(QsciScintilla::AcsAll);
+    textEdit_->setAutoCompletionCaseSensitivity(true);
+    textEdit_->setAutoCompletionReplaceWord(true);
+    textEdit_->setAutoCompletionUseSingle(QsciScintilla::AcusAlways);
+    textEdit_->setAutoCompletionThreshold(0);
+    //! Подсветка соответствий скобок
+    textEdit_->setBraceMatching(QsciScintilla::SloppyBraceMatch);
+    textEdit_->setMatchedBraceBackgroundColor(Qt::yellow);
+    textEdit_->setUnmatchedBraceForegroundColor(Qt::blue);
+
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
     ui->statusContainer->addWidget(bar_);
     bar_->addPermanentWidget(ui->label_left,1);
@@ -25,6 +49,8 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
 TabWindow::~TabWindow()
 {
     delete ui;
+    delete textEdit_;
+    delete sqlLexer_;
 
     for (auto item : models_)
     {
@@ -77,12 +103,12 @@ void TabWindow::keyPressEvent(QKeyEvent *event)
 
 QString TabWindow::textFromTextEdit()
 {
-    return ui->textEdit_->toPlainText();
+    return textEdit_->text();
 }
 
 void TabWindow::setText(QString input)
 {
-    ui->textEdit_->setText(input);
+    textEdit_->setText(input);
 }
 
 void TabWindow::setCurrentIndex(int index)
@@ -114,11 +140,8 @@ void TabWindow::push_button_run_clicked()
     // get text from TextEdit
 
     QString executeText;
-    if (ui->textEdit_->textCursor().selectedText() == "") executeText = ui->textEdit_->toPlainText();
-    else
-    {
-        for (int i = ui->textEdit_->textCursor().selectionStart(); i < ui->textEdit_->textCursor().selectionEnd(); i += 1 ) executeText += ui->textEdit_->toPlainText().at(i);
-    }
+    if (textEdit_->selectedText() == "") executeText = textEdit_->text();
+    else executeText = textEdit_->selectedText();
 
     std::cout<<executeText.toStdString()<<std::endl;
 
@@ -126,13 +149,14 @@ void TabWindow::push_button_run_clicked()
 
     std::thread th1([=]()
     {
+        ExecSqlASYNC2(tabNumber_ , dbPort_, textEdit_->text().toStdString());
+
         std::vector<std::string> queryesVector = getParsedQuery(executeText.toStdString());
 
         for (auto item : queryesVector) item = item.substr(0, item.size() > 60 ? 60 : item.size());
 
         for (int i = 0; i < GetCountAnswer(tabNumber_); i+=1)
         {
-            std::cout<<"check"<<std::endl;
             ResponceView* model = new ResponceView();
 
             std::string err = GetError(tabNumber_, i);

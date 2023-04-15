@@ -80,7 +80,17 @@ set(LOGGERLIB
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB})
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-    target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network ${PROJECT_SOURCE_DIR}/nbclient-dbg.lib)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Network
+        ${PROJECT_SOURCE_DIR}/nbclient-dbg.lib
+        ${PROJECT_SOURCE_DIR}/Qsci/debug/qscintilla2_qt6d.lib
+    )
 else()
-    target_link_libraries(${PROJECT_NAME} PRIVATE Qt${QT_VERSION_MAJOR}::Widgets Qt${QT_VERSION_MAJOR}::Network ${PROJECT_SOURCE_DIR}/nbclient.lib)
+    target_link_libraries(${PROJECT_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Network
+        ${PROJECT_SOURCE_DIR}/nbclient.lib
+        ${PROJECT_SOURCE_DIR}/Qsci/release/qscintilla2_qt6.lib
+    )
 endif()

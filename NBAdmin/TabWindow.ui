@@ -48,6 +48,9 @@ QTableView {	border: 0px;}</string>
     <number>0</number>
    </property>
    <item>
+    <layout class="QVBoxLayout" name="verticalLayout_"/>
+   </item>
+   <item>
     <widget class="QSplitter" name="splitter">
      <property name="styleSheet">
       <string notr="true">QSplitter::handle
@@ -89,11 +92,6 @@ QScrollBar::handle:horizontal  {
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <widget class="QTextEdit" name="textEdit_">
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-     </widget>
      <widget class="QWidget" name="widget" native="true">
       <property name="styleSheet">
        <string notr="true">margin: 0;
@@ -124,22 +122,6 @@ QHeaderView::section {
 	font: 12pt &quot;Segoe UI&quot;;	
 }
 	</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0">
-        <widget class="QComboBox" name="comboBox_">
-         <property name="font">
-          <font>
-           <family>Segoe UI</family>
-           <pointsize>10</pointsize>
-           <italic>false</italic>
-           <bold>false</bold>
-          </font>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">margin: 0;
-padding: 0;</string>
          </property>
         </widget>
        </item>
@@ -248,6 +230,22 @@ border: 0px;
            </widget>
           </item>
          </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QComboBox" name="comboBox_">
+         <property name="font">
+          <font>
+           <family>Segoe UI</family>
+           <pointsize>10</pointsize>
+           <italic>false</italic>
+           <bold>false</bold>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">margin: 0;
+padding: 0;</string>
+         </property>
         </widget>
        </item>
       </layout>

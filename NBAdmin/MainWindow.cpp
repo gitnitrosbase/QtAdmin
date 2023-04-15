@@ -267,7 +267,7 @@ void MainWindow::push_button_plus_clicked()
         }
     }
 
-    for (int i = 1; i <= MAXTABCOUNT; i+=1)
+    for (int i = 0; i <= MAXTABCOUNT; i+=1)
     {
         if (auto search = tabList.find(i); search == tabList.end())
         {
@@ -353,7 +353,7 @@ void MainWindow::on_actionCreateDBQueryTrig()
                         {
                             QString query = "\n\t";
                             query += QString(fields.toObject().find("name")->toString() + " ");
-                            query += QString(fieldsTypes_.at(fields.toObject().find("type")->toInt()) + " ").toUpper();
+                            query += QString(getType(fields.toObject()) + " ").toUpper();
                             if(fields.toObject().find("subtype")->toInt() == 1) query += "PRIMARY KEY NOT NULL";
                             if (fields.toObject().find("linktable")->toString() != "")
                             {
@@ -372,7 +372,7 @@ void MainWindow::on_actionCreateDBQueryTrig()
                 push_button_plus_clicked();
                 ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
                 TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-                currentTab->ui->textEdit_->setText(finalQuery);
+                currentTab->textEdit_->setText(finalQuery);
             }
             reply->deleteLater();
         });
@@ -422,7 +422,7 @@ void MainWindow::on_actionSelectEdgeTrig()
     push_button_plus_clicked();
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
     TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-    currentTab->ui->textEdit_->setText(tmp);
+    currentTab->textEdit_->setText(tmp);
     push_button_run_clicked();
 }
 
@@ -484,7 +484,7 @@ void MainWindow::on_tableSelectActionTrig()
         push_button_plus_clicked();
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
-        currentTab->ui->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0) + ";"));
+        currentTab->textEdit_->setText(QString("SELECT TOP 1000 * FROM " + ui->treeWidget->currentItem()->text(0) + ";"));
     }
     push_button_run_clicked();
 }
