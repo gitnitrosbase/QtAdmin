@@ -15,16 +15,16 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     textEdit_->setLexer(sqlLexer_);
     //! Текущая строка кода и ее подсветка
     textEdit_->setCaretLineVisible(true);
-    textEdit_->setCaretLineBackgroundColor(QColor("gainsboro"));
+    textEdit_->setCaretLineBackgroundColor(QColor("#eee"));
     //! Выравнивание
     textEdit_->setAutoIndent(true);
     textEdit_->setIndentationGuides(false);
     textEdit_->setIndentationsUseTabs(true);
     textEdit_->setIndentationWidth(4);
     //! margin это полоска слева, на которой обычно распологаются breakpoints
-    textEdit_->setMarginsBackgroundColor(QColor("gainsboro"));
+    textEdit_->setMarginsBackgroundColor(QColor("#eee"));
     textEdit_->setMarginLineNumbers(1, true);
-    textEdit_->setMarginWidth(1, 50);
+    textEdit_->setMarginWidth(1, 20);
     //! Авто-дополнение кода в зависимости от источника
     textEdit_->setAutoCompletionSource(QsciScintilla::AcsAll);
     textEdit_->setAutoCompletionCaseSensitivity(true);
@@ -34,7 +34,7 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     //! Подсветка соответствий скобок
     textEdit_->setBraceMatching(QsciScintilla::SloppyBraceMatch);
     textEdit_->setMatchedBraceBackgroundColor(Qt::yellow);
-    textEdit_->setUnmatchedBraceForegroundColor(Qt::blue);
+    textEdit_->setUnmatchedBraceForegroundColor(QColor("#0085c7"));
 
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
     ui->statusContainer->addWidget(bar_);
@@ -166,11 +166,10 @@ void TabWindow::push_button_run_clicked()
 
             model->setQueryInfo(tabNumber_, i);
             models_.push_back(model);
-            reqTypesList_.push_back(QString("Result %1: ").arg(i+1) + QString::fromStdString(GetQueryType(tabNumber_,i)) + " => " + QString::fromStdString(queryesVector.at(i)));
-            if ( GetQueryType(tabNumber_,i) == "ANOTHER")
-            {
-                refresh_tree();
-            }
+            reqTypesList_.push_back(QString("Result %1: ").arg(i+1)
+                                    + QString::fromStdString(GetQueryType(tabNumber_,i))
+                                    + QString(" => ")
+                                    + QString::fromStdString(queryesVector.at(i)));
         }
 
     });

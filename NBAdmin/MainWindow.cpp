@@ -227,7 +227,6 @@ void MainWindow::showContextMenu(const QPoint point)
             menu_->addAction(deleteTableAction_);
         }
     }
-
     menu_->popup(ui->treeWidget->viewport()->mapToGlobal(point));
 }
 
@@ -238,6 +237,7 @@ void MainWindow::push_button_run_clicked()
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
         currentTab->dbPort_ = dbList_[currentDatabase_];
         currentTab->push_button_run_clicked();
+        filling_tree();
     }
     else
     {

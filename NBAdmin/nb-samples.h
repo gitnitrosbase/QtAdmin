@@ -571,8 +571,6 @@ inline std::vector<std::string> PrintResultInfo2( queryresultbase *resultbase, i
     queryresult *result = (queryresult *)resultbase;
     int count = (int)result->queries.size();
 
-    std::cout<<queryIndex<<std::endl;
-
     queryres res = result->queries.at(queryIndex);
 
     int err = ( queryIndex < count - 1 ) ? 0 : result->err;
@@ -589,7 +587,6 @@ inline std::vector<std::string> PrintResultInfo2( queryresultbase *resultbase, i
     for ( int j = 0; j < fcount; j++ )
     {
         auto f = res.fields[j];
-        std::cout << f.name << std::endl;
         outputHeader.push_back(std::string(f.name));
     }
 
@@ -623,8 +620,6 @@ inline int GetRowCount(queryresultbase *resultbase, int queryIndex )
 
         break;
     }
-
-    std::cout<<rowCount<<std::endl;
 
     return rowCount;
 }
