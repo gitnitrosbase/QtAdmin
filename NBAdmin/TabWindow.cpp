@@ -1,8 +1,5 @@
 #include "TabWindow.hpp"
 
-ConnectPool3 nbpool;
-
-
 TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
 {
     bar_ = new QStatusBar(this);
@@ -148,26 +145,48 @@ void TabWindow::push_button_run_clicked()
 
     std::thread th1([=]()
     {
-        ExecSqlASYNC2(tabNumber_ , dbPort_, executeText.toStdString());
+        // execute query
+        nb_execute_sql_fortab_utf8(tabNumber_, dbPort_, executeText.toStdString().c_str(), executeText.toStdString().size());
 
         std::vector<std::string> queryesVector = getParsedQuery(executeText.toStdString());
 
         for (auto item : queryesVector) item = item.substr(0, item.size() > 60 ? 60 : item.size());
 
-        for (int i = 0; i < GetCountAnswer(tabNumber_); i+=1)
+        int isallready, numberOfReady;
+        NB_HANDLE connection;
+        do
+        {
+            nb_check_result( tabNumber_, &isallready, &numberOfReady, &connection );
+        } while ( numberOfReady == 0 );
+
+        // get answer count
+        for (int i = 0; i < numberOfReady; i+=1)
         {
             ResponceView* model = new ResponceView();
 
-            std::string err = GetError(tabNumber_, i);
-            if (err != "") model->setError(err);
+            // get info about subquery
 
-            std::this_thread::sleep_for( std::chrono::milliseconds( 10 ) );
-            GetSqlResulsASYNC(tabNumber_, dbPort_, i);
+            ConnectInfo info = GetConnectInfo(tabNumber_, i);
 
+            if (info.queryError != NB_OK)
+            {
+                size_t errorBufLen;
+                std::string errorStr;
+                const char* errorBuf = nb_err_text_utf8(connection, &errorBufLen);
+                for (size_t i = 0; i < errorBufLen; i += 1 ) errorStr += errorBuf[i];
+                model->setError(errorStr);
+            }
+
+            if ( info.rowsAffected != 0 )
+            {
+                model->rowsAffected_ = info.rowsAffected;
+                model->errFlag_ = true; //  Это кастыль... извините
+            }
             model->setQueryInfo(tabNumber_, i);
             models_.push_back(model);
             reqTypesList_.push_back(QString("Result %1: ").arg(i+1)
-                                    + QString::fromStdString(GetQueryType(tabNumber_,i))
+                                    /* get query type */
+                                    + QString::fromStdString(info.queryType)
                                     + QString(" => ")
                                     + QString::fromStdString(queryesVector.at(i)));
         }
@@ -184,40 +203,6 @@ void TabWindow::push_button_run_clicked()
     std::cout<<"\n\ntime -- "<<t<< " ms\n\n"<<std::endl;
 }
 
-
-bool TabWindow::check_query(NB_HANDLE connection)
-{
-    if (nb_errno(connection) == NB_OK) return true;
-    else
-    {
-        std::cout << "ERROR: " << nb_errno( connection ) << ": " << nb_err_text_utf8( connection ) << std::endl;
-        return false;
-    }
-}
-QString TabWindow::from_nbvalue(NBValue v)
-{
-    std::string output = "";
-
-    if (v.null == true) return QString("null");
-
-    switch ( v.type )
-    {
-        case NB_DATA_INT: output = std::to_string(v.intv); break;
-        case NB_DATA_DATETIME: for (int i = 0; i< v.len; i+=1) output += v.str[i]; break;
-        case NB_DATA_STRING: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-        case NB_DATA_U16STRING: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-        case NB_DATA_DECIMAL: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-        case NB_DATA_INT64: output = std::to_string(v.int64v); break;
-        case NB_DATA_DOUBLE: output = std::to_string(v.dbl); break;
-        case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
-        case NB_DATA_BINARY: output += *(&v.str); break;
-        case NB_DATA_DATE: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-        case NB_DATA_NONE : output = "none"; break;
-        case NB_DATA_ROWVERSION: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-        case NB_DATA_URI: for (int i = 0; i< v.len; i+=1) output+= v.str[i]; break;
-    }
-    return QString::fromStdString(output);
-}
 
 std::vector<std::string> TabWindow::getParsedQuery(std::string str)
 {

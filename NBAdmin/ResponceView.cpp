@@ -10,13 +10,11 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
 {
     connectIndex_ = connectIndex;
     queryIndex_ = queryIndex;
-    horizontalHeader_ = PrintResultInfo2(nbpool.connects[connectIndex_].result, queryIndex_);
-    rowCount_ = GetRowCount(nbpool.connects[connectIndex_].result, queryIndex_);
-    std::cout<<"rowCount - "<<rowCount_<<std::endl;
+    horizontalHeader_ = getHoryzontalHeader(connectIndex, queryIndex);
 
     for (int i = 0; i< horizontalHeader_.size(); i+=1)
     {
-        this->setHeaderData(i, Qt::Horizontal, QString::fromStdString(horizontalHeader_.at(i)));
+        this->setHeaderData(i, Qt::Horizontal, fromNBValue(horizontalHeader_.at(i)));
     }
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
@@ -29,7 +27,8 @@ QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int 
     }
     if (role == Qt::DisplayRole && orientation == Qt::Horizontal)
     {
-        return QString::fromStdString(horizontalHeader_.at(section));
+        QString tmp = fromNBValue(horizontalHeader_.at(section));
+        return tmp;
     }
     return QVariant();
 }
@@ -48,7 +47,7 @@ int ResponceView::columnCount(const QModelIndex &parent) const
 QVariant ResponceView::data(const QModelIndex &index, int role) const
 {
     if (errFlag_ && role == Qt::DisplayRole) return (QString::fromStdString(errStr_));
-    if (GetRowsAffectedFlag(nbpool.connects[connectIndex_].result, queryIndex_) != "" && role == Qt::DisplayRole) return QString::fromStdString(GetRowsAffectedFlag(nbpool.connects[connectIndex_].result, queryIndex_));
+    if (role == Qt::DisplayRole && rowsAffected_ != 0) return QString("Rows affected: %1").arg(rowsAffected_) ;
 
     if(role != Qt::DisplayRole) return QVariant();
 
@@ -56,34 +55,7 @@ QVariant ResponceView::data(const QModelIndex &index, int role) const
 
     if (index.column() <= horizontalHeader_.size() && index.row() <= rowCount_)
     {
-        NBValue v = GetItemFromTable(nbpool.connects[connectIndex_].result, queryIndex_, index.column(), index.row());
-
-        QString output = "";
-
-        if ( v.null == true ) return QString("null");
-
-        switch ( v.type )
-        {
-        case NB_DATA_INT: output = QString::number( v.intv ); break;
-        case NB_DATA_DATETIME: output = QString( v.str ) ; break;
-        case NB_DATA_STRING: output= QString::fromUtf8( v.str, v.len ); break;
-        case NB_DATA_U16STRING:  output= QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
-        case NB_DATA_DECIMAL: output = QString( v.str ); break;
-        case NB_DATA_INT64: output = QString::number( v.int64v ); break;
-        case NB_DATA_DOUBLE: output = QString::number( v.dbl ); break;
-        case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
-        case NB_DATA_BINARY:
-        {
-            QByteArray utf8Data = QString::fromUtf8(v.str, v.len).toUtf8();
-            for (int i = 0; i < utf8Data.size() && i < 2048; i += 1 ) output += QString::number( (quint8)utf8Data.at(i), 16 );
-            break;
-        }
-        case NB_DATA_DATE: output = QString( v.str ); break;
-        case NB_DATA_NONE : output = "none"; break;
-        case NB_DATA_ROWVERSION: output= QString( v.str ); break;
-        case NB_DATA_URI: output = QString( v.str ); break;
-        }
-        return output;
+        return fromNBValue(getFieldValue(connectIndex_, queryIndex_, index.row(), index.column()));
     }
     return var;
 }
@@ -95,4 +67,34 @@ void ResponceView::setError(std::string& errStr)
 {
     errFlag_ = true;
     errStr_ = errStr;
+}
+
+QString ResponceView::fromNBValue(const NBValue &v) const
+{
+    QString output = "";
+
+    if ( v.null == true ) return QString("null");
+
+    switch ( v.type )
+    {
+    case NB_DATA_INT: output = QString::number( v.intv ); break;
+    case NB_DATA_DATETIME: output = QString( v.str ) ; break;
+    case NB_DATA_STRING: output= QString::fromUtf8( v.str, v.len ); break;
+    case NB_DATA_U16STRING:  output= QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
+    case NB_DATA_DECIMAL: output = QString( v.str ); break;
+    case NB_DATA_INT64: output = QString::number( v.int64v ); break;
+    case NB_DATA_DOUBLE: output = QString::number( v.dbl ); break;
+    case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
+    case NB_DATA_BINARY:
+    {
+        QByteArray utf8Data = QString::fromUtf8(v.str, v.len).toUtf8();
+        for (int i = 0; i < utf8Data.size() && i < 2048; i += 1 ) output += QString::number( (quint8)utf8Data.at(i), 16 );
+        break;
+    }
+    case NB_DATA_DATE: output = QString( v.str ); break;
+    case NB_DATA_NONE : output = "none"; break;
+    case NB_DATA_ROWVERSION: output= QString( v.str ); break;
+    case NB_DATA_URI: output = QString( v.str ); break;
+    }
+    return output;
 }

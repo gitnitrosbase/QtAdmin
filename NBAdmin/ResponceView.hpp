@@ -23,13 +23,16 @@ public:
 
     QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
+    QString fromNBValue(const NBValue &v) const;
+
     ~ResponceView();
 
 public:
-    std::vector<std::string> horizontalHeader_;
+    std::vector<NBValue> horizontalHeader_;
     int rowCount_ = 0;
     int connectIndex_ = 0;
     int queryIndex_ = 0;
     bool errFlag_ = false;
+    int rowsAffected_ = 0;
     std::string errStr_;
 };

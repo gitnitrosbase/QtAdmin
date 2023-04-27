@@ -65,12 +65,6 @@ public slots:
 private:
     std::vector<std::string> getParsedQuery(std::string str);
 
-    bool check_query(NB_HANDLE connection);
-
-    QString from_nbvalue(NBValue value);
-
-    QString exec_select_query(NB_HANDLE connection, QStandardItemModel* model, QString query);
-
     void keyPressEvent(QKeyEvent *event) override;
 
 public:
@@ -79,7 +73,6 @@ public:
     QStringList reqTypesList_;
     QMenu* rightClickMenu_ = nullptr;
     QFont font;
-    SyntaxHighlighter* syntaxHighLight_ = nullptr;
     QList<QString> reqTypes_ = {"NONE", "SELECT", "INSERT", "UPDATE", "DELETE", "TRANSACTION", "ANOTHER"};
     Ui::TabWindow* ui;
     bool flag_ = true;
@@ -87,6 +80,7 @@ public:
     QStatusBar* bar_;
     QsciScintilla* textEdit_ = nullptr;
     QsciLexerSQL* sqlLexer_ = nullptr;
+    NB_HANDLE* connection_ = nullptr;
 
 public:
     int dbPort_;
