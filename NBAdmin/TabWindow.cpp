@@ -160,7 +160,7 @@ void TabWindow::push_button_run_clicked()
         } while ( numberOfReady == 0 );
 
         // get answer count
-        for (int i = 0; i < numberOfReady; i+=1)
+        for (int i = 0; i < queryesVector.size(); i+=1)
         {
             ResponceView* model = new ResponceView();
 
@@ -177,12 +177,16 @@ void TabWindow::push_button_run_clicked()
                 model->setError(errorStr);
             }
 
-            if ( info.rowsAffected != 0 )
+            if ( info.queryType != "SELECT" )
             {
-                model->rowsAffected_ = info.rowsAffected;
                 model->errFlag_ = true; //  Это кастыль... извините
             }
+            else
+            {
+                model->rowCount_ = info.rowsAffected;
+            }
             model->setQueryInfo(tabNumber_, i);
+
             models_.push_back(model);
             reqTypesList_.push_back(QString("Result %1: ").arg(i+1)
                                     /* get query type */
@@ -200,7 +204,7 @@ void TabWindow::push_button_run_clicked()
 
     int end = clock();
     int t = (end - start);
-    std::cout<<"\n\ntime -- "<<t<< " ms\n\n"<<std::endl;
+    std::cout<<"\n\ntime -- "<<t<<" ms\n\n"<<std::endl;
 }
 
 

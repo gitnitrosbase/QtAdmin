@@ -16,6 +16,8 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
     {
         this->setHeaderData(i, Qt::Horizontal, fromNBValue(horizontalHeader_.at(i)));
     }
+
+
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -47,7 +49,7 @@ int ResponceView::columnCount(const QModelIndex &parent) const
 QVariant ResponceView::data(const QModelIndex &index, int role) const
 {
     if (errFlag_ && role == Qt::DisplayRole) return (QString::fromStdString(errStr_));
-    if (role == Qt::DisplayRole && rowsAffected_ != 0) return QString("Rows affected: %1").arg(rowsAffected_) ;
+    if (role == Qt::DisplayRole && rowsAffected_ != 0) return QString("Rows affected: %1").arg(rowsAffected_);
 
     if(role != Qt::DisplayRole) return QVariant();
 
