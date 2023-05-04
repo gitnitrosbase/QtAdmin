@@ -1,4 +1,10 @@
 ==============================================
+Version 8
+---------
+ - Added database support 2.6.108
+ - Added a new text editor (QScintilla)
+ - Fixed minor bugs
+==============================================
 Version 7
 ---------
  - Fixed right-click menu style
