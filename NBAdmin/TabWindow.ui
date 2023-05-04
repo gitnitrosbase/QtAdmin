@@ -41,15 +41,6 @@ QComboBox QListView::item::selectd {
 QTableView {	border: 0px;}</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
-   <property name="leftMargin">
-    <number>0</number>
-   </property>
-   <property name="rightMargin">
-    <number>0</number>
-   </property>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout_"/>
-   </item>
    <item>
     <widget class="QSplitter" name="splitter">
      <property name="styleSheet">
@@ -92,6 +83,9 @@ QScrollBar::handle:horizontal  {
      <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
+     <widget class="QWidget" name="layoutWidget">
+      <layout class="QVBoxLayout" name="verticalLayout_"/>
+     </widget>
      <widget class="QWidget" name="widget" native="true">
       <property name="styleSheet">
        <string notr="true">margin: 0;
