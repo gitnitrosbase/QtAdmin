@@ -25,10 +25,14 @@ public:
 
     QString fromNBValue(const NBValue &v) const;
 
+    QString getFieldValue1(int idconnect, int resnum, int rowIndex, int columnIndex) const;
+
+    std::vector<QString> getHoryzontalHeader1(int idconnect, int resnum);
+
     ~ResponceView();
 
 public:
-    std::vector<NBValue> horizontalHeader_;
+    std::vector<QString> horizontalHeader_;
     int rowCount_ = 0;
     int connectIndex_ = 0;
     int queryIndex_ = 0;

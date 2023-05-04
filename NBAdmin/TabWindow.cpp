@@ -179,7 +179,7 @@ void TabWindow::push_button_run_clicked()
 
             if ( info.queryType != "SELECT" )
             {
-                model->errFlag_ = true; //  Это кастыль... извините
+                model->errFlag_ = true;
             }
             else
             {

@@ -276,7 +276,7 @@ void MainWindow::push_button_plus_clicked()
         }
     }
 
-    ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Query " + QString::number(tabNumber)));
+    ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Query " + QString::number(tabNumber + 1)));
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     tmp->tabNumber_ = tabNumber;
     connect(tmp, &TabWindow::refresh_tree, this, &MainWindow::on_actionRefresh_triggered);
