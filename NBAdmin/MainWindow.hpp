@@ -146,6 +146,37 @@ private:
 
     void filling_tree();
 
+    void getAllExpandedItems(QTreeWidgetItem* item, QStringList& names)
+    {
+        if (item->isExpanded())
+        {
+            names.append(item->text(0));
+        }
+
+        for (int i = 0; i < item->childCount(); i += 1)
+        {
+            QTreeWidgetItem* childItem = item->child(i);
+            getAllExpandedItems(childItem, names);
+        }
+    }
+
+    void expandItems(QTreeWidgetItem* item, const QList<QString>& namesToExpand)
+    {
+        for (int i = 0; i < namesToExpand.count(); i += 1)
+        {
+            if (namesToExpand.at(i).toStdString() == item->text(0).toStdString())
+            {
+                item->setExpanded(true);
+            }
+        }
+
+        for (int i = 0; i < item->childCount(); i += 1)
+        {
+            QTreeWidgetItem* childItem = item->child(i);
+            expandItems(childItem, namesToExpand);
+        }
+    }
+
 private:
     QString userName_ = "";
     QString address_ = "http://127.0.0.1:8008/api3";
@@ -198,6 +229,8 @@ private:
     QAction * createDBQueryAction_ = nullptr;
     QList<int> splitterSize_;
     QList<QTreeWidgetItem*> tables_;
+
+    QList<QString> treeState_;
 
     const int MAXTABCOUNT = 64;
 };

@@ -694,6 +694,13 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
+    QList<QString> expandedItems;
+
+    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)
+    {
+        getAllExpandedItems(ui->treeWidget->topLevelItem(i), expandedItems);
+    }
+
     tables_.clear();
     delete ui->treeWidget;
 
@@ -931,6 +938,17 @@ void MainWindow::filling_tree()
                 });
             }
         }
+
+        for (auto item : expandedItems)
+        {
+            std::cout<<item.toStdString()<<std::endl;
+        }
+
+        for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)
+        {
+            expandItems(ui->treeWidget->topLevelItem(i), expandedItems);
+        }
+
         reply->deleteLater();
     });
 }
