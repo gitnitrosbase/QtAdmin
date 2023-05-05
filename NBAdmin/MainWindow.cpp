@@ -692,7 +692,6 @@ QString MainWindow::runCheck(bool input)
     else return "STOPED";
 }
 
-
 void MainWindow::filling_tree()
 {
     tables_.clear();

@@ -16,6 +16,7 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
     {
         this->setHeaderData(i, Qt::Horizontal, horizontalHeader_.at(i));
     }
+
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -69,6 +70,11 @@ void ResponceView::setError(std::string& errStr)
     errStr_ = errStr;
 }
 
+QString toHex(const QString& str) {
+    QByteArray data = str.toUtf8();
+    return data.toHex();
+}
+
 QString ResponceView::fromNBValue(const NBValue &v) const
 {
     QString output = "";
@@ -81,19 +87,19 @@ QString ResponceView::fromNBValue(const NBValue &v) const
     case NB_DATA_DATETIME: output = QString( v.str ) ; break;
     case NB_DATA_STRING: output= QString::fromUtf8( v.str, v.len ); break;
     case NB_DATA_U16STRING:  output= QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
-    case NB_DATA_DECIMAL: output = QString( v.str ); break;
+    case NB_DATA_DECIMAL: output = QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
     case NB_DATA_INT64: output = QString::number( v.int64v ); break;
     case NB_DATA_DOUBLE: output = QString::number( v.dbl ); break;
     case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
     case NB_DATA_BINARY:
     {
-        QByteArray utf8Data = QString::fromUtf8(v.str, v.len).toUtf8();
-        for (int i = 0; i < utf8Data.size() && i < 2048; i += 1 ) output += QString::number( (quint8)utf8Data.at(i), 16 );
+
+        output = QString( v.str );
         break;
     }
     case NB_DATA_DATE: output = QString( v.str ); break;
     case NB_DATA_NONE : output = "none"; break;
-    case NB_DATA_ROWVERSION: output= QString( v.str ); break;
+    case NB_DATA_ROWVERSION: output= QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
     case NB_DATA_URI: output = QString( v.str ); break;
     }
     return output;
@@ -137,7 +143,11 @@ QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, in
     }
     case NB_DATA_DATE: output = QString( value.str ); break;
     case NB_DATA_NONE : output = "none"; break;
-    case NB_DATA_ROWVERSION: output= QString( value.str ); break;
+    case NB_DATA_ROWVERSION:
+    {
+        output= QString::fromUtf16( (char16_t*)value.str, value.len/2 );
+        break;
+    }
     case NB_DATA_URI: output = QString( value.str ); break;
     }
 

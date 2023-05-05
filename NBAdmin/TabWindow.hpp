@@ -14,6 +14,7 @@
 #include <QClipboard>
 #include <QMimeData>
 #include <QLocale>
+#include <QKeyEvent>
 
 #include <QTableView>
 #include <QStandardItemModel>
@@ -32,7 +33,6 @@
 #include "Qsci/qsciscintilla.h"
 #include "Qsci/qscilexersql.h"
 
-#include "SyntexHightlight.hpp"
 #include "ResponceView.hpp"
 
 #include "ui_TabWindow.h"
@@ -64,7 +64,6 @@ public slots:
 
 private:
     std::vector<std::string> getParsedQuery(std::string str);
-
     void keyPressEvent(QKeyEvent *event) override;
 
 public:
@@ -81,6 +80,10 @@ public:
     QsciScintilla* textEdit_ = nullptr;
     QsciLexerSQL* sqlLexer_ = nullptr;
     NB_HANDLE* connection_ = nullptr;
+
+    QList<QList<QString>> buffers_;
+    QList<int> startIndexes_;
+
 
 public:
     int dbPort_;

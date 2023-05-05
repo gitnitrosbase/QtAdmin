@@ -70,6 +70,7 @@ private:
     QStringList headerTable = {"Name", "Type", "PK", "FK", "FK table", "Identity", "NOT NULL" , "Default", ""};
     std::vector<QString> fieldsTypes_ = {
         "bigint",
+        "bit",
         "binary(50)",
         "char(10)",
         "date",

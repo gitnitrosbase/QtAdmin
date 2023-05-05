@@ -58,7 +58,6 @@ TabWindow::~TabWindow()
 
 void TabWindow::keyPressEvent(QKeyEvent *event)
 {
-
     if (event->key() == 67)
     {
         std::string buffer_;

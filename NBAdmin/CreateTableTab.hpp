@@ -67,6 +67,7 @@ public:
     int port_ = 0;
     std::vector<QString> fieldsTypes_ = {
         "bigint",
+        "bit",
         "binary(50)",
         "char(10)",
         "date",
