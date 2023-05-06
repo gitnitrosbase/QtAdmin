@@ -33,6 +33,9 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     textEdit_->setMatchedBraceBackgroundColor(Qt::yellow);
     textEdit_->setUnmatchedBraceForegroundColor(QColor("#0085c7"));
 
+    //! Подсветка синтаксиса ключевых слов
+    sqlLexer_->setColor(QColor("#0085c7"), QsciLexerSQL::Keyword);
+
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
     ui->statusContainer->addWidget(bar_);
     bar_->addPermanentWidget(ui->label_left,1);
@@ -119,6 +122,12 @@ void TabWindow::setCurrentIndex(int index)
 }
 void TabWindow::push_button_run_clicked()
 {
+    if (buffers_ != nullptr) delete buffers_;
+    if (startIndexes_ != nullptr) delete startIndexes_;
+
+    buffers_ = new QList<QList<QList<QString>>>;
+    startIndexes_ = new QList<int>;
+
     flag_ = false;
     int start = clock();
     input_queries_.clear();
@@ -184,7 +193,7 @@ void TabWindow::push_button_run_clicked()
             {
                 model->rowCount_ = info.rowsAffected;
             }
-            model->setQueryInfo(tabNumber_, i);
+            model->setQueryInfo(tabNumber_, i, buffers_, startIndexes_);
 
             models_.push_back(model);
             reqTypesList_.push_back(QString("Result %1: ").arg(i+1)
@@ -192,6 +201,7 @@ void TabWindow::push_button_run_clicked()
                                     + QString::fromStdString(info.queryType)
                                     + QString(" => ")
                                     + QString::fromStdString(queryesVector.at(i)));
+
         }
 
     });

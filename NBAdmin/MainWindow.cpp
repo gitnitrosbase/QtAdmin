@@ -933,15 +933,14 @@ void MainWindow::filling_tree()
                         }
                         dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
                         dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
+
+                        expandItems(dbTables, expandedItems);
+                        expandItems(dbEdges, expandedItems);
+
                     }
                     reply_table->deleteLater();
                 });
             }
-        }
-
-        for (auto item : expandedItems)
-        {
-            std::cout<<item.toStdString()<<std::endl;
         }
 
         for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)

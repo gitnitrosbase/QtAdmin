@@ -84,7 +84,7 @@ public:
 
     void setError(std::string &errStr);
 
-    void setQueryInfo(int connectIndex, int queryIndex);
+    void setQueryInfo(int connectIndex, int queryIndex, QList<QList<QList<QString>>>* bufferLink, QList<int>* startIndexLink);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const;
 
@@ -98,8 +98,6 @@ public:
 
     QString getFieldValue1(int idconnect, int resnum, int rowIndex, int columnIndex) const;
 
-    QList<QList<QString> > GetBuffer(int connectIndex, int queryIndex, int rowIndex);
-
     std::vector<QString> getHoryzontalHeader1(int idconnect, int resnum);
 
     ~ResponceView();
@@ -112,4 +110,7 @@ public:
     bool errFlag_ = false;
     int rowsAffected_ = 0;
     std::string errStr_;
+
+    QList<QList<QList<QString> > >* bufferLink_ = nullptr;
+    QList<int>* startIndexesLink_ = nullptr;
 };

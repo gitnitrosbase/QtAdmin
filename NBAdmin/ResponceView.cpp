@@ -6,8 +6,11 @@ ResponceView::ResponceView(QObject *parent)
 {
 
 }
-void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
+void ResponceView::setQueryInfo(int connectIndex, int queryIndex, QList<QList<QList<QString>>>* bufferLink, QList<int>* startIndexLink)
 {
+    startIndexesLink_ = startIndexLink;
+    bufferLink_ = bufferLink;
+
     connectIndex_ = connectIndex;
     queryIndex_ = queryIndex;
     horizontalHeader_ = getHoryzontalHeader1(connectIndex, queryIndex);
@@ -16,6 +19,8 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
     {
         this->setHeaderData(i, Qt::Horizontal, horizontalHeader_.at(i));
     }
+
+//    bufferLink_->at(queryIndex) = GetBuffer(connectIndex, queryIndex, 0);
 
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
@@ -42,7 +47,6 @@ int ResponceView::rowCount(const QModelIndex &parent) const
 int ResponceView::columnCount(const QModelIndex &parent) const
 {
     if (errFlag_) return 1;
-
     return horizontalHeader_.size();
 }
 QVariant ResponceView::data(const QModelIndex &index, int role) const
@@ -56,6 +60,16 @@ QVariant ResponceView::data(const QModelIndex &index, int role) const
 
     if (index.column() <= horizontalHeader_.size() && index.row() <= rowCount_)
     {
+//        if ( index.row() >= startIndexesLink_->at(queryIndex_) && index.row() <= (startIndexesLink_->at(queryIndex_) + 1000) )
+//        {
+//            int rowIndex = index.row() - startIndexesLink_->at(queryIndex_);
+
+//            return bufferLink_->at(queryIndex_).at(rowIndex).at(index.column());
+//        }
+//        else
+//        {
+//            GetBuffer(connectIndex_, queryIndex_, index.row());
+//        }
         return getFieldValue1(connectIndex_, queryIndex_, index.row(), index.column());
     }
     return var;

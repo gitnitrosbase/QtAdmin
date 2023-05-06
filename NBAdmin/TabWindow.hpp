@@ -32,6 +32,7 @@
 
 #include "Qsci/qsciscintilla.h"
 #include "Qsci/qscilexersql.h"
+#include "Qsci/qscilexercpp.h"
 
 #include "ResponceView.hpp"
 
@@ -79,10 +80,9 @@ public:
     QStatusBar* bar_;
     QsciScintilla* textEdit_ = nullptr;
     QsciLexerSQL* sqlLexer_ = nullptr;
-    NB_HANDLE* connection_ = nullptr;
 
-    QList<QList<QString>> buffers_;
-    QList<int> startIndexes_;
+    QList<QList<QList<QString> > >* buffers_ = nullptr;
+    QList<int>* startIndexes_ = nullptr;
 
 
 public:

@@ -162,17 +162,26 @@ private:
 
     void expandItems(QTreeWidgetItem* item, const QList<QString>& namesToExpand)
     {
+        QString tmp = item->text(0);
+
         for (int i = 0; i < namesToExpand.count(); i += 1)
         {
-            if (namesToExpand.at(i).toStdString() == item->text(0).toStdString())
+            QString itemInTree = item->text(0);
+            if (namesToExpand.at(i) == item->text(0))
             {
                 item->setExpanded(true);
+                break;
             }
         }
 
         for (int i = 0; i < item->childCount(); i += 1)
         {
             QTreeWidgetItem* childItem = item->child(i);
+
+            bool isNumber = false;
+            item->text(0).toInt(&isNumber, 10);
+            if( isNumber ) continue;
+
             expandItems(childItem, namesToExpand);
         }
     }
