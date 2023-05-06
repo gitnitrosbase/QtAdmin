@@ -5,6 +5,21 @@
 #include "nb-samples.h"
 #include <iostream>
 
+inline std::string convertToHex(const char16_t* input)
+{
+    std::ostringstream oss;
+    oss << std::hex << std::uppercase /*<< std::setfill('0')*/;
+
+    const char16_t* ptr = input;
+    while (*ptr != u'\0')
+    {
+        oss << static_cast<unsigned short>(*ptr);
+        ++ptr;
+    }
+
+    return oss.str();
+}
+
 inline QList<QList<QString> > GetBuffer(int connectIndex, int queryIndex, int rowIndex)
 {
     QList<QList<QString> > output;

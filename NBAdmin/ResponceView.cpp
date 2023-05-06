@@ -151,15 +151,16 @@ QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, in
     case NB_DATA_BOOL: output = ( ( value.intv ) ? "TRUE" : "FALSE" ); break;
     case NB_DATA_BINARY:
     {
-        QByteArray utf8Data = QString::fromUtf8(value.str, value.len).toUtf8();
-        for (int i = 0; i < utf8Data.size() && i < 2048; i += 1 ) output += QString::number( (quint8)utf8Data.at(i), 16 );
+        output = QString::fromStdString(convertToHex((char16_t*)value.str));
+        output.push_front("0x");
         break;
     }
     case NB_DATA_DATE: output = QString( value.str ); break;
     case NB_DATA_NONE : output = "none"; break;
     case NB_DATA_ROWVERSION:
     {
-        output= QString::fromUtf16( (char16_t*)value.str, value.len/2 );
+        output.push_front("0x");
+        output.push_back(QString::fromStdString(convertToHex((char16_t*)value.str)));
         break;
     }
     case NB_DATA_URI: output = QString( value.str ); break;
