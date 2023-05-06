@@ -193,7 +193,7 @@ void TabWindow::push_button_run_clicked()
             {
                 model->rowCount_ = info.rowsAffected;
             }
-            model->setQueryInfo(tabNumber_, i, buffers_, startIndexes_);
+            model->setQueryInfo(tabNumber_, i);
 
             models_.push_back(model);
             reqTypesList_.push_back(QString("Result %1: ").arg(i+1)

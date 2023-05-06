@@ -242,4 +242,5 @@ private:
     QList<QString> treeState_;
 
     const int MAXTABCOUNT = 64;
+
 };

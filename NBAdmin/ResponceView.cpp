@@ -6,11 +6,8 @@ ResponceView::ResponceView(QObject *parent)
 {
 
 }
-void ResponceView::setQueryInfo(int connectIndex, int queryIndex, QList<QList<QList<QString>>>* bufferLink, QList<int>* startIndexLink)
+void ResponceView::setQueryInfo(int connectIndex, int queryIndex)
 {
-    startIndexesLink_ = startIndexLink;
-    bufferLink_ = bufferLink;
-
     connectIndex_ = connectIndex;
     queryIndex_ = queryIndex;
     horizontalHeader_ = getHoryzontalHeader1(connectIndex, queryIndex);
@@ -19,9 +16,6 @@ void ResponceView::setQueryInfo(int connectIndex, int queryIndex, QList<QList<QL
     {
         this->setHeaderData(i, Qt::Horizontal, horizontalHeader_.at(i));
     }
-
-//    bufferLink_->at(queryIndex) = GetBuffer(connectIndex, queryIndex, 0);
-
 }
 QVariant ResponceView::headerData(int section, Qt::Orientation orientation, int role) const
 {
@@ -89,35 +83,6 @@ QString toHex(const QString& str) {
     return data.toHex();
 }
 
-QString ResponceView::fromNBValue(const NBValue &v) const
-{
-    QString output = "";
-
-    if ( v.null == true ) return QString("null");
-
-    switch ( v.type )
-    {
-    case NB_DATA_INT: output = QString::number( v.intv ); break;
-    case NB_DATA_DATETIME: output = QString( v.str ) ; break;
-    case NB_DATA_STRING: output= QString::fromUtf8( v.str, v.len ); break;
-    case NB_DATA_U16STRING:  output= QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
-    case NB_DATA_DECIMAL: output = QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
-    case NB_DATA_INT64: output = QString::number( v.int64v ); break;
-    case NB_DATA_DOUBLE: output = QString::number( v.dbl ); break;
-    case NB_DATA_BOOL: output = ( ( v.intv ) ? "TRUE" : "FALSE" ); break;
-    case NB_DATA_BINARY:
-    {
-
-        output = QString( v.str );
-        break;
-    }
-    case NB_DATA_DATE: output = QString( v.str ); break;
-    case NB_DATA_NONE : output = "none"; break;
-    case NB_DATA_ROWVERSION: output= QString::fromUtf16( (char16_t*)v.str, v.len/2 ); break;
-    case NB_DATA_URI: output = QString( v.str ); break;
-    }
-    return output;
-}
 QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, int columnIndex) const
 {
     QString output;
@@ -151,16 +116,18 @@ QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, in
     case NB_DATA_BOOL: output = ( ( value.intv ) ? "TRUE" : "FALSE" ); break;
     case NB_DATA_BINARY:
     {
-        output = QString::fromStdString(convertToHex((char16_t*)value.str));
-        output.push_front("0x");
+        output += "0x";
+        output += QString::fromStdString(convertToHex((char16_t*)value.str));
+
         break;
     }
     case NB_DATA_DATE: output = QString( value.str ); break;
     case NB_DATA_NONE : output = "none"; break;
     case NB_DATA_ROWVERSION:
     {
-        output.push_front("0x");
-        output.push_back(QString::fromStdString(convertToHex((char16_t*)value.str)));
+        output += "0x";
+        output += QString::fromStdString(convertToHex8((char*)value.str));
+
         break;
     }
     case NB_DATA_URI: output = QString( value.str ); break;
