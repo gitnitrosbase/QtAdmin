@@ -200,11 +200,21 @@ inline ConnectInfo GetConnectInfo(int connectIndex, int queryIndex )
 {
     ConnectInfo output;
 
+
     int querytype, rowsaffected, queryerror, recordstartindex = 0;
     nb_stop_and_settorecord( connectIndex, queryIndex, recordstartindex, &querytype, &rowsaffected, &queryerror );
 
+    int isallready, numberOfReady;
+    NB_HANDLE connection;
+    do
+    {
+        nb_check_result( connectIndex, &isallready, &numberOfReady, &connection );
+    } while ( numberOfReady == 0 );
+
     output.queryError = queryerror;
-    output.rowsAffected = rowsaffected;
+    output.rowsAffected = 0;
+
+    while ( nb_fetch_row( connection ) == NB_OK) output.rowsAffected += 1;
 
     switch (querytype)
     {

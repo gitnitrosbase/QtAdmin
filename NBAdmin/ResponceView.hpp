@@ -36,9 +36,10 @@ inline std::string convertToHex8(const char* input)
 
 //QList<QList<QList<QList<QString> > > > buffer_{64};
 //QList<QList<int> > startIndexes_;
+
 //inline void writeToBuffer(int connectIndex, int queryIndex, int startRow)
 //{
-//    buffer_;
+
 //}
 //inline QString getFromBuffer(int connectIndex, int queryIndex, int rowIndex, int columnIndex)
 //{
