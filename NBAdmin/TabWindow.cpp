@@ -43,6 +43,9 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     ui->label_left->setText("left");
     ui->label_right->setText("right");
     ui->tableWidget_->setLocale(QLocale::Russian);
+
+    timer_ = new QTimer();
+    connect(timer_, SIGNAL(timeout()), this, SLOT(modelTimerSlot()));
 }
 
 
@@ -51,12 +54,67 @@ TabWindow::~TabWindow()
     delete ui;
     delete textEdit_;
     delete sqlLexer_;
+    delete bar_;
+    delete timer_;
 
     for (auto item : models_)
     {
         delete item;
     }
     models_.clear();
+}
+
+void TabWindow::modelTimerSlot()
+{
+    reqTypesList_.clear();
+    firstPaintModelFlag_ = true;
+    int isallready, numberOfReady;
+    NB_HANDLE connection;
+
+    nb_check_result( tabNumber_, &isallready, &numberOfReady, &connection );
+
+
+    //int startIndex = models_.size() == 0 ? 0 : models_.size() - 1;
+    for (int i = models_.size() ; i < numberOfReady - 1; i += 1 )
+    {
+        ResponceView* model = new ResponceView();
+
+        // get info about subquery
+
+        ConnectInfo info = GetConnectInfo(tabNumber_, i);
+
+        if (info.queryError != NB_OK)
+        {
+            size_t errorBufLen;
+            std::string errorStr;
+            const char* errorBuf = nb_err_text_utf8(connection, &errorBufLen);
+            for (size_t i = 0; i < errorBufLen; i += 1 ) errorStr += errorBuf[i];
+            model->setError(errorStr);
+        }
+
+        if ( info.queryType != "SELECT" )
+        {
+            model->errFlag_ = true;
+        }
+        else
+        {
+            model->rowCount_ = info.rowsAffected;
+        }
+        model->setQueryInfo(tabNumber_, i);
+
+        models_.push_back(model);
+        reqTypesList_.push_back(QString("Result %1: ").arg(i+1)
+        /* get query type */
+        + QString::fromStdString(info.queryType)
+                                + QString(" => "));
+
+
+    }
+
+    // add input queries to comboBox
+
+    ui->comboBox_->addItems(reqTypesList_);
+    if ( isallready == 0 ) timer_->start(300);
 }
 
 void TabWindow::keyPressEvent(QKeyEvent *event)
@@ -122,6 +180,7 @@ void TabWindow::setCurrentIndex(int index)
 }
 void TabWindow::push_button_run_clicked()
 {
+    firstPaintModelFlag_ = true;
     if (buffers_ != nullptr) delete buffers_;
     if (startIndexes_ != nullptr) delete startIndexes_;
 
@@ -150,66 +209,12 @@ void TabWindow::push_button_run_clicked()
     else executeText = textEdit_->text();
 
     // fill models
+    nb_execute_sql_fortab_utf8(tabNumber_, dbPort_, executeText.toStdString().c_str(), executeText.toStdString().size());
 
-    std::thread th1([=]()
-    {
-        // execute query
-        nb_execute_sql_fortab_utf8(tabNumber_, dbPort_, executeText.toStdString().c_str(), executeText.toStdString().size());
+    timer_->start(0);
 
-        std::vector<std::string> queryesVector = getParsedQuery(executeText.toStdString());
-
-        for (auto item : queryesVector) item = item.substr(0, item.size() > 60 ? 60 : item.size());
-
-        int isallready, numberOfReady;
-        NB_HANDLE connection;
-        do
-        {
-            nb_check_result( tabNumber_, &isallready, &numberOfReady, &connection );
-        } while ( numberOfReady == 0 );
-
-        // get answer count
-        for (int i = 0; i < queryesVector.size(); i+=1)
-        {
-            ResponceView* model = new ResponceView();
-
-            // get info about subquery
-
-            ConnectInfo info = GetConnectInfo(tabNumber_, i);
-
-            if (info.queryError != NB_OK)
-            {
-                size_t errorBufLen;
-                std::string errorStr;
-                const char* errorBuf = nb_err_text_utf8(connection, &errorBufLen);
-                for (size_t i = 0; i < errorBufLen; i += 1 ) errorStr += errorBuf[i];
-                model->setError(errorStr);
-            }
-
-            if ( info.queryType != "SELECT" )
-            {
-                model->errFlag_ = true;
-            }
-            else
-            {
-                model->rowCount_ = info.rowsAffected;
-            }
-            model->setQueryInfo(tabNumber_, i);
-
-            models_.push_back(model);
-            reqTypesList_.push_back(QString("Result %1: ").arg(i+1)
-                                    /* get query type */
-                                    + QString::fromStdString(info.queryType)
-                                    + QString(" => ")
-                                    + QString::fromStdString(queryesVector.at(i)));
-
-        }
-
-    });
-    th1.join();
     flag_ = true;
 
-    // add input queries to comboBox
-    ui->comboBox_->addItems(reqTypesList_);
 
     int end = clock();
     int t = (end - start);

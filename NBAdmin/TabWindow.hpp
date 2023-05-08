@@ -15,6 +15,7 @@
 #include <QMimeData>
 #include <QLocale>
 #include <QKeyEvent>
+#include <QTimer>
 
 #include <QTableView>
 #include <QStandardItemModel>
@@ -63,6 +64,8 @@ public slots:
 
     void push_button_run_clicked();
 
+    void modelTimerSlot();
+
 private:
     std::vector<std::string> getParsedQuery(std::string str);
     void keyPressEvent(QKeyEvent *event) override;
@@ -84,6 +87,8 @@ public:
     QList<QList<QList<QString> > >* buffers_ = nullptr;
     QList<int>* startIndexes_ = nullptr;
 
+    QTimer* timer_ = nullptr;
+    bool firstPaintModelFlag_ = true;
 
 public:
     int dbPort_;
