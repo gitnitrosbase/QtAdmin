@@ -1,3 +1,8 @@
+Version 9
+---------
+ - Added tree state saving
+ - Added a new way to output query results
+ - Fixed minor bugs
 ==============================================
 Version 8
 ---------
