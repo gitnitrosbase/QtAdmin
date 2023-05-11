@@ -1,3 +1,8 @@
+Version 10
+---------
+ - Fixed binary type output error
+ - Added database support for version 2.6.130
+==============================================
 Version 9
 ---------
  - Added tree state saving
