@@ -12,7 +12,7 @@ inline std::string convertToHex(const char16_t* input, size_t len)
     oss << std::hex << std::uppercase;
 
     const unsigned char* ptr = reinterpret_cast<const unsigned char*>(input);
-    for (size_t i = 0; i < len; ++i)
+    for (size_t i = 0; i < len < 60 ? len : 60; ++i)
     {
         unsigned int hexValue = static_cast<unsigned int>(ptr[i]);
         oss << std::setw(2) << std::setfill('0') << hexValue;
