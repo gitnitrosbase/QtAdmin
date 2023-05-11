@@ -200,7 +200,6 @@ inline ConnectInfo GetConnectInfo(int connectIndex, int queryIndex )
 {
     ConnectInfo output;
 
-
     int querytype, rowsaffected, queryerror, recordstartindex = 0;
     nb_stop_and_settorecord( connectIndex, queryIndex, recordstartindex, &querytype, &rowsaffected, &queryerror );
 
@@ -211,21 +210,32 @@ inline ConnectInfo GetConnectInfo(int connectIndex, int queryIndex )
         nb_check_result( connectIndex, &isallready, &numberOfReady, &connection );
     } while ( numberOfReady == 0 );
 
-    output.queryError = queryerror;
-    output.rowsAffected = 0;
-
-    while ( nb_fetch_row( connection ) == NB_OK) output.rowsAffected += 1;
-
-    switch (querytype)
+    if ( int errorNum = nb_errno(connection) != NB_OK)
     {
-    case 0: output.queryType = "ERROR"; break;
-    case 1: output.queryType = "SELECT"; break;
-    case 2: output.queryType = "INSERT"; break;
-    case 3: output.queryType = "UPDATE"; break;
-    case 4: output.queryType = "DELETE"; break;
-    case 5: output.queryType = "TRANSACTION"; break;
-    default: output.queryType = "ANOTHER"; break;
+        output.queryType = "ERROR";
+        output.queryError = errorNum;
+        size_t errorStrLen = 0;
+        const char* errorBuf = nb_err_text_utf8(connection, &errorStrLen);
+        std::string buf = std::string(errorBuf, errorStrLen);
     }
-    nb_continue_work( connectIndex );
+    else
+    {
+        output.queryError = queryerror;
+        output.rowsAffected = 0;
+
+        while ( nb_fetch_row( connection ) == NB_OK) output.rowsAffected += 1;
+
+        switch (querytype)
+        {
+            case 0: output.queryType = "ERROR"; break;
+            case 1: output.queryType = "SELECT"; break;
+            case 2: output.queryType = "INSERT"; break;
+            case 3: output.queryType = "UPDATE"; break;
+            case 4: output.queryType = "DELETE"; break;
+            case 5: output.queryType = "TRANSACTION"; break;
+            default: output.queryType = "ANOTHER"; break;
+        }
+        nb_continue_work( connectIndex );
+    }
     return output;
 }

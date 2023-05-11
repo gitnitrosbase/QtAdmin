@@ -73,8 +73,6 @@ void TabWindow::modelTimerSlot()
 
     nb_check_result( tabNumber_, &isallready, &numberOfReady, &connection );
 
-
-    //int startIndex = models_.size() == 0 ? 0 : models_.size() - 1;
     for (int i = models_.size() ; i < numberOfReady - 1; i += 1 )
     {
         ResponceView* model = new ResponceView();
@@ -107,8 +105,6 @@ void TabWindow::modelTimerSlot()
         /* get query type */
         + QString::fromStdString(info.queryType)
                                 + QString(" => "));
-
-
     }
 
     // add input queries to comboBox
