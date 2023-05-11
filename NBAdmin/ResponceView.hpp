@@ -6,15 +6,16 @@
 #include <iostream>
 
 
-inline std::string convertToHex(const char16_t* input)
+inline std::string convertToHex(const char16_t* input, size_t len)
 {
     std::ostringstream oss;
-    oss << std::hex << std::uppercase << std::setfill('0');
+    oss << std::hex << std::uppercase;
 
     const unsigned char* ptr = reinterpret_cast<const unsigned char*>(input);
-    for (int i = 0; i < input[i] != '\0'; ++i)
+    for (size_t i = 0; i < len; ++i)
     {
-        oss << static_cast<unsigned int>(ptr[i]);
+        unsigned int hexValue = static_cast<unsigned int>(ptr[i]);
+        oss << std::setw(2) << std::setfill('0') << hexValue;
     }
 
     return oss.str();
@@ -23,7 +24,7 @@ inline std::string convertToHex(const char16_t* input)
 inline std::string convertToHex8(const char* input)
 {
     std::ostringstream oss;
-    oss << std::hex << std::uppercase << std::setfill('0');
+    oss << std::hex << std::uppercase;
 
     const unsigned char* ptr = reinterpret_cast<const unsigned char*>(input);
     for (int i = 0; i < 8; ++i)

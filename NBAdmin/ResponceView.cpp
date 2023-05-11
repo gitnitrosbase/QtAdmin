@@ -117,7 +117,7 @@ QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, in
     case NB_DATA_BINARY:
     {
         output += "0x";
-        output += QString::fromStdString(convertToHex((char16_t*)value.str));
+        output += QString::fromStdString(convertToHex((char16_t*)value.str, value.len));
 
         break;
     }
