@@ -111,6 +111,10 @@ void TabWindow::modelTimerSlot()
 
     ui->comboBox_->addItems(reqTypesList_);
     if ( isallready == 0 ) timer_->start(300);
+    else
+    {
+        emit turnOnRunButtonSignal();
+    }
 }
 
 void TabWindow::keyPressEvent(QKeyEvent *event)
@@ -176,6 +180,7 @@ void TabWindow::setCurrentIndex(int index)
 }
 void TabWindow::push_button_run_clicked()
 {
+    emit turnOffRunButtonSignal();
     firstPaintModelFlag_ = true;
     if (buffers_ != nullptr) delete buffers_;
     if (startIndexes_ != nullptr) delete startIndexes_;

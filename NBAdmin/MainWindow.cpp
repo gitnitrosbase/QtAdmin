@@ -280,6 +280,9 @@ void MainWindow::push_button_plus_clicked()
     ui->tabWidget->setCurrentIndex(ui->tabWidget->count() - 1);
     tmp->tabNumber_ = tabNumber;
     connect(tmp, &TabWindow::refresh_tree, this, &MainWindow::on_actionRefresh_triggered);
+
+    connect(tmp, &TabWindow::turnOnRunButtonSignal, this, &MainWindow::turnOnRunButton);
+    connect(tmp, &TabWindow::turnOffRunButtonSignal, this, &MainWindow::turnOffRunButton);
 }
 void MainWindow::on_tabWidget_tabCloseRequested(int index)
 {

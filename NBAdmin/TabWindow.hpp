@@ -55,6 +55,9 @@ public:
 signals:
     void refresh_tree();
 
+    void turnOnRunButtonSignal();
+    void turnOffRunButtonSignal();
+
 public slots:
     QString textFromTextEdit();
 

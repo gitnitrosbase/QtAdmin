@@ -63,6 +63,16 @@ public:
     explicit MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
+public slots:
+    void turnOnRunButton()
+    {
+        ui->Run->setEnabled(true);
+    };
+    void turnOffRunButton()
+    {
+        ui->Run->setEnabled(false);
+    };
+
 private slots:
 
     void filling_tree_slot();
