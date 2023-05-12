@@ -385,11 +385,11 @@ void MainWindow::on_actionSelectEdgeTrig()
 
     for(int i = ui->treeWidget->currentItem()->child(0)->text(0).size()-1; i >=0; i-=1)
     {
-        if(ui->treeWidget->currentItem()->child(0)->text(0).at(i) != ' ') fromId += ui->treeWidget->currentItem()->child(0)->text(0).at(i); else break;
+        if(ui->treeWidget->currentItem()->child(0)->text(0).at(i) != '>') fromId += ui->treeWidget->currentItem()->child(0)->text(0).at(i); else break;
     }
     for(int i = ui->treeWidget->currentItem()->child(1)->text(0).size()-1; i >=0; i-=1)
     {
-        if(ui->treeWidget->currentItem()->child(1)->text(0).at(i) != ' ') toId += ui->treeWidget->currentItem()->child(1)->text(0).at(i); else break;
+        if(ui->treeWidget->currentItem()->child(1)->text(0).at(i) != '>') toId += ui->treeWidget->currentItem()->child(1)->text(0).at(i); else break;
     }
 
     std::reverse(fromId.begin(), fromId.end());
