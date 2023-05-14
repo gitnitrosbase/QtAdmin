@@ -189,7 +189,6 @@ void TabWindow::push_button_run_clicked()
     startIndexes_ = new QList<int>;
 
     flag_ = false;
-    int start = clock();
     input_queries_.clear();
     ui->comboBox_->clear();
     reqTypesList_.clear();
@@ -215,11 +214,6 @@ void TabWindow::push_button_run_clicked()
     timer_->start(0);
 
     flag_ = true;
-
-
-    int end = clock();
-    int t = (end - start);
-    std::cout<<"\n\ntime -- "<<t<<" ms\n\n"<<std::endl;
 }
 
 
