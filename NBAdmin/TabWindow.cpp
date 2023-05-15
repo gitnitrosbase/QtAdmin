@@ -73,7 +73,7 @@ void TabWindow::modelTimerSlot()
 
     nb_check_result( tabNumber_, &isallready, &numberOfReady, &connection );
 
-    for (int i = models_.size() ; i < numberOfReady - 1; i += 1 )
+    for (int i = models_.size() ; i < numberOfReady; i += 1 )
     {
         ResponceView* model = new ResponceView();
 
@@ -119,7 +119,7 @@ void TabWindow::modelTimerSlot()
 
 void TabWindow::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == 67)
+    if ( event->key() == 67 )
     {
         std::string buffer_;
 

@@ -100,10 +100,13 @@ MainWindow::~MainWindow()
         configFile.flush();
         configFile.close();
     }
-
     delete ui;
 }
 
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    if ( event->key() == Qt::Key_F5 && ui->Run->isEnabled() ) push_button_run_clicked();
+}
 
 void MainWindow::filling_tree_slot()
 {
@@ -762,15 +765,6 @@ void MainWindow::filling_tree()
         {
             QJsonDocument copyReply = QJsonDocument::fromJson(reply->readAll());
 
-            QFile dbsInfo("dbsInfo.txt");
-            dbsInfo.open(QIODevice::ReadWrite);
-            if (dbsInfo.isOpen())
-            {
-                dbsInfo.write(copyReply.toJson());
-                dbsInfo.close();
-            }
-
-
             QJsonObject Responce = copyReply.object();
             QJsonArray tmpArray = Responce["list"].toArray();
             dbList_.clear();
@@ -824,11 +818,6 @@ void MainWindow::filling_tree()
                         QJsonDocument copy_reply_table = QJsonDocument::fromJson(reply_table->readAll());
                         QJsonObject Responce = copy_reply_table.object();
                         QJsonArray tmpArray = Responce["data"].toArray();
-
-                        QFile filename(QString("file" + QString::number(i) + ".txt"));
-                        filename.open(QIODevice::ReadWrite);
-                        filename.write(copy_reply_table.toJson());
-                        filename.close();
 
                         QTreeWidgetItem* dbTables = new QTreeWidgetItem();
                         dbName->addChild(dbTables);
