@@ -1,3 +1,8 @@
+Version 11
+---------
+ - Fixed minor bugs
+ - Added processing of the f5 button
+==============================================
 Version 10
 ---------
  - Fixed binary type output error
