@@ -255,4 +255,7 @@ private:
 
     const int MAXTABCOUNT = 64;
 
+    QByteArray dbsData_;
+    QByteArray tablesData_;
+    std::mutex mutex_;
 };

@@ -759,189 +759,194 @@ void MainWindow::filling_tree()
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
+
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if (reply->error() == QNetworkReply::NoError)
     {
-        if(reply->error() == QNetworkReply::NoError)
+        dbsData_ = reply->readAll();
+    }
+
+    reply->deleteLater();
+
+    QJsonDocument copyReply = QJsonDocument::fromJson(dbsData_);
+
+    QJsonObject Responce = copyReply.object();
+    QJsonArray tmpArray = Responce["list"].toArray();
+    dbList_.clear();
+
+    int i = 0;
+
+    for (auto item_db : tmpArray)
+    {
+
+        QTreeWidgetItem *dbName = new QTreeWidgetItem();
+        dbName->setText(0, QString(item_db.toObject().find("dbname").value().toString()
+                                   + " "
+                                   + QString::number(item_db.toObject().find("port").value().toInt())
+        ));
+        ui->treeWidget->addTopLevelItem(dbName);
+
+        dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()),
+                                               item_db.toObject().find("port").value().toInt()));
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 8;
+        obj["port"] = item_db.toObject().find("port").value().toInt();
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply_table = mgr->post(request, data);
+
+        QEventLoop loop_tables;
+        QObject::connect(reply_table, &QNetworkReply::finished, &loop_tables, &QEventLoop::quit);
+        loop_tables.exec();
+
+        if (reply_table->error() == QNetworkReply::NoError)
         {
-            QJsonDocument copyReply = QJsonDocument::fromJson(reply->readAll());
+            tablesData_ = reply_table->readAll();
+        }
 
-            QJsonObject Responce = copyReply.object();
-            QJsonArray tmpArray = Responce["list"].toArray();
-            dbList_.clear();
+        reply_table->deleteLater();
 
-            int i = 0;
+        QTreeWidgetItem *runableProperty = new QTreeWidgetItem;
 
-            for (auto item_db : tmpArray)
+        if (!item_db.toObject().find("run")->toBool()) {
+            dbName->setIcon(0, QIcon(":/images/false.png"));
+            runableProperty->setText(0, "0");
+            continue;
+        } else {
+            dbName->setIcon(0, QIcon(":/images/true.png"));
+            runableProperty->setText(0, "1");
+        }
+
+        dbName->addChild(runableProperty);
+        runableProperty->setHidden(true);
+
+        i += 1;
+
+        QJsonDocument copy_reply_table = QJsonDocument::fromJson(tablesData_);
+        QJsonObject Responce = copy_reply_table.object();
+        QJsonArray tmpArray = Responce["data"].toArray();
+
+        QTreeWidgetItem* dbTables = new QTreeWidgetItem();
+        dbName->addChild(dbTables);
+
+        QTreeWidgetItem* dbEdges = new QTreeWidgetItem();
+        dbName->addChild(dbEdges);
+
+        int tablesCount = 0;
+        int edgesCount = 0;
+
+        for (auto item_table : tmpArray)
+        {
+            if (item_table.toObject().find("type").value().toInt() == 2)
             {
-                QTreeWidgetItem* dbName = new QTreeWidgetItem();
-                dbName->setText(0, QString(item_db.toObject().find("dbname").value().toString()
-                                           + " "
-                                           + QString::number(item_db.toObject().find("port").value().toInt())
-                                           ));
-                ui->treeWidget->addTopLevelItem(dbName);
+                QTreeWidgetItem* table_name = new QTreeWidgetItem();
+                table_name->setText(0,item_table.toObject().find("tablename").value().toString());
+                dbTables->addChild(table_name);
+                QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
 
-                dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()), item_db.toObject().find("port").value().toInt()));
-                QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-                QUrl url(address_);
-                QNetworkRequest request(url);
-                request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-                QJsonObject obj;
-                obj["cmd"] = 8;
-                obj["port"] = item_db.toObject().find("port").value().toInt();
-                QJsonDocument doc(obj);
-                QByteArray data = doc.toJson();
-                QNetworkReply *reply_table = mgr->post(request, data);
+                QTreeWidgetItem* columnItem = new QTreeWidgetItem();
+                columnItem->setText(0, "Columns");
+                table_name->addChild(columnItem);
 
-                QTreeWidgetItem* runableProperty = new QTreeWidgetItem;
+                QTreeWidgetItem* indexItem = new QTreeWidgetItem();
+                indexItem->setText(0, "Indexes");
+                table_name->addChild(indexItem);
 
-                if ( !item_db.toObject().find("run")->toBool())
+                QJsonArray indexesArray = Responce["indexes"].toArray();
+                tables_.push_back(table_name);
+
+                for (auto item_field : fields_array)
                 {
-                    dbName->setIcon(0, QIcon(":/images/false.png"));
-                    runableProperty->setText(0, "0");
-                    continue;
+                    QTreeWidgetItem* field = new QTreeWidgetItem();
+                    field->setText(0, QString(item_field.toObject().find("name")->toString()
+                                              + QString(" [")
+                                              + getType(item_field.toObject())
+                                              + nullCheck(item_field.toObject().find("nullable")->toInt())
+                                              + QString("] ")
+                                              + linkCheck(item_field.toObject().find("linktable")->toString())
+                    ));
+                    columnItem->addChild(field);
+
+                    QTreeWidgetItem* fieldName = new QTreeWidgetItem();
+                    fieldName->setText(0, item_field.toObject().find("name")->toString());
+                    field->addChild(fieldName);
+                    fieldName->setHidden(true);
+
+                    QTreeWidgetItem* fieldTipe = new QTreeWidgetItem();
+                    if (item_field.toObject().find("subtype")->toInt() == 1) fieldTipe->setText(0, "1");
+                    else fieldTipe->setText(0, "0");
+                    field->addChild(fieldTipe);
+                    fieldTipe->setHidden(true);
                 }
-                else
+
+                columnItem->setText(0, QString("Columns (" + QString::number(fields_array.count()) + ")"));
+
+                int indexesCount = 0;
+                for (auto item_field : indexesArray)
                 {
-                    dbName->setIcon(0, QIcon(":/images/true.png"));
-                    runableProperty->setText(0, "1");
-                }
-
-                dbName->addChild(runableProperty);
-                runableProperty->setHidden(true);
-
-                i+=1;
-
-                connect(reply_table, &QNetworkReply::finished, [=]()
-                {
-                    if(reply_table->error() == QNetworkReply::NoError)
+                    if (item_field.toObject().find("table")->toString() == table_name->text(0))
                     {
-                        QJsonDocument copy_reply_table = QJsonDocument::fromJson(reply_table->readAll());
-                        QJsonObject Responce = copy_reply_table.object();
-                        QJsonArray tmpArray = Responce["data"].toArray();
+                        indexesCount += 1;
+                        QTreeWidgetItem* field = new QTreeWidgetItem();
 
-                        QTreeWidgetItem* dbTables = new QTreeWidgetItem();
-                        dbName->addChild(dbTables);
+                        field->setText(0, QString(item_field.toObject().find("name")->toString()));
 
-                        QTreeWidgetItem* dbEdges = new QTreeWidgetItem();
-                        dbName->addChild(dbEdges);
+                        QJsonArray indexesArray = item_field.toObject().find("fields")->toArray();
 
-                        int tablesCount = 0;
-                        int edgesCount = 0;
-
-                        for (auto item_table : tmpArray)
+                        for (auto item_index : indexesArray)
                         {
-                            if (item_table.toObject().find("type").value().toInt() == 2)
-                            {
-                                QTreeWidgetItem* table_name = new QTreeWidgetItem();
-                                table_name->setText(0,item_table.toObject().find("tablename").value().toString());
-                                dbTables->addChild(table_name);
-                                QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
+                            QTreeWidgetItem* treeItem = new QTreeWidgetItem();
+                            treeItem->setText(0, item_index.toString());
 
-                                QTreeWidgetItem* columnItem = new QTreeWidgetItem();
-                                columnItem->setText(0, "Columns");
-                                table_name->addChild(columnItem);
-
-                                QTreeWidgetItem* indexItem = new QTreeWidgetItem();
-                                indexItem->setText(0, "Indexes");
-                                table_name->addChild(indexItem);
-
-                                QJsonArray indexesArray = Responce["indexes"].toArray();
-                                tables_.push_back(table_name);
-
-                                for (auto item_field : fields_array)
-                                {
-                                    QTreeWidgetItem* field = new QTreeWidgetItem();
-                                    field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString(" [")
-                                                              + getType(item_field.toObject())
-                                                              + nullCheck(item_field.toObject().find("nullable")->toInt())
-                                                              + QString("] ")
-                                                              + linkCheck(item_field.toObject().find("linktable")->toString())
-                                                              ));
-                                    columnItem->addChild(field);
-
-                                    QTreeWidgetItem* fieldName = new QTreeWidgetItem();
-                                    fieldName->setText(0, item_field.toObject().find("name")->toString());
-                                    field->addChild(fieldName);
-                                    fieldName->setHidden(true);
-
-                                    QTreeWidgetItem* fieldTipe = new QTreeWidgetItem();
-                                    if (item_field.toObject().find("subtype")->toInt() == 1) fieldTipe->setText(0, "1");
-                                    else fieldTipe->setText(0, "0");
-                                    field->addChild(fieldTipe);
-                                    fieldTipe->setHidden(true);
-                                }
-
-                                columnItem->setText(0, QString("Columns (" + QString::number(fields_array.count()) + ")"));
-
-                                int indexesCount = 0;
-                                for (auto item_field : indexesArray)
-                                {
-                                    if (item_field.toObject().find("table")->toString() == table_name->text(0))
-                                    {
-                                        indexesCount += 1;
-                                        QTreeWidgetItem* field = new QTreeWidgetItem();
-
-                                        field->setText(0, QString(item_field.toObject().find("name")->toString()));
-
-                                        QJsonArray indexesArray = item_field.toObject().find("fields")->toArray();
-
-                                        for (auto item_index : indexesArray)
-                                        {
-                                            QTreeWidgetItem* treeItem = new QTreeWidgetItem();
-                                            treeItem->setText(0, item_index.toString());
-
-                                            field->addChild(treeItem);
-                                        }
-
-                                        indexItem->addChild(field);
-                                    }
-                                }
-                                indexItem->setText(0, "Indexes (" + QString::number(indexesCount) + ")");
-
-                                tablesCount+=1;
-                            }
-                            else if (item_table.toObject().find("type").value().toInt() == 3)
-                            {
-                                QTreeWidgetItem* table_name = new QTreeWidgetItem();
-                                table_name->setText(0,item_table.toObject().find("tablename").value().toString());
-                                dbEdges->addChild(table_name);
-                                QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
-                                for (auto item_field : fields_array)
-                                {
-                                    QTreeWidgetItem* field = new QTreeWidgetItem();
-                                    field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                                              + QString(" [")
-                                                              + getType(item_field.toObject())
-                                                              + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
-                                                              + QString("] ")
-                                                              + linkCheck(item_field.toObject().find("linktable")->toString())
-                                                              ));
-                                    table_name->addChild(field);
-                                }
-
-                                edgesCount+=1;
-                            }
+                            field->addChild(treeItem);
                         }
-                        dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
-                        dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
 
-                        expandItems(dbTables, expandedItems);
-                        expandItems(dbEdges, expandedItems);
-
+                        indexItem->addChild(field);
                     }
-                    reply_table->deleteLater();
-                });
+                }
+                indexItem->setText(0, "Indexes (" + QString::number(indexesCount) + ")");
+
+                tablesCount+=1;
+            }
+            else if (item_table.toObject().find("type").value().toInt() == 3)
+            {
+                QTreeWidgetItem* table_name = new QTreeWidgetItem();
+                table_name->setText(0,item_table.toObject().find("tablename").value().toString());
+                dbEdges->addChild(table_name);
+                QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
+                for (auto item_field : fields_array)
+                {
+                    QTreeWidgetItem* field = new QTreeWidgetItem();
+                    field->setText(0, QString(item_field.toObject().find("name")->toString()
+                                              + QString(" [")
+                                              + getType(item_field.toObject())
+                                              + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
+                                              + QString("] ")
+                                              + linkCheck(item_field.toObject().find("linktable")->toString())
+                    ));
+                    table_name->addChild(field);
+                }
+
+                edgesCount+=1;
             }
         }
+        dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
+        dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
 
-        for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)
-        {
-            expandItems(ui->treeWidget->topLevelItem(i), expandedItems);
-        }
+    }
 
-        reply->deleteLater();
-    });
+
+    for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)
+    {
+        expandItems(ui->treeWidget->topLevelItem(i), expandedItems);
+    }
 }
 
 void MainWindow::on_on_actionCreateTableTrig_triggered()
