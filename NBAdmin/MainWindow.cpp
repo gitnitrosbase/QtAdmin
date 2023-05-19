@@ -29,8 +29,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     push_button_plus_clicked();
     connect(ui->Add, SIGNAL(clicked()), this, SLOT(push_button_plus_clicked()));
     connect(ui->Run, SIGNAL(clicked()), this, SLOT(push_button_run_clicked()));
-    QStringList headers = {"Databases"};
-    ui->treeWidget->setHeaderLabels(headers);
     connectWindow_ = new ConnectWindow();
     openWindow_ = new OpenWindow();
     backupWindow_ = new BackupWindow();
@@ -38,9 +36,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     infoWindow_ = new InfoWindow();
     ui->Add->setIcon(QIcon(":/images/AddTab.svg"));
     ui->Run->setIcon(QIcon(":/images/RunbtnPic.svg"));
-
-    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
 
     filling_tree();
     menu_ = new QMenu(this);
@@ -105,7 +100,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
-    if ( event->key() == Qt::Key_F5 && ui->Run->isEnabled() ) push_button_run_clicked();
+
 }
 
 void MainWindow::filling_tree_slot()
@@ -235,12 +230,13 @@ void MainWindow::showContextMenu(const QPoint point)
 
 void MainWindow::push_button_run_clicked()
 {
+    if ( ui->Run->isEnabled() )
+
     if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
     {
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
         currentTab->dbPort_ = dbList_[currentDatabase_];
         currentTab->push_button_run_clicked();
-        filling_tree();
     }
     else
     {
@@ -700,6 +696,8 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
+    mutex_.lock();
+
     QList<QString> expandedItems;
 
     for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)
@@ -947,6 +945,8 @@ void MainWindow::filling_tree()
     {
         expandItems(ui->treeWidget->topLevelItem(i), expandedItems);
     }
+
+    mutex_.unlock();
 }
 
 void MainWindow::on_on_actionCreateTableTrig_triggered()

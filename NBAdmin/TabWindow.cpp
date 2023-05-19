@@ -119,12 +119,18 @@ void TabWindow::modelTimerSlot()
         }
 
         // add input queries to comboBox
-
         ui->comboBox_->addItems(reqTypesList_);
+
         if (isallready != 0)
         {
             timer_->stop();
+            emit refresh_tree();
             emit turnOnRunButtonSignal();
+        }
+        else
+        {
+            timer_->stop();
+            timer_->start(300);
         }
     }
     catch (...)
@@ -172,6 +178,7 @@ void TabWindow::keyPressEvent(QKeyEvent *event)
         }
         QApplication::clipboard()->setText(QString::fromStdString(buffer_));
     }
+    if ( event->key() == Qt::Key_F5 ) push_button_run_clicked();
 }
 
 QString TabWindow::textFromTextEdit()
