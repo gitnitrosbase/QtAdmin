@@ -78,6 +78,8 @@ set(LOGGERLIB
     LoggerFile.hpp
     )
 
+set(CUSTOM_LEXER QSciLexerNBSQL.hpp)
+
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB})
 
 

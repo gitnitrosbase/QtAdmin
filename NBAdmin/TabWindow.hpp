@@ -31,6 +31,7 @@
 #include <QJsonObject>
 #include <QFile>
 
+#include "Qsci/qsciapis.h"
 #include "Qsci/qsciscintilla.h"
 #include "Qsci/qscilexersql.h"
 #include "Qsci/qscilexercpp.h"
@@ -58,7 +59,9 @@ signals:
     void turnOnRunButtonSignal();
     void turnOffRunButtonSignal();
 
-public slots:
+public slots:    
+    void setLeftMargin();
+
     QString textFromTextEdit();
 
     void setText(QString input);
@@ -86,7 +89,7 @@ public:
     QStatusBar* bar_;
     QsciScintilla* textEdit_ = nullptr;
     QsciLexerSQL* sqlLexer_ = nullptr;
-
+    QsciAPIs* api_ = nullptr;
     QList<QList<QList<QString> > >* buffers_ = nullptr;
     QList<int>* startIndexes_ = nullptr;
 
