@@ -16,6 +16,7 @@
 #include <QLocale>
 #include <QKeyEvent>
 #include <QTimer>
+#include <QCompleter>
 
 #include <QTableView>
 #include <QStandardItemModel>
@@ -87,14 +88,18 @@ public:
     bool flag_ = true;
     int tabNumber_ = 1;
     QStatusBar* bar_;
+
     QsciScintilla* textEdit_ = nullptr;
     QsciLexerSQL* sqlLexer_ = nullptr;
     QsciAPIs* api_ = nullptr;
+
     QList<QList<QList<QString> > >* buffers_ = nullptr;
     QList<int>* startIndexes_ = nullptr;
 
     QTimer* timer_ = nullptr;
     bool firstPaintModelFlag_ = true;
+
+    QStringList keywordList_ = {"SELECT", "FROM", "INTO", "TOP"};
 
 public:
     int dbPort_;

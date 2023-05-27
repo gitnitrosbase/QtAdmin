@@ -367,6 +367,11 @@ QScrollBar:vertical {
        <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QTabWidget" name="tabWidget">
+          <property name="font">
+           <font>
+            <pointsize>12</pointsize>
+           </font>
+          </property>
           <property name="styleSheet">
            <string notr="true">QTabWidget::pane { 
      border-top: 1px solid #C2C7CB;;
@@ -398,12 +403,16 @@ QTabBar::tab:selected {
  QTabBar::close-button:hover { 
 	image: url(:/images/icons8-selected-close.svg);
 }
-
-
 </string>
           </property>
           <property name="currentIndex">
            <number>-1</number>
+          </property>
+          <property name="tabsClosable">
+           <bool>true</bool>
+          </property>
+          <property name="movable">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -617,6 +626,11 @@ color: rgb(255, 255, 255);
    </property>
    <property name="text">
     <string>Database Info</string>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
    </property>
   </action>
   <action name="actionNew_query">

@@ -22,18 +22,24 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     textEdit_->setMarginsBackgroundColor(QColor("#eee"));
     textEdit_->setMarginLineNumbers(1, true);
     textEdit_->setMarginWidth(1, 15);
-    textEdit_->setFont(QFont("Arial", 14));
+//    textEdit_->setFont(QFont("Arial", 14));
+
+
+
+
     //! Авто-дополнение кода в зависимости от источника
-    textEdit_->setAutoCompletionCaseSensitivity(false);
     textEdit_->setAutoCompletionThreshold(1);
     textEdit_->setAutoCompletionReplaceWord(true);
     textEdit_->setAutoCompletionSource(QsciScintilla::AcsAll);
+    textEdit_->setAutoCompletionCaseSensitivity(false);
 
     api_ = new QsciAPIs(sqlLexer_);
-
     api_->add("SELECT");
     api_->add("FROM");
     api_->prepare();
+
+
+
 
 
     //! Подсветка соответствий скобок
