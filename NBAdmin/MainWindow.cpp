@@ -307,11 +307,14 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWi
     QString dbNameTmp = tmp->text(0);
     QString dbName = "";
 
+    QString dbPort = "";
+
     for (auto &item : dbNameTmp)
     {
         if (item != ' ') dbName += item;
         else break;
     }
+    for ( int i = dbName.size(); i != dbNameTmp.size(); i+=1 ) dbPort += dbNameTmp.at(i);
 
     ui->label_2->setText(dbName);
     currentDatabase_ = dbName;
@@ -323,6 +326,42 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWi
     ui->actionRestore->setEnabled(true);
     ui->actionDatabase_Info->setEnabled(true);
     ui->actionInfo->setEnabled(true);
+
+    {
+        QJsonObject dbInfoObject;
+
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 8;
+        obj["port"] = dbPort.toInt();
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply_table = mgr->post(request, data);
+
+        QEventLoop loop_tables;
+        QObject::connect(reply_table, &QNetworkReply::finished, &loop_tables, &QEventLoop::quit);
+        loop_tables.exec();
+
+        if (reply_table->error() == QNetworkReply::NoError)
+        {
+            QString tmp = reply_table->readAll();
+
+            dbInfoObject = QJsonDocument::fromJson( tmp.toUtf8() ).object();
+
+            QFile file( QString("db").arg(dbPort) );
+            if ( file.open(QIODevice::ReadWrite) )
+            {
+                file.write(tmp.toUtf8());
+                file.close();
+            }
+
+            ui->dbVersionLabel->setText( QString("NitrosBase: %1").arg(dbInfoObject.find("version")->toString()) );
+        }
+        reply_table->deleteLater();
+    }
 }
 void MainWindow::on_actionCreateDBQueryTrig()
 {
@@ -708,8 +747,9 @@ void MainWindow::filling_tree()
     tables_.clear();
     delete ui->treeWidget;
 
-    ui->treeWidget = new QTreeWidget(ui->splitter);
-    ui->splitter->addWidget(ui->tabWidget);
+    ui->treeWidget = new QTreeWidget();
+
+    ui->splitter->insertWidget(0, ui->treeWidget);
 
     ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));

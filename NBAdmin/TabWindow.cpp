@@ -21,13 +21,27 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     //! margin это полоска слева, на которой обычно распологаются breakpoints
     textEdit_->setMarginsBackgroundColor(QColor("#eee"));
     textEdit_->setMarginLineNumbers(1, true);
-    textEdit_->setMarginWidth(1, 20);
+    textEdit_->setMarginWidth(1, 15);
+//    textEdit_->setFont(QFont("Arial", 14));
+
+
+
+
     //! Авто-дополнение кода в зависимости от источника
-    textEdit_->setAutoCompletionSource(QsciScintilla::AcsAll);
-    textEdit_->setAutoCompletionCaseSensitivity(true);
+    textEdit_->setAutoCompletionThreshold(1);
     textEdit_->setAutoCompletionReplaceWord(true);
-    textEdit_->setAutoCompletionUseSingle(QsciScintilla::AcusAlways);
-    textEdit_->setAutoCompletionThreshold(0);
+    textEdit_->setAutoCompletionSource(QsciScintilla::AcsAll);
+    textEdit_->setAutoCompletionCaseSensitivity(false);
+
+    api_ = new QsciAPIs(sqlLexer_);
+    api_->add("SELECT");
+    api_->add("FROM");
+    api_->prepare();
+
+
+
+
+
     //! Подсветка соответствий скобок
     textEdit_->setBraceMatching(QsciScintilla::SloppyBraceMatch);
     textEdit_->setMatchedBraceBackgroundColor(Qt::yellow);
@@ -46,11 +60,13 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
 
     timer_ = new QTimer();
     connect(timer_, SIGNAL(timeout()), this, SLOT(modelTimerSlot()));
-}
 
+    connect(textEdit_, SIGNAL(linesChanged()), this, SLOT(setLeftMargin()));
+}
 
 TabWindow::~TabWindow()
 {
+    delete api_;
     delete ui;
     delete textEdit_;
     delete sqlLexer_;
@@ -64,6 +80,17 @@ TabWindow::~TabWindow()
     models_.clear();
 }
 
+void TabWindow::setLeftMargin()
+{
+    int rc = textEdit_->lines();
+    if ( rc >= 0 && rc < 10 ) textEdit_->setMarginWidth(1, 15);
+    else if ( rc >= 10 && rc < 100 ) textEdit_->setMarginWidth(1, 23);
+    else if ( rc >= 100 && rc < 1000 ) textEdit_->setMarginWidth(1, 30);
+    else if ( rc >= 1000 && rc < 10000 ) textEdit_->setMarginWidth(1, 37);
+    else if ( rc >= 10000 && rc < 100000 ) textEdit_->setMarginWidth(1, 42);
+    else textEdit_->setMarginWidth(1, 100);
+}
+
 void TabWindow::modelTimerSlot()
 {
     reqTypesList_.clear();
@@ -73,9 +100,6 @@ void TabWindow::modelTimerSlot()
 
     try
     {
-
-
-
         nb_check_result(tabNumber_, &isallready, &numberOfReady, &connection);
 
         if (numberOfReady < 0)

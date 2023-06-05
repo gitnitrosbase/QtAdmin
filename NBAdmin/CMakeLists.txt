@@ -11,8 +11,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES  Qt6 Qt5 COMPONENTS Widgets Network REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets Network REQUIRED)
+set( CMAKE_PREFIX_PATH C:/Qt/6.4.2/msvc2019_64/lib/cmake/ )
+
+find_package(Qt6 COMPONENTS Widgets Network REQUIRED)
 
 set(PROJECT_HEADERS
     TabWindow.hpp
@@ -77,6 +78,8 @@ set(LOGGERLIB
     LoggerFile.hpp
     )
 
+set(CUSTOM_LEXER QSciLexerNBSQL.hpp)
+
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB})
 
 
@@ -88,7 +91,6 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
         ${PROJECT_SOURCE_DIR}/nbadminclient.lib
         ${PROJECT_SOURCE_DIR}/Qsci/debug/qscintilla2_qt6d.lib
     )
-
 else()
     target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
