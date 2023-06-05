@@ -257,5 +257,5 @@ private:
 
     QByteArray dbsData_;
     QByteArray tablesData_;
-    std::mutex mutex_;
+    //std::mutex mutex_;
 };

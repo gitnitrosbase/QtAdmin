@@ -593,25 +593,31 @@ void MainWindow::on_actionDeleteDatabaseTrig()
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
-    {
-        if (reply->error() == QNetworkReply::NoError)
-        {
-            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-            QFile file("answer.txt");
-            file.open(QIODevice::ReadWrite);
-            file.write(reply_doc.toJson());
-            file.close();
 
-            filling_tree();
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QJsonObject jsonObject = QJsonDocument::fromJson(reply->readAll()).object();
+
+        QString text = "The database has been deleted";
+
+        if ( jsonObject.find("err")->toInt() != 0 )
+        {
+            text = jsonObject.find("msg")->toString();
         }
-        reply->deleteLater();
-    });
-    MessageWindow* message = new MessageWindow(this);
-    message->setWindowTitle("Info");
-    message->setText(QString("The database has been deleted"));
-    message->setAttribute(Qt::WA_DeleteOnClose);
-    message->show();
+
+        filling_tree();
+
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Info");
+        message->setText(text);
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
+    }
+
     ui->label_2->setText("");
 }
 
@@ -735,7 +741,7 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
-    mutex_.lock();
+    //mutex_.lock();
 
     QList<QString> expandedItems;
 
@@ -807,15 +813,20 @@ void MainWindow::filling_tree()
         dbsData_ = reply->readAll();
     }
 
-    reply->deleteLater();
+//    QFile replyFile("replyFile.json");
+//    if ( replyFile.open(QIODevice::WriteOnly) )
+//    {
+//        replyFile.write(dbsData_);
+//        replyFile.close();
+//    }
+
+    delete reply;
 
     QJsonDocument copyReply = QJsonDocument::fromJson(dbsData_);
 
     QJsonObject Responce = copyReply.object();
     QJsonArray tmpArray = Responce["list"].toArray();
     dbList_.clear();
-
-    int i = 0;
 
     for (auto item_db : tmpArray)
     {
@@ -849,7 +860,20 @@ void MainWindow::filling_tree()
             tablesData_ = reply_table->readAll();
         }
 
-        reply_table->deleteLater();
+        QFile replyTableFile(QString("replyTableFile%1.json").arg(item_db.toObject().find("port").value().toInt()));
+        if ( replyTableFile.open(QIODevice::WriteOnly) )
+        {
+            replyTableFile.write(tablesData_);
+            replyTableFile.close();
+        }
+
+        delete reply_table;
+
+        if ( QJsonDocument::fromJson(tablesData_).object().find("err")->toInt() != 0 )
+        {
+            dbName->setIcon(0, QIcon(":/images/false.png"));
+            continue;
+        }
 
         QTreeWidgetItem *runableProperty = new QTreeWidgetItem;
 
@@ -864,8 +888,6 @@ void MainWindow::filling_tree()
 
         dbName->addChild(runableProperty);
         runableProperty->setHidden(true);
-
-        i += 1;
 
         QJsonDocument copy_reply_table = QJsonDocument::fromJson(tablesData_);
         QJsonObject Responce = copy_reply_table.object();
@@ -986,7 +1008,7 @@ void MainWindow::filling_tree()
         expandItems(ui->treeWidget->topLevelItem(i), expandedItems);
     }
 
-    mutex_.unlock();
+    //mutex_.unlock();
 }
 
 void MainWindow::on_on_actionCreateTableTrig_triggered()
@@ -1023,20 +1045,22 @@ void MainWindow::on_actionStop_triggered()
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
+
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if (reply->error() == QNetworkReply::NoError)
     {
-        if (reply->error() == QNetworkReply::NoError)
+        QJsonObject jsonObject = QJsonDocument::fromJson(reply->readAll()).object();
+
+        if ( jsonObject.find("err")->toInt() != 0 )
         {
-            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-
-            QFile file("answerstartstop.txt");
-            file.open(QIODevice::ReadWrite);
-            file.write(reply_doc.toJson());
-            file.close();
-
+            QString text = jsonObject.find("msg")->toString();
+            QMessageBox::critical(this, "Error %" + QString::number(jsonObject.find("err")->toInt()), text);
         }
-        reply->deleteLater();
-    });
+    }
+
     filling_tree();
 }
 
@@ -1059,19 +1083,20 @@ void MainWindow::on_actionStart_triggered()
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
-    {
-        if (reply->error() == QNetworkReply::NoError)
-        {
-            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
 
-            QFile file("answerstartstop.txt");
-            file.open(QIODevice::ReadWrite);
-            file.write(reply_doc.toJson());
-            file.close();
+    if (reply->error() == QNetworkReply::NoError)
+    {
+        QJsonObject jsonObject = QJsonDocument::fromJson(reply->readAll()).object();
+
+        if ( jsonObject.find("err")->toInt() != 0 )
+        {
+            QString text = jsonObject.find("msg")->toString();
+            QMessageBox::critical(this, "Error " + QString::number(jsonObject.find("err")->toInt()), text);
         }
-        reply->deleteLater();
-    });
+    }
     filling_tree();
 }
 
