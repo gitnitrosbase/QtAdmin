@@ -999,9 +999,9 @@ void MainWindow::on_on_actionCreateTableTrig_triggered()
 
 void MainWindow::on_actionOpen_database_triggered()
 {
-    openWindow_->show();
     openWindow_->setWindowTitle("Open database");
     openWindow_->address_ = this->address_;
+    openWindow_->show();
 }
 
 

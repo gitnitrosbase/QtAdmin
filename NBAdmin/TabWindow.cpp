@@ -38,10 +38,6 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     api_->add("FROM");
     api_->prepare();
 
-
-
-
-
     //! Подсветка соответствий скобок
     textEdit_->setBraceMatching(QsciScintilla::SloppyBraceMatch);
     textEdit_->setMatchedBraceBackgroundColor(Qt::yellow);

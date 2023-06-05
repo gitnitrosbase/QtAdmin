@@ -74,23 +74,33 @@ void OpenWindow::OpenDatabase()
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
+
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if (reply->error() == QNetworkReply::NoError)
     {
-        if (reply->error() == QNetworkReply::NoError) std::cout<<reply->readAll().toStdString()<<std::endl;
-        else std::cout<<"error!"<<std::endl;
+        QString responce = reply->readAll();
 
-        reply->deleteLater();
-    });
-    this->close();
+        std::cout<<responce.toStdString()<<std::endl;
 
-    MessageWindow* message = new MessageWindow(this);
-    message->setWindowTitle("Warning");
-    message->setText(QString("The database has been opened"));
-    message->setAttribute(Qt::WA_DeleteOnClose);
-    message->show();
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        QString text;
+        {
+            QJsonObject jsonObject = QJsonDocument::fromJson(responce.toUtf8()).object();
+            if ( jsonObject.find("err")->toInt() == 0) text = "";
+            else text = jsonObject.find("msg")->toString();
+        }
+        message->setText(text);
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
+        this->close();
 
-    emit refreshTree();
-    clear_fields();
+        emit refreshTree();
+        clear_fields();
+    }
 }
 
 void OpenWindow::on_buttonPath_clicked()
