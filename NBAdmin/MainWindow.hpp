@@ -248,14 +248,16 @@ private:
     QAction * deleteIndexAction_ = nullptr;
     QAction * selectEdgeAction_ = nullptr;
     QAction * createDBQueryAction_ = nullptr;
+
     QList<int> splitterSize_;
     QList<QTreeWidgetItem*> tables_;
 
-    QList<QString> treeState_;
+    std::map<QString, QString> dbsVersion_;
 
     const int MAXTABCOUNT = 64;
 
     QByteArray dbsData_;
     QByteArray tablesData_;
-    //std::mutex mutex_;
+    bool treeUpdateFlug_ = false;
+
 };

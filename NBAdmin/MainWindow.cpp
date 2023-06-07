@@ -297,6 +297,8 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
 }
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWidgetItem* to)
 {
+    if ( treeUpdateFlug_ == true ) return;
+
     QTreeWidgetItem* tmp = ui->treeWidget->currentItem();
 
     while(tmp->parent() != nullptr)
@@ -327,41 +329,8 @@ void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWi
     ui->actionDatabase_Info->setEnabled(true);
     ui->actionInfo->setEnabled(true);
 
-    {
-        QJsonObject dbInfoObject;
-
-        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-        QUrl url(address_);
-        QNetworkRequest request(url);
-        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-        QJsonObject obj;
-        obj["cmd"] = 8;
-        obj["port"] = dbPort.toInt();
-        QJsonDocument doc(obj);
-        QByteArray data = doc.toJson();
-        QNetworkReply *reply_table = mgr->post(request, data);
-
-        QEventLoop loop_tables;
-        QObject::connect(reply_table, &QNetworkReply::finished, &loop_tables, &QEventLoop::quit);
-        loop_tables.exec();
-
-        if (reply_table->error() == QNetworkReply::NoError)
-        {
-            QString tmp = reply_table->readAll();
-
-            dbInfoObject = QJsonDocument::fromJson( tmp.toUtf8() ).object();
-
-            QFile file( QString("db").arg(dbPort) );
-            if ( file.open(QIODevice::ReadWrite) )
-            {
-                file.write(tmp.toUtf8());
-                file.close();
-            }
-
-            ui->dbVersionLabel->setText( QString("NitrosBase: %1").arg(dbInfoObject.find("version")->toString()) );
-        }
-        reply_table->deleteLater();
-    }
+    if (dbsVersion_.find(ui->label_2->text()) == dbsVersion_.end()) ui->dbVersionLabel->setText("error");
+    else ui->dbVersionLabel->setText( QString("NitrosBase: %1").arg( dbsVersion_.find( ui->label_2->text() )->second ) );
 }
 void MainWindow::on_actionCreateDBQueryTrig()
 {
@@ -741,7 +710,9 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
-    //mutex_.lock();
+    dbsVersion_.clear();
+
+    treeUpdateFlug_ = true;
 
     QList<QString> expandedItems;
 
@@ -812,14 +783,6 @@ void MainWindow::filling_tree()
     {
         dbsData_ = reply->readAll();
     }
-
-//    QFile replyFile("replyFile.json");
-//    if ( replyFile.open(QIODevice::WriteOnly) )
-//    {
-//        replyFile.write(dbsData_);
-//        replyFile.close();
-//    }
-
     delete reply;
 
     QJsonDocument copyReply = QJsonDocument::fromJson(dbsData_);
@@ -859,14 +822,6 @@ void MainWindow::filling_tree()
         {
             tablesData_ = reply_table->readAll();
         }
-
-        QFile replyTableFile(QString("replyTableFile%1.json").arg(item_db.toObject().find("port").value().toInt()));
-        if ( replyTableFile.open(QIODevice::WriteOnly) )
-        {
-            replyTableFile.write(tablesData_);
-            replyTableFile.close();
-        }
-
         delete reply_table;
 
         if ( QJsonDocument::fromJson(tablesData_).object().find("err")->toInt() != 0 )
@@ -874,24 +829,14 @@ void MainWindow::filling_tree()
             dbName->setIcon(0, QIcon(":/images/false.png"));
             continue;
         }
-
-        QTreeWidgetItem *runableProperty = new QTreeWidgetItem;
-
-        if (!item_db.toObject().find("run")->toBool()) {
-            dbName->setIcon(0, QIcon(":/images/false.png"));
-            runableProperty->setText(0, "0");
-            continue;
-        } else {
-            dbName->setIcon(0, QIcon(":/images/true.png"));
-            runableProperty->setText(0, "1");
-        }
-
-        dbName->addChild(runableProperty);
-        runableProperty->setHidden(true);
+        else dbName->setIcon(0, QIcon(":/images/true.png"));
 
         QJsonDocument copy_reply_table = QJsonDocument::fromJson(tablesData_);
         QJsonObject Responce = copy_reply_table.object();
         QJsonArray tmpArray = Responce["data"].toArray();
+
+        dbsVersion_.insert(std::pair<QString, QString>(item_db.toObject().find("dbname").value().toString(), Responce.find("version").value().toString()));
+
 
         QTreeWidgetItem* dbTables = new QTreeWidgetItem();
         dbName->addChild(dbTables);
@@ -1007,8 +952,7 @@ void MainWindow::filling_tree()
     {
         expandItems(ui->treeWidget->topLevelItem(i), expandedItems);
     }
-
-    //mutex_.unlock();
+    treeUpdateFlug_ = false;
 }
 
 void MainWindow::on_on_actionCreateTableTrig_triggered()
