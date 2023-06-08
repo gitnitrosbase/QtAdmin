@@ -76,6 +76,42 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(createDBQueryAction_, &QAction::triggered, this, &MainWindow::on_actionCreateDBQueryTrig);
 
     ui->treeWidget->setFrameStyle(0);
+    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
+    connect(ui->treeWidget, &QTreeWidget::currentItemChanged, this, &MainWindow::on_treeWidget_currentItemChanged);
+    ui->splitter->setSizes(splitterSize_);
+
+    ui->treeWidget->setStyleSheet(
+            "QTreeWidget {"
+            "border:0px solid rgb(204, 204, 204);"
+            "padding-left: 5px;}"
+            "QHeaderView::section {"
+            "color: #555;"
+            "background-color: rgb(255, 255, 255);"
+            "border: 0px;"
+            "height: 0px;}"
+            "QTreeView::branch {"
+            "height: 0px;}"
+            "QScrollBar:vertical {"
+            "border: 2px solid grey;"
+            "background: #32CC99;"
+            "height: 15px;"
+            "margin: 0px 20px 0 20px;}"
+            "QHeaderView::section {"
+            "color: black;"
+            "padding: 2px;"
+            "height:0px;"
+            "border: 0px solid #567dbc;"
+            "border-left:0px;"
+            "border-right:0px;"
+            "background: white;} "
+            "QTreeView::item{color: #555;} "
+            "QTreeWidget {"
+            "font-size: 12pt;"
+            "font: \"Segoe UI\";"
+            "} "
+            "QTreeView::branch:hover {}");
+
 
     connect(connectWindow_, &ConnectWindow::refreshTree, this, &MainWindow::filling_tree_slot);
     connect(openWindow_, &OpenWindow::refreshTree, this, &MainWindow::filling_tree_slot);
@@ -710,9 +746,9 @@ QString MainWindow::runCheck(bool input)
 
 void MainWindow::filling_tree()
 {
-    dbsVersion_.clear();
-
     treeUpdateFlug_ = true;
+
+
 
     QList<QString> expandedItems;
 
@@ -722,48 +758,8 @@ void MainWindow::filling_tree()
     }
 
     tables_.clear();
-    delete ui->treeWidget;
-
-    ui->treeWidget = new QTreeWidget();
-
-    ui->splitter->insertWidget(0, ui->treeWidget);
-
-    ui->treeWidget->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(ui->treeWidget, SIGNAL(customContextMenuRequested(const QPoint&)), this, SLOT(showContextMenu(const QPoint&)));
-    connect(ui->treeWidget, &QTreeWidget::currentItemChanged, this, &MainWindow::on_treeWidget_currentItemChanged);
-
-    ui->splitter->setSizes(splitterSize_);
-
-    ui->treeWidget->setStyleSheet(
-                "QTreeWidget {"
-                    "border:0px solid rgb(204, 204, 204);"
-                    "padding-left: 5px;}"
-                "QHeaderView::section {"
-                    "color: #555;"
-                    "background-color: rgb(255, 255, 255);"
-                    "border: 0px;"
-                    "height: 0px;}"
-                "QTreeView::branch {"
-                   "height: 0px;}"
-                "QScrollBar:vertical {"
-                    "border: 2px solid grey;"
-                    "background: #32CC99;"
-                    "height: 15px;"
-                    "margin: 0px 20px 0 20px;}"
-                    "QHeaderView::section {"
-                        "color: black;"
-                        "padding: 2px;"
-                        "height:0px;"
-                        "border: 0px solid #567dbc;"
-                        "border-left:0px;"
-                        "border-right:0px;"
-                        "background: white;} "
-                    "QTreeView::item{color: #555;} "
-                    "QTreeWidget {"
-                        "font-size: 12pt;"
-                        "font: \"Segoe UI\";"
-                    "} "
-                    "QTreeView::branch:hover {}");
+    ui->treeWidget->clear();
+    dbsVersion_.clear();
 
     QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
     const QUrl url(address_);
@@ -799,7 +795,6 @@ void MainWindow::filling_tree()
                                    + " "
                                    + QString::number(item_db.toObject().find("port").value().toInt())
         ));
-        ui->treeWidget->addTopLevelItem(dbName);
 
         dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()),
                                                item_db.toObject().find("port").value().toInt()));
@@ -824,9 +819,11 @@ void MainWindow::filling_tree()
         }
         delete reply_table;
 
+
         if ( QJsonDocument::fromJson(tablesData_).object().find("err")->toInt() != 0 )
         {
             dbName->setIcon(0,  falseIcon_ );
+            ui->treeWidget->addTopLevelItem(dbName);
             continue;
         }
         else dbName->setIcon(0,  trueIcon_ );
@@ -945,7 +942,10 @@ void MainWindow::filling_tree()
         dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
         dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
 
+        ui->treeWidget->addTopLevelItem(dbName);
     }
+
+
 
 
     for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)
@@ -1090,20 +1090,30 @@ void MainWindow::on_actionDatabase_Info_triggered()
         QJsonDocument doc(obj);
         QByteArray data = doc.toJson();
         QNetworkReply *reply = mgr->post(request, data);
-        connect(reply, &QNetworkReply::finished, [=]()
-        {
-            if (reply->error() == QNetworkReply::NoError)
-            {
-                QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
-                int port = dbList_[currentDatabase_];
-                QJsonObject reply_obj = reply_doc.object();
-                QString str = reply_obj.find("version").value().toString();
 
-                infoWindow_->setInformation(currentDatabase_, dbList_[currentDatabase_], reply_obj.find("version").value().toString());
-                infoWindow_->show();
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (reply->error() == QNetworkReply::NoError)
+        {
+            QJsonDocument reply_doc = QJsonDocument::fromJson(reply->readAll());
+            int port = dbList_[currentDatabase_];
+            QJsonObject reply_obj = reply_doc.object();
+
+            int error = reply_obj.find("err")->toInt();
+
+            if (reply_obj.find("err")->toInt() != 0)
+            {
+                QMessageBox::critical(this, "Error", "Unknown error");
+                return;
             }
-            reply->deleteLater();
-        });
+
+            QString str = reply_obj.find("version").value().toString();
+
+            infoWindow_->setInformation(currentDatabase_, dbList_[currentDatabase_], reply_obj.find("version").value().toString());
+            infoWindow_->show();
+        }
     }
     else
     {
