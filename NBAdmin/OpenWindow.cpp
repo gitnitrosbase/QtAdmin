@@ -90,7 +90,7 @@ void OpenWindow::OpenDatabase()
         QString text;
         {
             QJsonObject jsonObject = QJsonDocument::fromJson(responce.toUtf8()).object();
-            if ( jsonObject.find("err")->toInt() == 0) text = "";
+            if ( jsonObject.find("err")->toInt() == 0) text = "The database has been opened";
             else text = jsonObject.find("msg")->toString();
         }
         message->setText(text);

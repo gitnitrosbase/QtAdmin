@@ -826,10 +826,10 @@ void MainWindow::filling_tree()
 
         if ( QJsonDocument::fromJson(tablesData_).object().find("err")->toInt() != 0 )
         {
-            dbName->setIcon(0, QIcon(":/images/false.png"));
+            dbName->setIcon(0,  falseIcon_ );
             continue;
         }
-        else dbName->setIcon(0, QIcon(":/images/true.png"));
+        else dbName->setIcon(0,  trueIcon_ );
 
         QJsonDocument copy_reply_table = QJsonDocument::fromJson(tablesData_);
         QJsonObject Responce = copy_reply_table.object();

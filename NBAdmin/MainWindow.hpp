@@ -260,4 +260,7 @@ private:
     QByteArray tablesData_;
     bool treeUpdateFlug_ = false;
 
+    QIcon trueIcon_ = QIcon(":/images/true.png");
+    QIcon falseIcon_ = QIcon(":/images/false.png");
+
 };
