@@ -474,39 +474,65 @@ void MainWindow::on_actionSelectEdgeTrig()
 
 void MainWindow::on_actionDeleteEdgeTrig()
 {
-    std::cout<<"delete edge"<<std::endl;
-    NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
-    check_error(connection);
-    QString tmp = QString("DROP TABLE %1").arg(ui->treeWidget->currentItem()->text(0));
-    nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
-    nb_disconnect(connection);
-    filling_tree();
+    QString tmp = QString("DROP TABLE %1;").arg(ui->treeWidget->currentItem()->text(0));
+
+    int buttonTypePressed= 0;
+
+    buttonTypePressed = QMessageBox::question(this,
+                          "Delete edge",
+                          QString("Are you sure to delete edge %1").arg(ui->treeWidget->currentItem()->text(0)),
+                          QMessageBox::StandardButton::Yes,
+                          QMessageBox::StandardButton::Cancel);
+
+    if ( buttonTypePressed == QMessageBox::StandardButton::Yes )
+    {
+        NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
+        check_error(connection);
+        nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
+        nb_disconnect(connection);
+        filling_tree();
+    }
 }
 
 void MainWindow::on_actionDeleteIndexTrig()
 {
-    std::cout<<"delete index"<<std::endl;
-    NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
-    check_error(connection);
     QString tmp = QString("DROP INDEX %1 ON %2;")
             .arg(ui->treeWidget->currentItem()->text(0))
             .arg(ui->treeWidget->currentItem()->parent()->parent()->text(0));
-    std::cout<<tmp.toStdString()<<std::endl;
-    nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
-    check_error(connection);
-    nb_disconnect(connection);
-    filling_tree();
+
+    int buttonTypePressed = QMessageBox::question(this,
+                          "Delete index",
+                          QString("Are you sure to delete index %1").arg(ui->treeWidget->currentItem()->text(0)),
+                          QMessageBox::StandardButton::Yes,
+                          QMessageBox::StandardButton::Cancel);
+
+    if ( buttonTypePressed == QMessageBox::StandardButton::Yes )
+    {
+        NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
+        check_error(connection);
+        nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
+        nb_disconnect(connection);
+        filling_tree();
+    }
 }
 
 void MainWindow::on_deleteTableActionTrig()
 {
-    std::cout<<"delete table"<<std::endl;
-    NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
-    check_error(connection);
     QString tmp = QString("DROP TABLE %1").arg(ui->treeWidget->currentItem()->text(0));
-    nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
-    nb_disconnect(connection);
-    filling_tree();
+    int buttonTypePressed = QMessageBox::question(this,
+                          "Delete index",
+                          QString("Are you sure to delete table %1").arg(ui->treeWidget->currentItem()->text(0)),
+                          QMessageBox::StandardButton::Yes,
+                          QMessageBox::StandardButton::Cancel);
+
+    if ( buttonTypePressed == QMessageBox::StandardButton::Yes )
+    {
+        NB_HANDLE connection = nb_connect( u"127.0.0.1", dbList_[currentDatabase_], u"TESTUSER", u"1234" );
+        check_error(connection);
+        nb_execute_sql(connection, tmp.toStdU16String().c_str(), tmp.size());
+        nb_disconnect(connection);
+        filling_tree();
+    }
 }
 
 void MainWindow::on_modifyTableActionTrig()
@@ -577,53 +603,62 @@ void MainWindow::on_actionCreateTableTrig()
 
 void MainWindow::on_actionDeleteDatabaseTrig()
 {
-    QString name = "";
-    QString tmp = dbList_.find(currentDatabase_)->first;
-    for (auto item : tmp) if (item != ' ') name += item; else break;
+    int buttonTypePressed = QMessageBox::question(this,
+                          "Delete index",
+                          QString("Are you sure to delete index %1").arg(ui->treeWidget->currentItem()->text(0)),
+                          QMessageBox::StandardButton::Yes,
+                          QMessageBox::StandardButton::Cancel);
 
-    QTreeWidgetItem* findItem = nullptr;
-    findItem = ui->treeWidget->findItems(tmp + QString(" ") + QString::number(dbList_.find(tmp)->second), Qt::MatchContains).at(0);
-
-    if( findItem == nullptr && findItem->child(0)->text(0) == "1" ) return;
-
-    QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
-    const QUrl url(address_);
-    QNetworkRequest request(url);
-    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
-    QJsonObject obj;
-    obj["cmd"] = 10;
-    obj["port"] = dbList_.find(currentDatabase_)->second;
-    obj["dbname"] = name;
-    obj["dbpath"] = "";
-    QJsonDocument doc(obj);
-    QByteArray data = doc.toJson();
-    QNetworkReply *reply = mgr->post(request, data);
-
-    QEventLoop loop;
-    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-    loop.exec();
-
-    if (reply->error() == QNetworkReply::NoError)
+    if ( buttonTypePressed == QMessageBox::StandardButton::Yes )
     {
-        QJsonObject jsonObject = QJsonDocument::fromJson(reply->readAll()).object();
+        QString name = "";
+        QString tmp = dbList_.find(currentDatabase_)->first;
+        for (auto item : tmp) if (item != ' ') name += item; else break;
 
-        QString text = "The database has been deleted";
+        QTreeWidgetItem* findItem = nullptr;
+        findItem = ui->treeWidget->findItems(tmp + QString(" ") + QString::number(dbList_.find(tmp)->second), Qt::MatchContains).at(0);
 
-        if ( jsonObject.find("err")->toInt() != 0 )
+        if( findItem == nullptr && findItem->child(0)->text(0) == "1" ) return;
+
+        QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
+        const QUrl url(address_);
+        QNetworkRequest request(url);
+        request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+        QJsonObject obj;
+        obj["cmd"] = 10;
+        obj["port"] = dbList_.find(currentDatabase_)->second;
+        obj["dbname"] = name;
+        obj["dbpath"] = "";
+        QJsonDocument doc(obj);
+        QByteArray data = doc.toJson();
+        QNetworkReply *reply = mgr->post(request, data);
+
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (reply->error() == QNetworkReply::NoError)
         {
-            text = jsonObject.find("msg")->toString();
+            QJsonObject jsonObject = QJsonDocument::fromJson(reply->readAll()).object();
+
+            QString text = "The database has been deleted";
+
+            if ( jsonObject.find("err")->toInt() != 0 )
+            {
+                text = jsonObject.find("msg")->toString();
+            }
+
+            filling_tree();
+
+            MessageWindow* message = new MessageWindow(this);
+            message->setWindowTitle("Info");
+            message->setText(text);
+            message->setAttribute(Qt::WA_DeleteOnClose);
+            message->show();
         }
 
-        filling_tree();
-
-        MessageWindow* message = new MessageWindow(this);
-        message->setWindowTitle("Info");
-        message->setText(text);
-        message->setAttribute(Qt::WA_DeleteOnClose);
-        message->show();
+        ui->label_2->setText("");
     }
-
-    ui->label_2->setText("");
 }
 
 void MainWindow::setAddress()

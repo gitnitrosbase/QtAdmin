@@ -2,6 +2,7 @@
 
 #include <QAbstractTableModel>
 #include <QString>
+#include <QColor>
 #include "nb-samples.h"
 #include <iostream>
 

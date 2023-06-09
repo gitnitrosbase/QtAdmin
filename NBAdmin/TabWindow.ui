@@ -114,6 +114,7 @@ padding: 0;</string>
 }
 QHeaderView::section {
 	font: 12pt &quot;Segoe UI&quot;;	
+	background-color:&quot;#eee&quot;; 
 }
 	</string>
          </property>

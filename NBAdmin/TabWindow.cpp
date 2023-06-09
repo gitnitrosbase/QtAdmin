@@ -22,11 +22,6 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     textEdit_->setMarginsBackgroundColor(QColor("#eee"));
     textEdit_->setMarginLineNumbers(1, true);
     textEdit_->setMarginWidth(1, 15);
-//    textEdit_->setFont(QFont("Arial", 14));
-
-
-
-
     //! Авто-дополнение кода в зависимости от источника
     textEdit_->setAutoCompletionThreshold(1);
     textEdit_->setAutoCompletionReplaceWord(true);
@@ -58,6 +53,8 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     connect(timer_, SIGNAL(timeout()), this, SLOT(modelTimerSlot()));
 
     connect(textEdit_, SIGNAL(linesChanged()), this, SLOT(setLeftMargin()));
+
+    ui->tableWidget_->setStyleSheet("QHeaderView::section { background:\"#eee\" }; ");
 }
 
 TabWindow::~TabWindow()
