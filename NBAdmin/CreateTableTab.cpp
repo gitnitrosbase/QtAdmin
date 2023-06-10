@@ -109,6 +109,9 @@ void CreateTableTab::addRow()
     typesComboBox->setStyleSheet("background-color: #ffffff");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
+    identityCheckBox->setToolTip("The Identity option is not available:\neither the table already has an Identity field,\nor this field does not belong to the INT and BIGINT data types");
+    identityCheckBox->setToolTipDuration(1000000);
+
     for (auto item : fieldsTypes_)
     {
         typesComboBox->addItem(item);
@@ -166,35 +169,32 @@ void CreateTableTab::addRow()
         QJsonDocument doc(obj);
         QByteArray data = doc.toJson();
         QNetworkReply *reply = mgr->post(request, data);
-        connect(reply, &QNetworkReply::finished, [=]()
-        {
-            if(reply->error() == QNetworkReply::NoError)
-            {
-                QString strReply = reply->readAll();
-                QFile replyFile("./replyFile.txt");
-                replyFile.open(QIODevice::WriteOnly);
-                replyFile.write(strReply.toUtf8());
-                replyFile.close();
 
-                QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
-                for (auto item_table : tables)
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if(reply->error() == QNetworkReply::NoError)
+        {
+            QString strReply = reply->readAll();
+            QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
+            for (auto item_table : tables)
+            {
+                if (item_table.toObject().find("type")->toInt() == 2)
                 {
-                    if (item_table.toObject().find("type")->toInt() == 2)
+                    QJsonArray fields = item_table.toObject().find("fields")->toArray();
+                    for (auto item_field : fields)
                     {
-                        QJsonArray fields = item_table.toObject().find("fields")->toArray();
-                        for (auto item_field : fields)
+                        if (getType(item_field.toObject()) == ((QComboBox*)ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 1))->currentText()
+                                && item_field.toObject().find("subtype")->toInt() == 1)
                         {
-                            if (getType(item_field.toObject()) == ((QComboBox*)ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 1))->currentText()
-                                    && item_field.toObject().find("subtype")->toInt() == 1)
-                            {
-                                currentFKComboBox->addItem(item_table.toObject().find("tablename")->toString());
-                            }
+                            currentFKComboBox->addItem(item_table.toObject().find("tablename")->toString());
                         }
                     }
                 }
-                FKTableComboBox->setCurrentIndex(0);
             }
-        });
+            FKTableComboBox->setCurrentIndex(0);
+        }
     });
 
     ui->tableWidget->setColumnWidth(1, 140);
@@ -224,7 +224,7 @@ void CreateTableTab::rmRow()
         ui->tableWidget->removeRow(ui->tableWidget->currentRow());
     }
 }
-void CreateTableTab::on_pushButton_2_clicked()
+ void CreateTableTab::on_pushButton_2_clicked()
 {
     QString name = ui->lineEdit->text();
 
@@ -364,24 +364,27 @@ void CreateTableTab::on_pushButton_2_clicked()
               return;
           }
 
-        int columnSeed = ui->SeedLineEdit->text().toInt();
-        int columnIdentity = ui->SeedLineEdit->text().toInt();
-        if (columnSeed <= 0 && columnIdentity <= 0)
-          {
-              MessageWindow* message = new MessageWindow(this);
-              message->setWindowTitle("Warning");
-              message->setText(QString("Please, enter current identity information!"));
-              message->setAttribute(Qt::WA_DeleteOnClose);
-              message->show();
-              return;
-          }
+        bool columnSeedCorrent = false;
+        bool columnIncrementCorrent = false;
+        int columnSeed = ui->SeedLineEdit->text().toInt(&columnSeedCorrent);
+        int columnIdentity = ui->SeedLineEdit->text().toInt(&columnIncrementCorrent);
+
+        if ( columnSeed <= 0 || columnIdentity <= 0 || !columnIncrementCorrent || !columnSeedCorrent )
+        {
+            MessageWindow* message = new MessageWindow(this);
+            message->setWindowTitle("Warning");
+            message->setText(QString("Please, enter current identity information!"));
+            message->setAttribute(Qt::WA_DeleteOnClose);
+            message->show();
+            return;
+        }
 
         if (checkPK) subQueryStr+= "PRIMARY KEY ";
         if (checkIdentity && (typeName == "int" || typeName == "bigint"))
-          {
-              subQueryStr+= QString("IDENTITY (%1,%2) ").arg(columnSeed).arg(columnIdentity);
-              identityFlag+=1;
-          }
+        {
+            subQueryStr+= QString("IDENTITY (%1,%2) ").arg(columnSeed).arg(columnIdentity);
+            identityFlag+=1;
+        }
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
 
@@ -394,22 +397,22 @@ void CreateTableTab::on_pushButton_2_clicked()
     queryStr += ");";
 
     if (identityFlag > 1)
-      {
-          MessageWindow* message = new MessageWindow(this);
-          message->setWindowTitle("Warning");
-          message->setText(QString("Only one identity column is allowed per table"));
-          message->setAttribute(Qt::WA_DeleteOnClose);
-          message->show();
-          return;
-      }
+    {
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Only one identity column is allowed per table"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
+        return;
+    }
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
     nb_execute_sql(connection, queryStr.toStdU16String().c_str(), queryStr.size());
     if (!check_query(connection))
-      {
-          nb_disconnect(connection);
-          return;
-      }
+    {
+        nb_disconnect(connection);
+        return;
+    }
     nb_disconnect(connection);
 
     MessageWindow* message = new MessageWindow(this);
@@ -427,33 +430,33 @@ void CreateTableTab::on_addColumnButton_clicked()
 }
 
 void CreateTableTab::checkIdentity(int index)
-  {
-      std::cout<<index<<std::endl;
-      QCheckBox* checkBoxLink = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 5));
+{
+    QCheckBox* checkBoxLink = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 5));
 
-      if (index == 1 || index == 2)
-      {
-          checkBoxLink->setEnabled(true);
-      }
-      else
-      {
-          checkBoxLink->setEnabled(false);
-          checkBoxLink->setEnabled(false);
-      }
-  }
+    if (fieldsTypes_.at(index) == "int" || fieldsTypes_.at(index) == "bigint")
+    {
+        checkBoxLink->setEnabled(true);
+    }
+    else
+    {
+        checkBoxLink->setChecked(false);
+        checkBoxLink->setEnabled(false);
+        checkBoxLink->setEnabled(false);
+    }
+}
 
 void CreateTableTab::blockOtherIdentity(QCheckBox* item, int state)
-  {
-      if (state == Qt::CheckState::Checked)
-      for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)
-      {
-          if (item != dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5)))
-          {
-              dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(false);
-          }
-      }
-      else for (int i = 0; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
-  }
+{
+    if (state == Qt::CheckState::Checked)
+    for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)
+    {
+        if (item != dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5)))
+        {
+            dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(false);
+        }
+    }
+    else for (int i = 0; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
+}
 
 bool CreateTableTab::check_query(NB_HANDLE connection)
 {

@@ -193,7 +193,7 @@ void ModifyTableTab::on_saveButton_clicked()
 {
     QString queryStr = "";
     int identityFlag = 0;
-    for (int i = fieldCount_; i < ui->tableWidget->rowCount(); i+=1)
+    for (int i = fieldCount_; i < ui->tableWidget->rowCount() - 1; i+=1)
     {
         QString columnName = dynamic_cast<QLineEdit*>(ui->tableWidget->cellWidget(i, 0))->text();
         QString typeName = dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText();
@@ -301,6 +301,21 @@ void ModifyTableTab::on_saveButton_clicked()
         return;
     }
 
+    bool columnSeedCorrent = false;
+    bool columnIncrementCorrent = false;
+    int columnSeed = ui->SeedLineEdit->text().toInt(&columnSeedCorrent);
+    int columnIdentity = ui->SeedLineEdit->text().toInt(&columnIncrementCorrent);
+
+    if ( columnSeed <= 0 || columnIdentity <= 0 || !columnIncrementCorrent || !columnSeedCorrent )
+    {
+        MessageWindow* message = new MessageWindow(this);
+        message->setWindowTitle("Warning");
+        message->setText(QString("Please, enter current identity information!"));
+        message->setAttribute(Qt::WA_DeleteOnClose);
+        message->show();
+        return;
+    }
+
     std::cout<<queryStr.toStdString()<<std::endl;
 
     NB_HANDLE connection = nb_connect( u"127.0.0.1", port_, u"TESTUSER", u"1234" );
@@ -341,6 +356,9 @@ void ModifyTableTab::addRow()
     typesComboBox->setStyleSheet("background-color: #ffffff");
     FKTableComboBox->setStyleSheet("background-color: #ffffff");
 
+    identityCheckBox->setToolTip("The Identity option is not available:\neither the table already has an Identity field,\nor this field does not belong to the INT and BIGINT data types");
+    identityCheckBox->setToolTipDuration(1000000);
+
     for (auto item : fieldsTypes_)
     {
         typesComboBox->addItem(item);
@@ -356,23 +374,26 @@ void ModifyTableTab::addRow()
     QJsonDocument doc(obj);
     QByteArray data = doc.toJson();
     QNetworkReply *reply = mgr->post(request, data);
-    connect(reply, &QNetworkReply::finished, [=]()
-    {
-        if(reply->error() == QNetworkReply::NoError)
-        {
-            QString strReply = reply->readAll();
-            QFile replyFile("./replyFile");
-            replyFile.open(QIODevice::WriteOnly);
-            replyFile.write(strReply.toUtf8());
 
-            QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
-            for (auto item : tables)
-            {
-                if (item.toObject().find("type")->toInt() == 2) FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
-            }
-            FKTableComboBox->setCurrentIndex(0);
+    QEventLoop loop;
+    QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+    loop.exec();
+
+    if(reply->error() == QNetworkReply::NoError)
+    {
+        QString strReply = reply->readAll();
+        QFile replyFile("./replyFile");
+        replyFile.open(QIODevice::WriteOnly);
+        replyFile.write(strReply.toUtf8());
+
+        QJsonArray tables = QJsonDocument::fromJson(strReply.toUtf8()).object().find("data")->toArray();
+        for (auto item : tables)
+        {
+            if (item.toObject().find("type")->toInt() == 2) FKTableComboBox->addItem(item.toObject().find("tablename")->toString());
         }
-    });
+        FKTableComboBox->setCurrentIndex(0);
+    }
+
     std::cout<<ui->tableWidget->rowCount()<<std::endl;
     ui->tableWidget->insertRow(ui->tableWidget->rowCount());
     ui->tableWidget->setCellWidget(ui->tableWidget->rowCount() - 1, 0, nameLineEdit);
@@ -437,10 +458,9 @@ void ModifyTableTab::rmRow()
 
 void ModifyTableTab::checkIdentity(int index)
 {
-    std::cout<<index<<std::endl;
     QCheckBox* checkBoxLink = dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(ui->tableWidget->currentRow(), 5));
 
-    if (index == 1 || index == 2)
+    if (fieldsTypes_.at(index) == "int" || fieldsTypes_.at(index) == "bigint")
     {
         checkBoxLink->setEnabled(true);
     }

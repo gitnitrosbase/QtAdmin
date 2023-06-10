@@ -54,16 +54,6 @@ QVariant ResponceView::data(const QModelIndex &index, int role) const
 
     if (index.column() <= horizontalHeader_.size() && index.row() <= rowCount_)
     {
-//        if ( index.row() >= startIndexesLink_->at(queryIndex_) && index.row() <= (startIndexesLink_->at(queryIndex_) + 1000) )
-//        {
-//            int rowIndex = index.row() - startIndexesLink_->at(queryIndex_);
-
-//            return bufferLink_->at(queryIndex_).at(rowIndex).at(index.column());
-//        }
-//        else
-//        {
-//            GetBuffer(connectIndex_, queryIndex_, index.row());
-//        }
         return getFieldValue1(connectIndex_, queryIndex_, index.row(), index.column());
     }
     return var;
