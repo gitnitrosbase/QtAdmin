@@ -121,6 +121,7 @@ void TabWindow::modelTimerSlot()
             if (info.queryType != "SELECT")
             {
                 model->errFlag_ = true;
+                model->rowsAffected_ = info.rowsAffected;
             }
             else
             {

@@ -783,8 +783,6 @@ void MainWindow::filling_tree()
 {
     treeUpdateFlug_ = true;
 
-
-
     QList<QString> expandedItems;
 
     for (int i = 0; i < ui->treeWidget->topLevelItemCount(); i += 1)
@@ -854,6 +852,12 @@ void MainWindow::filling_tree()
         }
         delete reply_table;
 
+//        QFile outputDbFile(QString("db-%1").arg(item_db.toObject().find("dbname").value().toString()));
+//        if ( outputDbFile.open(QIODevice::WriteOnly) )
+//        {
+//            outputDbFile.write(tablesData_);
+//            outputDbFile.close();
+//        }
 
         if ( QJsonDocument::fromJson(tablesData_).object().find("err")->toInt() != 0 )
         {
@@ -954,24 +958,28 @@ void MainWindow::filling_tree()
             }
             else if (item_table.toObject().find("type").value().toInt() == 3)
             {
-                QTreeWidgetItem* table_name = new QTreeWidgetItem();
-                table_name->setText(0,item_table.toObject().find("tablename").value().toString());
-                dbEdges->addChild(table_name);
                 QJsonArray fields_array = item_table.toObject().find("fields")->toArray();
-                for (auto item_field : fields_array)
-                {
-                    QTreeWidgetItem* field = new QTreeWidgetItem();
-                    field->setText(0, QString(item_field.toObject().find("name")->toString()
-                                              + QString(" [")
-                                              + getType(item_field.toObject())
-                                              + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
-                                              + QString("] ")
-                                              + linkCheck(item_field.toObject().find("linktable")->toString())
-                    ));
-                    table_name->addChild(field);
-                }
 
-                edgesCount+=1;
+                if ( fields_array.size() != 0 )
+                {
+                    QTreeWidgetItem* table_name = new QTreeWidgetItem();
+                    table_name->setText(0,item_table.toObject().find("tablename").value().toString());
+                    dbEdges->addChild(table_name);
+                    for (auto item_field : fields_array)
+                    {
+                        QTreeWidgetItem* field = new QTreeWidgetItem();
+                        field->setText(0, QString(item_field.toObject().find("name")->toString()
+                                                  + QString(" [")
+                                                  + getType(item_field.toObject())
+                                                  + QString(nullCheck(item_field.toObject().find("nullable")->toInt()))
+                                                  + QString("] ")
+                                                  + linkCheck(item_field.toObject().find("linktable")->toString())
+                        ));
+                        table_name->addChild(field);
+                    }
+
+                    edgesCount+=1;
+                }
             }
         }
         dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
