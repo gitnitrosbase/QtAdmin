@@ -80,7 +80,6 @@ set(CUSTOM_LEXER QSciLexerNBSQL.hpp)
 
 add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB})
 
-
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
