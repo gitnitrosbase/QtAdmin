@@ -540,6 +540,7 @@ void MainWindow::on_modifyTableActionTrig()
     if (currentDatabase_ != "")
     {
         ModifyTableTab* tmp = new ModifyTableTab();
+        tmp->setAttribute(Qt::WA_DeleteOnClose);
         ui->tabWidget->insertTab(ui->tabWidget->count(), tmp, QString("Modify"));
         tmp->currentTable_ = ui->treeWidget->currentItem()->text(0);
         tmp->port_ = dbList_.find(currentDatabase_)->second;
