@@ -143,7 +143,6 @@ private slots:
     void on_treeWidget_itemExpanded(QTreeWidgetItem *item);
 
 private:
-
     void setAddress();
 
     QString paintText(QString str, int color);
