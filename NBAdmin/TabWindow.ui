@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>626</width>
-    <height>474</height>
+    <height>476</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -40,8 +40,24 @@ QComboBox QListView::item::selectd {
 	background-color: #1e90ff;}
 QTableView {	border: 0px;}</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
-   <item>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_left">
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>12</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">color: #0085c7;</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
     <widget class="QSplitter" name="splitter">
      <property name="styleSheet">
       <string notr="true">QSplitter::handle
@@ -104,129 +120,6 @@ padding: 0;</string>
        <property name="bottomMargin">
         <number>0</number>
        </property>
-       <item row="1" column="0">
-        <widget class="QTableView" name="tableWidget_">
-         <property name="styleSheet">
-          <string notr="true">QTableView {	
-	font: 12pt &quot;Segoe UI&quot;;	
-	/*border: 1px solid #ececec;*/
-	/*border-top: 1px solid #ececec;*/
-}
-QHeaderView::section {
-	font: 12pt &quot;Segoe UI&quot;;	
-	background-color:&quot;#eee&quot;; 
-}
-	</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QWidget" name="horizontalWidget" native="true">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="maximumSize">
-          <size>
-           <width>16777215</width>
-           <height>12</height>
-          </size>
-         </property>
-         <property name="styleSheet">
-          <string notr="true">QStatusBar::item {
-	border: none; 
-	margin: 0px;
-};</string>
-         </property>
-         <layout class="QHBoxLayout" name="statusContainer">
-          <item>
-           <widget class="QLabel" name="label_left">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>12</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>12</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border: 0px;</string>
-            </property>
-            <property name="lineWidth">
-             <number>0</number>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QLabel" name="label_right">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>12</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>16777215</width>
-              <height>12</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">color: #555;
-border: 0px;
-</string>
-            </property>
-            <property name="lineWidth">
-             <number>0</number>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
        <item row="0" column="0">
         <widget class="QComboBox" name="comboBox_">
          <property name="font">
@@ -240,6 +133,23 @@ border: 0px;
          <property name="styleSheet">
           <string notr="true">margin: 0;
 padding: 0;</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QTableView" name="tableWidget_">
+         <property name="styleSheet">
+          <string notr="true">QTableView {	
+	font: 12pt &quot;Segoe UI&quot;;	
+	border: 1px solid #ececec;
+	border-top: 1px solid #ececec;
+}
+/*
+QHeaderView::section {
+	font: 12pt &quot;Segoe UI&quot;;	
+	background-color:&quot;#eee&quot;; 
+}
+*/</string>
          </property>
         </widget>
        </item>

@@ -2,7 +2,7 @@
 
 TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
 {
-    bar_ = new QStatusBar(this);
+    //bar_ = new QStatusBar(this);
     ui->setupUi(this);
 
     textEdit_ = new QsciScintilla;
@@ -42,11 +42,11 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     sqlLexer_->setColor(QColor("#0085c7"), QsciLexerSQL::Keyword);
 
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
-    ui->statusContainer->addWidget(bar_);
-    bar_->addPermanentWidget(ui->label_left,1);
-    bar_->addPermanentWidget(ui->label_right,1);
-    ui->label_left->setText("left");
-    ui->label_right->setText("right");
+//    ui->statusContainer->addWidget(bar_);
+//    bar_->addPermanentWidget(ui->label_left,1);
+//    bar_->addPermanentWidget(ui->label_right,1);
+//    ui->label_left->setText("left");
+//    ui->label_right->setText("right");
     ui->tableWidget_->setLocale(QLocale::Russian);
 
     timer_ = new QTimer();
@@ -54,7 +54,7 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
 
     connect(textEdit_, SIGNAL(linesChanged()), this, SLOT(setLeftMargin()));
 
-    ui->tableWidget_->setStyleSheet("QHeaderView::section { background:\"#eee\" }; ");
+    //ui->tableWidget_->setStyleSheet("QHeaderView::section { background:\"#eee\" }; ");
 }
 
 TabWindow::~TabWindow()
@@ -144,6 +144,7 @@ void TabWindow::modelTimerSlot()
             timer_->stop();
             emit refresh_tree();
             emit turnOnRunButtonSignal();
+            ui->label_left->setText("finished");
         }
         else
         {
@@ -222,6 +223,9 @@ void TabWindow::setCurrentIndex(int index)
 void TabWindow::push_button_run_clicked()
 {
     emit turnOffRunButtonSignal();
+
+    ui->label_left->setText("in working...");
+
     firstPaintModelFlag_ = true;
     if (buffers_ != nullptr) delete buffers_;
     if (startIndexes_ != nullptr) delete startIndexes_;

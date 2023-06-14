@@ -322,34 +322,37 @@ QScrollBar::handle:horizontal  {
        </property>
        <property name="styleSheet">
         <string notr="true">QTreeWidget {
-	border:0px solid rgb(204, 204, 204);
-	padding-left: 5px;
+            border:0px solid rgb(204, 204, 204);
+            padding-left: 5px;
 }
-
 QHeaderView::section {
-	color: #555;	
-	background-color: rgb(255, 255, 255);
-	border: 0px;
-	height: 0px;
-}
-
+            color: #555;
+            background-color: rgb(255, 255, 255);
+            border: 0px;
+            height: 0px;}
 QTreeView::branch {
-   height: 0px;
+            height: 0px;
 }
-
-QTreeWidget::item {
-	border: 0px;
-	font-size: 12px;
-    color: #555;
-} 
-
 QScrollBar:vertical {
-    border: 2px solid grey;
-    background: #32CC99;
-    height: 15px;
-    margin: 0px 20px 0 20px;
+            border: 2px solid grey;
+            background: #32CC99;
+            height: 15px;
+            margin: 0px 20px 0 20px;}
+QHeaderView::section {
+            color: black;
+            padding: 2px;
+            height:0px;
+            border: 0px solid #567dbc;
+            border-left:0px;
+            border-right:0px;
+            background: white;
 }
-</string>
+QTreeView::item{color: #555;} 
+QTreeWidget {
+            font-size: 12pt;
+            font: Segoe UI&quot;;
+}
+QTreeView::branch:hover {}</string>
        </property>
        <column>
         <property name="text">
@@ -444,7 +447,7 @@ QTabBar::tab:selected {
      <x>0</x>
      <y>0</y>
      <width>878</width>
-     <height>28</height>
+     <height>27</height>
     </rect>
    </property>
    <property name="sizePolicy">

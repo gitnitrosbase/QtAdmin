@@ -81,38 +81,6 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
     connect(ui->treeWidget, &QTreeWidget::currentItemChanged, this, &MainWindow::on_treeWidget_currentItemChanged);
     ui->splitter->setSizes(splitterSize_);
 
-    ui->treeWidget->setStyleSheet(
-            "QTreeWidget {"
-            "border:0px solid rgb(204, 204, 204);"
-            "padding-left: 5px;}"
-            "QHeaderView::section {"
-            "color: #555;"
-            "background-color: rgb(255, 255, 255);"
-            "border: 0px;"
-            "height: 0px;}"
-            "QTreeView::branch {"
-            "height: 0px;}"
-            "QScrollBar:vertical {"
-            "border: 2px solid grey;"
-            "background: #32CC99;"
-            "height: 15px;"
-            "margin: 0px 20px 0 20px;}"
-            "QHeaderView::section {"
-            "color: black;"
-            "padding: 2px;"
-            "height:0px;"
-            "border: 0px solid #567dbc;"
-            "border-left:0px;"
-            "border-right:0px;"
-            "background: white;} "
-            "QTreeView::item{color: #555;} "
-            "QTreeWidget {"
-            "font-size: 12pt;"
-            "font: \"Segoe UI\";"
-            "} "
-            "QTreeView::branch:hover {}");
-
-
     connect(connectWindow_, &ConnectWindow::refreshTree, this, &MainWindow::filling_tree_slot);
     connect(openWindow_, &OpenWindow::refreshTree, this, &MainWindow::filling_tree_slot);
     connect(restoreWindow_, &RestoreWindow::refreshTree, this, &MainWindow::filling_tree_slot);
@@ -830,6 +798,8 @@ void MainWindow::filling_tree()
                                    + QString::number(item_db.toObject().find("port").value().toInt())
         ));
 
+        ui->treeWidget->addTopLevelItem(dbName);
+
         dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()),
                                                item_db.toObject().find("port").value().toInt()));
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
@@ -985,8 +955,6 @@ void MainWindow::filling_tree()
         }
         dbTables->setText(0, QString("Tables (" + QString::number(tablesCount) + ")"));
         dbEdges->setText(0, QString("Edges (" + QString::number(edgesCount) + ")"));
-
-        ui->treeWidget->addTopLevelItem(dbName);
     }
 
 
