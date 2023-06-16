@@ -40,14 +40,17 @@ QString CreateTableTab::getType(QJsonObject obj)
         if(precision == -1) return QString("double");
         break;
     case 5:
-        if(precision > 0) return QString("datetime");
+//        if(precision > 0) return QString("datetime");
+        if(precision <= 3) return QString("datetime(%1)").arg(precision);
+        else return QString("datetime2(%1)").arg(precision);
         break;
     case 6:
         return QString("bit");
         break;
     case 7:
-        if(precision == -1) return QString("datetime2(MAX)");
-        else return QString("datetime2(%1)").arg(precision);
+        if(precision == -1) return QString("date");
+//        if(precision == -1) return QString("datetime2(MAX)");
+//        else return QString("datetime2(%1)").arg(precision);
         break;
     case 9:
         if(precision > 0 && scale == 1)
