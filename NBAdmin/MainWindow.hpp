@@ -23,6 +23,7 @@
 #include <QList>
 #include <QTimer>
 #include <QThread>
+#include <QTreeWidgetItem>
 
 #include <QRegularExpression>
 #include <QSyntaxHighlighter>
@@ -35,6 +36,8 @@
 #include <typeinfo>
 #include <QFile>
 #include <filesystem>
+#include <thread>
+#include <atomic>
 
 #define PATH "config.conf"
 

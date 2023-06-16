@@ -782,6 +782,11 @@ void MainWindow::filling_tree()
     if (reply->error() == QNetworkReply::NoError)
     {
         dbsData_ = reply->readAll();
+
+        auto dbsFile = QFile("dbs");
+        dbsFile.open(QIODevice::WriteOnly);
+        dbsFile.write(dbsData_);
+        dbsFile.close();
     }
     delete reply;
 
@@ -804,6 +809,15 @@ void MainWindow::filling_tree()
 
         dbList_.insert(std::pair<QString, int>(QString(item_db.toObject().find("dbname").value().toString()),
                                                item_db.toObject().find("port").value().toInt()));
+
+        if ( item_db.toObject().find("run").value().toBool() == false )
+        {
+            dbName->setIcon(0,  falseIcon_ );
+            ui->treeWidget->addTopLevelItem(dbName);
+            continue;
+        }
+        else dbName->setIcon(0,  trueIcon_ );
+
         QNetworkAccessManager *mgr = new QNetworkAccessManager(this);
         QUrl url(address_);
         QNetworkRequest request(url);
@@ -822,16 +836,13 @@ void MainWindow::filling_tree()
         if (reply_table->error() == QNetworkReply::NoError)
         {
             tablesData_ = reply_table->readAll();
+
+            auto dbFile = QFile(QString("db%1").arg(item_db.toObject().find("port").value().toInt()));
+            dbFile.open(QIODevice::WriteOnly);
+            dbFile.write(dbsData_);
+            dbFile.close();
         }
         delete reply_table;
-
-        if ( QJsonDocument::fromJson(tablesData_).object().find("err")->toInt() != 0 )
-        {
-            dbName->setIcon(0,  falseIcon_ );
-            ui->treeWidget->addTopLevelItem(dbName);
-            continue;
-        }
-        else dbName->setIcon(0,  trueIcon_ );
 
         QJsonDocument copy_reply_table = QJsonDocument::fromJson(tablesData_);
         QJsonObject Responce = copy_reply_table.object();
