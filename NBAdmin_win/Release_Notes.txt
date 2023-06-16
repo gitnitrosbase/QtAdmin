@@ -1,3 +1,9 @@
+Version 12
+---------
+ - Fixed minor bugs
+ - Added query status
+ - Added new keywoard 
+==============================================
 Version 11
 ---------
  - Fixed minor bugs
