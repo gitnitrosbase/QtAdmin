@@ -399,6 +399,7 @@ void MainWindow::on_actionCreateDBQueryTrig()
             currentTab->textEdit_->setText(finalQuery);
         }
         delete reply;
+        delete mgr;
     }
 }
 void MainWindow::on_actionSelectEdgeTrig()
