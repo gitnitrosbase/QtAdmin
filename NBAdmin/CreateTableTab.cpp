@@ -458,7 +458,14 @@ void CreateTableTab::blockOtherIdentity(QCheckBox* item, int state)
             dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(false);
         }
     }
-    else for (int i = 0; i< ui->tableWidget->rowCount(); i+=1) dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
+    else for (int i = 0; i< ui->tableWidget->rowCount(); i+=1)
+    {
+        if (
+                dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText() == "bigint"||
+                dynamic_cast<QComboBox*>(ui->tableWidget->cellWidget(i, 1))->currentText() == "int"
+                )
+            dynamic_cast<QCheckBox*>(ui->tableWidget->cellWidget(i, 5))->setEnabled(true);
+    }
 }
 
 bool CreateTableTab::check_query(NB_HANDLE connection)
