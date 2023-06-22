@@ -371,9 +371,10 @@ void MainWindow::on_actionCreateDBQueryTrig()
                         QString query = "\n\t";
                         query += QString(fields.toObject().find("name")->toString() + " ");
 
+                        query += QString(getType(fields.toObject())).toUpper();
+
                         if (fields.toObject().find("seed")->toInt() != 0 && fields.toObject().find("increment")->toInt() != 0)
-                            query += QString("IDENTITY (%1,%2)").arg(fields.toObject().find("seed")->toInt()).arg(fields.toObject().find("increment")->toInt());
-                        else query += QString(getType(fields.toObject())).toUpper();
+                            query += QString(" IDENTITY (%1,%2)").arg(fields.toObject().find("seed")->toInt()).arg(fields.toObject().find("increment")->toInt());
 
                         if(fields.toObject().find("subtype")->toInt() == 1)
                             query += " PRIMARY KEY NOT NULL";
