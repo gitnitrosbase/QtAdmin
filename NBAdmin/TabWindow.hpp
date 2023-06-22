@@ -87,7 +87,6 @@ public:
     Ui::TabWindow* ui;
     bool flag_ = true;
     int tabNumber_ = 1;
-    QStatusBar* bar_;
 
     QsciScintilla* textEdit_ = nullptr;
     QsciLexerSQL* sqlLexer_ = nullptr;

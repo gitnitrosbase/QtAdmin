@@ -192,6 +192,7 @@ inline NBValue getFieldValue(int idconnect, int resnum, int rowIndex, int column
 struct ConnectInfo
 {
     std::string queryType;
+    int columnCount;
     int rowsAffected;
     int queryError;
 };
@@ -212,6 +213,7 @@ inline ConnectInfo GetConnectInfo(int connectIndex, int queryIndex )
 
     if ( int errorNum = nb_errno(connection) != NB_OK)
     {
+        output.columnCount = nb_field_count(connection);
         output.queryType = "ERROR";
         output.queryError = errorNum;
         size_t errorStrLen = 0;

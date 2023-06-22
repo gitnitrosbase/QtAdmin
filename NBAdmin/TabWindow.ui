@@ -47,22 +47,6 @@ QTableView {	border: 0px;}</string>
    <property name="spacing">
     <number>0</number>
    </property>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_left">
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>12</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true">color: #0085c7;</string>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="0" colspan="2">
     <widget class="QSplitter" name="splitter">
      <property name="styleSheet">

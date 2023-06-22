@@ -145,33 +145,43 @@ std::vector<QString> ResponceView::getHoryzontalHeader1(int idconnect, int resnu
 
 
     int fieldcount = nb_field_count( connection );
-    for (int i = 0; i < fieldcount; i += 1)
+    if( fieldcount == 0 )
     {
-        nb_field_name( connection, i, &value );
-
-        switch ( value.type )
+        output.push_back("(No name)");
+    }
+    else
+    {
+        for (int i = 0; i < fieldcount; i += 1)
         {
-        case NB_DATA_INT: strValue = QString::number( value.intv ); break;
-        case NB_DATA_DATETIME: strValue = QString( value.str ) ; break;
-        case NB_DATA_STRING: strValue= QString::fromUtf8( value.str, value.len ); break;
-        case NB_DATA_U16STRING:  strValue= QString::fromUtf16( (char16_t*)value.str, value.len/2 ); break;
-        case NB_DATA_DECIMAL: strValue = QString( value.str ); break;
-        case NB_DATA_INT64: strValue = QString::number( value.int64v ); break;
-        case NB_DATA_DOUBLE: strValue = QString::number( value.dbl ); break;
-        case NB_DATA_BOOL: strValue = ( ( value.intv ) ? "TRUE" : "FALSE" ); break;
-        case NB_DATA_BINARY:
-        {
-            QByteArray utf8Data = QString::fromUtf8(value.str, value.len).toUtf8();
-            for (int i = 0; i < utf8Data.size() && i < 2048; i += 1 ) strValue += QString::number( (quint8)utf8Data.at(i), 16 );
-            break;
-        }
-        case NB_DATA_DATE: strValue = QString( value.str ); break;
-        case NB_DATA_NONE : strValue = "none"; break;
-        case NB_DATA_ROWVERSION: strValue= QString( value.str ); break;
-        case NB_DATA_URI: strValue = QString( value.str ); break;
-        }
+            nb_field_name( connection, i, &value );
 
-        output.push_back(strValue);
+            switch ( value.type )
+            {
+            case NB_DATA_INT: strValue = QString::number( value.intv ); break;
+            case NB_DATA_DATETIME: strValue = QString( value.str ) ; break;
+            case NB_DATA_STRING: strValue= QString::fromUtf8( value.str, value.len ); break;
+            case NB_DATA_U16STRING:  strValue= QString::fromUtf16( (char16_t*)value.str, value.len/2 ); break;
+            case NB_DATA_DECIMAL: strValue = QString( value.str ); break;
+            case NB_DATA_INT64: strValue = QString::number( value.int64v ); break;
+            case NB_DATA_DOUBLE: strValue = QString::number( value.dbl ); break;
+            case NB_DATA_BOOL: strValue = ( ( value.intv ) ? "TRUE" : "FALSE" ); break;
+            case NB_DATA_BINARY:
+            {
+                QByteArray utf8Data = QString::fromUtf8(value.str, value.len).toUtf8();
+                for (int i = 0; i < utf8Data.size() && i < 2048; i += 1 ) strValue += QString::number( (quint8)utf8Data.at(i), 16 );
+                break;
+            }
+            case NB_DATA_DATE: strValue = QString( value.str ); break;
+            case NB_DATA_NONE : strValue = "none"; break;
+            case NB_DATA_ROWVERSION: strValue= QString( value.str ); break;
+            case NB_DATA_URI: strValue = QString( value.str ); break;
+            default: strValue = "(No name)";
+            }
+
+            if ( strValue == "" ) strValue = "(No name)";
+
+            output.push_back(strValue);
+        }
     }
 
     nb_continue_work( idconnect );
