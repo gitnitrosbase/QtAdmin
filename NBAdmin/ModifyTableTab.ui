@@ -228,7 +228,7 @@
 }</string>
        </property>
        <property name="text">
-        <string>-1</string>
+        <string>1</string>
        </property>
       </widget>
      </item>

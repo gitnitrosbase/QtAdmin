@@ -307,7 +307,7 @@ void ModifyTableTab::on_saveButton_clicked()
     int columnSeed = ui->SeedLineEdit->text().toInt(&columnSeedCorrent);
     int columnIdentity = ui->SeedLineEdit->text().toInt(&columnIncrementCorrent);
 
-    if ( columnSeed <= 0 || columnIdentity <= -1 || !columnIncrementCorrent || !columnSeedCorrent )
+    if ( columnSeed <= 1 || columnIdentity <= 1 || !columnIncrementCorrent || !columnSeedCorrent )
     {
         MessageWindow* message = new MessageWindow(this);
         message->setWindowTitle("Warning");
