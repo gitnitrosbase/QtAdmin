@@ -234,9 +234,9 @@ void MainWindow::showContextMenu(const QPoint point)
 
 void MainWindow::push_button_run_clicked()
 {
-    if ( ui->Run->isEnabled() )
+    if ( !ui->Run->isEnabled() ) return;
 
-    if (ui->tabWidget->count() > 0 && currentDatabase_ != "")
+    if (ui->tabWidget->count() > 0 && currentDatabase_ != "" && ui->dbVersionLabel->text() != "error")
     {
         TabWindow* currentTab = dynamic_cast<TabWindow*>(ui->tabWidget->currentWidget());
         currentTab->dbPort_ = dbList_[currentDatabase_];
@@ -246,7 +246,7 @@ void MainWindow::push_button_run_clicked()
     {
         MessageWindow* message = new MessageWindow(this);
         message->setWindowTitle("Warning");
-        message->setText(QString("Select database first"));
+        message->setText(QString("Select the running database"));
         message->setAttribute(Qt::WA_DeleteOnClose);
         message->show();
     }
@@ -1032,6 +1032,8 @@ void MainWindow::on_actionStop_triggered()
             QMessageBox::critical(this, "Error %" + QString::number(jsonObject.find("err")->toInt()), text);
         }
     }
+
+    ui->dbVersionLabel->setText("error");
 
     filling_tree();
 }

@@ -285,7 +285,6 @@ void ModifyTableTab::on_saveButton_clicked()
         if (checkFK) subQueryStr+= QString("FOREIGN KEY(%1) REFERENCES %2 ").arg(columnName).arg(nameFK);
         if (checkNullable) subQueryStr += "NOT NULL ";
 
-
         if (defaultValue != "") subQueryStr += QString(" DEFAULT '%1'").arg(defaultValue);
 
         queryStr += subQueryStr;
@@ -307,7 +306,7 @@ void ModifyTableTab::on_saveButton_clicked()
     int columnSeed = ui->SeedLineEdit->text().toInt(&columnSeedCorrent);
     int columnIdentity = ui->SeedLineEdit->text().toInt(&columnIncrementCorrent);
 
-    if ( columnSeed <= 1 || columnIdentity <= 1 || !columnIncrementCorrent || !columnSeedCorrent )
+    if ( columnSeed < 1 || columnIdentity < 1 || !columnIncrementCorrent || !columnSeedCorrent )
     {
         MessageWindow* message = new MessageWindow(this);
         message->setWindowTitle("Warning");
