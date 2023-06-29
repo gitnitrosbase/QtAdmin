@@ -102,6 +102,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::close_current_tab()
+{
+    ui->tabWidget->removeTab(ui->tabWidget->currentIndex());
+}
+
 void MainWindow::keyPressEvent(QKeyEvent *event)
 {
 
@@ -256,7 +261,7 @@ void MainWindow::push_button_plus_clicked()
     if (ui->tabWidget->count() > MAXTABCOUNT) return;
 
     TabWindow* tmp = new TabWindow(this);
-    int tabNumber;
+    int tabNumber = 1;
 
     std::set<int> tabList;
     for (int i = 0; i < ui->tabWidget->count(); i+=1)
@@ -272,7 +277,7 @@ void MainWindow::push_button_plus_clicked()
 
     for (int i = 0; i <= MAXTABCOUNT; i+=1)
     {
-        if (auto search = tabList.find(i); search == tabList.end())
+        if (tabList.find(i) == tabList.end())
         {
             tabNumber = i;
             break;
@@ -296,7 +301,7 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     else if ( ui->tabWidget->count() == 1 )
     {
         ui->tabWidget->removeTab(index);
-        ui->tabWidget->addTab(new TabWindow(), QString("Query 1"));
+        push_button_plus_clicked();
     }
 }
 void MainWindow::on_treeWidget_currentItemChanged(QTreeWidgetItem* from, QTreeWidgetItem* to)
@@ -526,6 +531,7 @@ void MainWindow::on_modifyTableActionTrig()
         ui->tabWidget->setCurrentWidget(tmp);
         tmp->printFromdb();
         connect(tmp, &ModifyTableTab::refreshTree, this, &MainWindow::filling_tree_slot);
+        connect(tmp, &ModifyTableTab::closeThisTab, this, &MainWindow::close_current_tab);
     }
 }
 void MainWindow::on_tableSelectActionTrig()
@@ -578,6 +584,7 @@ void MainWindow::on_actionCreateTableTrig()
         tmp->SetCurrentDatabase(currentDatabase_, dbList_.find(currentDatabase_)->second);
         ui->tabWidget->setCurrentIndex(ui->tabWidget->count()-1);
         connect(tmp, &CreateTableTab::refreshTree, this, &MainWindow::filling_tree_slot);
+        connect(tmp, &CreateTableTab::closeThisTab, this, &MainWindow::close_current_tab);
     }
 }
 

@@ -77,6 +77,8 @@ public slots:
     };
 
 private slots:
+    void close_current_tab();
+
     void keyPressEvent(QKeyEvent *event) override;
 
     void filling_tree_slot();

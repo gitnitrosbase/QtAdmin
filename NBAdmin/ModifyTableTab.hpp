@@ -49,6 +49,7 @@ public slots:
     void checkToAddRow(QString text);
 signals:
     void refreshTree();
+    void closeThisTab();
 
 public:
     int fieldCount_ = 0;

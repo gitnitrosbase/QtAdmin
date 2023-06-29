@@ -482,3 +482,9 @@ bool CreateTableTab::check_query(NB_HANDLE connection)
         return false;
     }
 }
+
+void CreateTableTab::on_pushButton_3_clicked()
+{
+    emit closeThisTab();
+}
+
