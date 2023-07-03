@@ -1,10 +1,15 @@
 #include <QApplication>
 #include <MainWindow.hpp>
-
+#include <QTextFormat>
+#include <QTextCodec>
 #include "LoggerFile.hpp"
 
 int main(int argc, char *argv[])
 {
+    // Set codec type
+    QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP1251"));
+
+
     Logger mainLogger("MAIN");
     QApplication a(argc, argv);
     MainWindow window;

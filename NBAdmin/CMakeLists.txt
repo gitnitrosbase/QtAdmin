@@ -11,7 +11,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 COMPONENTS Widgets Network REQUIRED)
+find_package(Qt6 COMPONENTS Widgets Network Core5Compat REQUIRED)
 
 set(PROJECT_HEADERS
     TabWindow.hpp
@@ -86,6 +86,7 @@ if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Core5Compat
         ${PROJECT_SOURCE_DIR}/nbclient.lib
         ${PROJECT_SOURCE_DIR}/nbadminclient.lib
         ${PROJECT_SOURCE_DIR}/Qsci/debug/qscintilla2_qt6d.lib
@@ -94,6 +95,7 @@ else()
     target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Widgets
         Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Core5Compat
         ${PROJECT_SOURCE_DIR}/nbclient.lib
         ${PROJECT_SOURCE_DIR}/nbadminclient.lib
         ${PROJECT_SOURCE_DIR}/Qsci/release/qscintilla2_qt6.lib

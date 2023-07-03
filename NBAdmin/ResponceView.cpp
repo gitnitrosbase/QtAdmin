@@ -2,6 +2,8 @@
 
 #include "ResponceView.hpp"
 
+#include <string>
+
 ResponceView::ResponceView(QObject *parent)
 {
 
@@ -97,10 +99,9 @@ QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, in
     switch ( value.type )
     {
     case NB_DATA_INT: output = QString::number( value.intv ); break;
-    case NB_DATA_DATETIME: output = QString( value.str ) ; break;
+    case NB_DATA_DATETIME: output = QString::fromUtf8( value.str, value.len ) ; break;
     case NB_DATA_STRING: output= QString::fromUtf8( value.str, value.len ); break;
     case NB_DATA_U16STRING:  output= QString::fromUtf16( (char16_t*)value.str, value.len/2 ); break;
-    case NB_DATA_DECIMAL: output = QString( value.str ); break;
     case NB_DATA_INT64: output = QString::number( value.int64v ); break;
     case NB_DATA_DOUBLE: output = QString::number( value.dbl ); break;
     case NB_DATA_BOOL: output = ( ( value.intv ) ? "TRUE" : "FALSE" ); break;
@@ -111,7 +112,7 @@ QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, in
 
         break;
     }
-    case NB_DATA_DATE: output = QString( value.str ); break;
+    case NB_DATA_DATE: output = QString::fromUtf8( value.str, value.len ); break;
     case NB_DATA_NONE : output = "none"; break;
     case NB_DATA_ROWVERSION:
     {
@@ -120,7 +121,15 @@ QString ResponceView::getFieldValue1(int idconnect, int resnum, int rowIndex, in
 
         break;
     }
-    case NB_DATA_URI: output = QString( value.str ); break;
+    case NB_DATA_DECIMAL:
+    {
+        output = QString::fromUtf8(value.str, value.len);
+
+        std::cout<<output.toStdString();
+
+
+        break;
+    }
     }
 
     nb_continue_work( idconnect );
@@ -174,7 +183,17 @@ std::vector<QString> ResponceView::getHoryzontalHeader1(int idconnect, int resnu
             case NB_DATA_DATE: strValue = QString( value.str ); break;
             case NB_DATA_NONE : strValue = "none"; break;
             case NB_DATA_ROWVERSION: strValue= QString( value.str ); break;
-            case NB_DATA_URI: strValue = QString( value.str ); break;
+            /*
+            case NB_DATA_URI:
+            {
+                strValue = QString( value.str );
+                for (int i = 0; i < strValue.size(); i += 1)
+                {
+                    if ( !strValue.at(i).isDigit() && strValue.at(i) != '.' ) strValue.remove((qsizetype)i);
+                }
+                break;
+            }
+            */
             default: strValue = "(No name)";
             }
 
