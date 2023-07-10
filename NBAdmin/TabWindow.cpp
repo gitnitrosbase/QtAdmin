@@ -50,6 +50,7 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     sqlLexer_->setFoldComments(true);
     sqlLexer_->setFoldCompact(false);
     textEdit_->setFolding(QsciScintilla::FoldStyle::CircledTreeFoldStyle);
+    textEdit_->setWrapMode(QsciScintilla::WrapWord);
 
     timer_ = new QTimer();
     connect(timer_, SIGNAL(timeout()), this, SLOT(modelTimerSlot()));
