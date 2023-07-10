@@ -1,5 +1,7 @@
 #include "TabWindow.hpp"
 
+#include <AddKeywordForQsci.cpp>
+
 TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
 {
     ui->setupUi(this);
@@ -28,8 +30,9 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     textEdit_->setAutoCompletionCaseSensitivity(false);
 
     api_ = new QsciAPIs(sqlLexer_);
-    api_->add("SELECT");
-    api_->add("FROM");
+
+    addKeyword(api_);
+
     api_->prepare();
 
     //! Подсветка соответствий скобок

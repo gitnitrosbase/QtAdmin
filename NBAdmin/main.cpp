@@ -2,10 +2,18 @@
 #include <MainWindow.hpp>
 #include <QTextFormat>
 #include <QTextCodec>
+#include <QProcess>
 #include "LoggerFile.hpp"
+
+#include <Windows.h>
 
 int main(int argc, char *argv[])
 {
+    // Starting nbase
+        //QProcess nbaseProcess;
+        //nbaseProcess.start("nbase");
+    system("nbase");
+
     // Set codec type
     QTextCodec::setCodecForLocale(QTextCodec::codecForName("CP1251"));
 

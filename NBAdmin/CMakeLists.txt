@@ -77,10 +77,11 @@ set(LOGGERLIB
     )
 
 set(CUSTOM_LEXER
+    AddKeywordForQsci.cpp
     QSciLexerNBSQL.hpp
     )
 
-add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB})
+add_executable(${PROJECT_NAME} WIN32 ${PROJECT_HEADERS} ${PROJECT_SOURCES} ${UI_FILES} ${NITROSBASE} ${RES_FILES} ${LOGGERLIB} "AddKeywordForQsci.cpp")
 
 if (${CMAKE_BUILD_TYPE} STREQUAL "Debug")
     target_link_libraries(${PROJECT_NAME} PRIVATE
