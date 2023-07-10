@@ -60,7 +60,8 @@ signals:
     void turnOnRunButtonSignal();
     void turnOffRunButtonSignal();
 
-public slots:    
+public slots:  
+
     void setLeftMargin();
 
     QString textFromTextEdit();
@@ -97,8 +98,6 @@ public:
 
     QTimer* timer_ = nullptr;
     bool firstPaintModelFlag_ = true;
-
-    QStringList keywordList_ = {"SELECT", "FROM", "INTO", "TOP"};
 
 public:
     int dbPort_;

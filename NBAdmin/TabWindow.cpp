@@ -46,6 +46,11 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
     ui->tableWidget_->setLocale(QLocale::Russian);
 
+    sqlLexer_->setFoldAtElse(true);
+    sqlLexer_->setFoldComments(true);
+    sqlLexer_->setFoldCompact(false);
+    textEdit_->setFolding(QsciScintilla::FoldStyle::CircledTreeFoldStyle);
+
     timer_ = new QTimer();
     connect(timer_, SIGNAL(timeout()), this, SLOT(modelTimerSlot()));
 
