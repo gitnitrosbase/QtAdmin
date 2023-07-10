@@ -62,6 +62,8 @@ signals:
 
 public slots:  
 
+    void hotspotSlot(int margin, int line, Qt::KeyboardModifiers state);
+
     void setLeftMargin();
 
     QString textFromTextEdit();

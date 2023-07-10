@@ -29,11 +29,13 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     textEdit_->setAutoCompletionSource(QsciScintilla::AcsAll);
     textEdit_->setAutoCompletionCaseSensitivity(false);
 
+    //! Autocomcition words
     api_ = new QsciAPIs(sqlLexer_);
-
     addKeyword(api_);
-
     api_->prepare();
+
+    //! Hotspot text
+    connect(textEdit_, &QsciScintilla::marginClicked, this, &TabWindow::hotspotSlot);
 
     //! Подсветка соответствий скобок
     textEdit_->setBraceMatching(QsciScintilla::SloppyBraceMatch);
@@ -46,11 +48,17 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     connect(ui->comboBox_, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [=](int index){setCurrentIndex(index);});
     ui->tableWidget_->setLocale(QLocale::Russian);
 
+    //! Folding text
     sqlLexer_->setFoldAtElse(true);
     sqlLexer_->setFoldComments(true);
     sqlLexer_->setFoldCompact(false);
     textEdit_->setFolding(QsciScintilla::FoldStyle::CircledTreeFoldStyle);
     textEdit_->setWrapMode(QsciScintilla::WrapWord);
+
+    textEdit_->setHotspotWrap(true);
+    textEdit_->setMarginSensitivity(1, true);
+    textEdit_->setMarginSensitivity(QsciScintilla::RightArrow, 8);
+    textEdit_->setBraceMatching(QsciScintilla::SloppyBraceMatch);
 
     timer_ = new QTimer();
     connect(timer_, SIGNAL(timeout()), this, SLOT(modelTimerSlot()));
@@ -71,6 +79,11 @@ TabWindow::~TabWindow()
         delete item;
     }
     models_.clear();
+}
+
+void TabWindow::hotspotSlot(int margin, int line, Qt::KeyboardModifiers state)
+{
+    if (Qt::KeyboardModifier::ControlModifier) std::cout << "margin - " << margin << "\nline - " << line << std::endl;
 }
 
 void TabWindow::setLeftMargin()
@@ -253,33 +266,4 @@ void TabWindow::push_button_run_clicked()
     timer_->start(0);
 
     flag_ = true;
-}
-
-
-std::vector<std::string> TabWindow::getParsedQuery(std::string str)
-{
-    std::vector<std::string> output;
-
-    size_t pos = str.find('\n');
-    while (pos != std::string::npos) {
-        str.erase(pos, 1);
-        pos = str.find('\n');
-    }
-    pos = str.find('\t');
-    while (pos != std::string::npos) {
-        str.erase(pos, 1);
-        pos = str.find('\t');
-    }
-
-    if (str.back() != ';') str.push_back(';');
-
-    std::string::size_type beg = 0;
-    for (size_t end = 0; (end = str.find(';', end)) != std::string::npos; end += 1)
-    {
-        std::string tmp = str.substr(beg, end - beg);
-        output.push_back(tmp);
-        beg = end + 1;
-    }
-
-    return output;
 }

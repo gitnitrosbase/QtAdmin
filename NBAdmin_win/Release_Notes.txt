@@ -1,3 +1,10 @@
+Version 13
+---------
+ - Fixed minor bugs
+ - Added wrap mode
+ - Added default folding in Text Editor
+ - Added autocompletion and autostarting nbase 
+==============================================
 Version 12
 ---------
  - Fixed minor bugs
