@@ -13,14 +13,14 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     textEdit_->setLexer(sqlLexer_);
     //! Текущая строка кода и ее подсветка
     textEdit_->setCaretLineVisible(true);
-    textEdit_->setCaretLineBackgroundColor(QColor("#eee"));
+    textEdit_->setCaretLineBackgroundColor(QColor("#fff"));
     //! Выравнивание
     textEdit_->setAutoIndent(true);
     textEdit_->setIndentationGuides(false);
     textEdit_->setIndentationsUseTabs(true);
     textEdit_->setIndentationWidth(4);
     //! margin это полоска слева, на которой обычно распологаются breakpoints
-    textEdit_->setMarginsBackgroundColor(QColor("#eee"));
+    textEdit_->setMarginsBackgroundColor(QColor("#fff"));
     textEdit_->setMarginLineNumbers(1, true);
     textEdit_->setMarginWidth(1, 15);
     //! Авто-дополнение кода в зависимости от источника
@@ -64,6 +64,8 @@ TabWindow::TabWindow(QWidget* parent) : QWidget(parent) ,ui(new Ui::TabWindow)
     connect(timer_, SIGNAL(timeout()), this, SLOT(modelTimerSlot()));
 
     connect(textEdit_, SIGNAL(linesChanged()), this, SLOT(setLeftMargin()));
+    textEdit_->setStyleSheet(
+                "border: 0px");
 }
 
 TabWindow::~TabWindow()

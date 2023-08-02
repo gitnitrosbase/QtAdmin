@@ -278,6 +278,7 @@ QPushButton:hover {
 	border-left: 1px solid rgb(202, 202, 202);*/	
 	background-color: #eee;
 }
+/*
 QScrollBar:vertical {
 	width: 6px;
     background: #fff;
@@ -296,7 +297,8 @@ QScrollBar::handle:horizontal  {
 	min-width: 20px;
 	background: #ececec;
 	border-radius: 1px;
-} </string>
+} 
+*/</string>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>

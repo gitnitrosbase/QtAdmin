@@ -64,13 +64,13 @@ QSplitter::handle
 	border-left: 1px solid rgb(202, 202, 202);*/	
 	background-color: #eee;
 }
+/*
 QScrollBar:vertical {
 	width: 12px;
     background: #fff;
 }
 QScrollBar::handle:vertical {
 	min-height: 20px;
-    /*background: #ececec;*/
 	background: #777;
 	border-radius: 4px;
 }
@@ -81,10 +81,10 @@ QScrollBar:horizontal  {
 }
 QScrollBar::handle:horizontal  {
 	min-width: 20px;
-	/*background: #ececec;*/
 	background: #777;
 	border-radius: 4px;
-} </string>
+} 
+*/</string>
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
